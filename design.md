@@ -1,8 +1,20 @@
 # Design System & UI Styleguide
 
-## Project: Next-Generation Modern E-Commerce Platform
+## Project: Cartivo &bull; Modern E-Commerce Platform
+**Tagline:** "Shop Smarter. Live Better."
 
 ---
+
+## 1. Brand Identity & Logo Assets
+- **Brand Name:** **Cartivo**
+- **Logo Graphic:** Stylized speed shopping cart with aerodynamic trailing motion bars and warm sunrise orange/amber gradient bowl supported on a dark navy frame and wheels.
+- **Logo Assets in `userview/static/images/`:**
+  - `cartivo-logo.png`: Full master vertical logo with emblem, "Cartivo" wordmark, and tagline.
+  - `cartivo-horizontal.png`: Optimized horizontal lockup for desktop/mobile headers and sticky navigation.
+  - `cartivo-icon.png`: Standalone shopping cart emblem for avatars, app icons, and loading states.
+  - `favicon.ico`: Multi-size browser favicon (16x16, 32x32, 48x48, 64x64).
+  - `favicon.png`: High-resolution 192x192 PNG favicon for modern browsers and mobile home screens.
+
 
 ## 1. Aesthetic Vision & Design Philosophy
 
@@ -52,9 +64,11 @@ The visual design is engineered around a **Modern Luxury-Minimalist & High-Conve
 ## 3. Typography Hierarchy
 
 ### 3.1. Font Families
-- **Primary Body Font:** `'Plus Jakarta Sans'`, `-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`
-- **Headings & Display:** `'Outfit'`, `'Plus Jakarta Sans', sans-serif`
+- **Primary Body & Display Font:** `'Poppins'`, from Google Fonts (`fonts.googleapis.com`), fallback `sans-serif`.
+  - Import URL: `https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap`
+  - Integrated directly as default font family in Tailwind CSS v4 `@theme { --font-sans: 'Poppins', sans-serif; }`.
 - **Monospace (SKUs, Order IDs, Invoices):** `'JetBrains Mono'`, `'Fira Code', monospace`
+
 
 ### 3.2. Type Scale
 
@@ -133,7 +147,31 @@ The visual design is engineered around a **Modern Luxury-Minimalist & High-Conve
 - Focus state: Border color `--color-brand-accent` with a `0 0 0 3px rgba(37, 99, 235, 0.15)` focus ring.
 - Error state: Border color `--color-border-danger` with helper text below in red.
 
-### 5.4. Slide-Over Cart Drawer
+### 5.4. Slide-Over Cart Drawer & Mobile Navigation Drawer
 - Width: `420px` (or `100vw` on mobile).
-- Slide-in from right with dark backdrop overlay (`rgba(15, 23, 42, 0.4)`).
-- Header with item count, scrollable list of items with thumbnail + quantity picker, sticky footer with subtotal, tax note, and primary "Checkout" button.
+- Slide-in with dark backdrop overlay (`rgba(15, 23, 42, 0.5)`).
+- Mobile Drawer: Quick access to Categories, Collections, Sale tags, and Account links.
+- Mobile Bottom Navigation Bar: Fixed bottom bar (`md:hidden`) with Home, Shop, Wishlist, Bag, and Account icons for native app feel.
+
+---
+
+## 6. Loading States & Micro-Animations
+
+### 6.1. Skeleton Shimmer Loading (Images)
+- **Placeholder:** Containers show a pulsing gradient sweep (`shimmer-effect` with `linear-gradient` sweep across `rgba(255, 255, 255, 0.4)`).
+- **Reveal Transition:** On native `onload`, images transition from `opacity-0` to full opacity via `transition-opacity duration-700 ease-out`, smoothly hiding the underlying skeleton.
+
+### 6.2. Text & Content Entrance Animations
+- **Fade-In-Up:** Staggered entrance animation (`animate-fade-in-up`) translating `16px` up with cubic-bezier easing (`0.16, 1, 0.3, 1`).
+- **Pulse Indicators:** Subtly pulsating notification dots on announcement pills and badges.
+
+---
+
+## 7. Responsive Breakpoint Standards
+
+| Device Class | Viewport Width | Key Layout Adaptations |
+| :--- | :--- | :--- |
+| **Mobile (Phones)** | `< 640px` | 2-column product grid, stacked hero buttons, slide-out drawer, fixed bottom navigation bar, expandable search |
+| **Tablet (iPads)** | `640px - 1023px` | 2x2 category grid, 3-column product grid, top navigation with hamburger menu, inline search input |
+| **Desktop / Wide** | `≥ 1024px` | 4-column product grid, full horizontal desktop menu, expanded search bar, ambient glow hero layout |
+

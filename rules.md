@@ -7,39 +7,43 @@
 ## 1. Approved Technology Stack & Libraries
 
 ### 1.1. Core Backend & Framework
-| Package / Dependency | Target Version | Primary Purpose |
-| :--- | :--- | :--- |
-| **Python** | `3.12+` | Runtime environment |
-| **Django** | `5.1.x / 5.2` | Core web framework |
-| **psycopg[binary]** | `3.2.x` | Modern PostgreSQL database adapter |
-| **django-environ** | `0.11.x` | Twelve-factor `.env` configuration |
-| **Pillow** | `10.x` | Image processing, resizing & WebP conversion |
-| **redis** | `5.0.x` | Python client for Redis caching & broker |
-| **celery** | `5.4.x` | Asynchronous task queue & background workers |
-| **django-celery-beat** | `2.6.x` | Database-backed periodic task scheduler |
+
+| Package / Dependency   | Target Version | Primary Purpose                              |
+| :--------------------- | :------------- | :------------------------------------------- |
+| **Python**             | `3.12+`        | Runtime environment                          |
+| **Django**             | `5.1.x / 5.2`  | Core web framework                           |
+| **psycopg[binary]**    | `3.2.x`        | Modern PostgreSQL database adapter           |
+| **django-environ**     | `0.11.x`       | Twelve-factor `.env` configuration           |
+| **Pillow**             | `10.x`         | Image processing, resizing & WebP conversion |
+| **redis**              | `5.0.x`        | Python client for Redis caching & broker     |
+| **celery**             | `5.4.x`        | Asynchronous task queue & background workers |
+| **django-celery-beat** | `2.6.x`        | Database-backed periodic task scheduler      |
 
 ### 1.2. Payments & Third-Party Integrations
-| Package / Dependency | Primary Purpose |
-| :--- | :--- |
-| **stripe** | Official Stripe Python SDK for Card/Apple Pay/Google Pay |
-| **razorpay** | Razorpay Python client for UPI, Cards & Netbanking |
-| **reportlab** | High-performance PDF invoice generation |
-| **django-storages** (with `boto3`) | AWS S3 / Cloudflare R2 media storage (production) |
+
+| Package / Dependency               | Primary Purpose                                          |
+| :--------------------------------- | :------------------------------------------------------- |
+| **stripe**                         | Official Stripe Python SDK for Card/Apple Pay/Google Pay |
+| **razorpay**                       | Razorpay Python client for UPI, Cards & Netbanking       |
+| **reportlab**                      | High-performance PDF invoice generation                  |
+| **django-storages** (with `boto3`) | AWS S3 / Cloudflare R2 media storage (production)        |
 
 ### 1.3. Frontend & UI Layer
-| Technology / Asset | Usage Guideline |
-| :--- | :--- |
-| **Django Templates (DTL)** | Clean, semantic server-rendered markup with template inheritance |
-| **Vanilla CSS3 (Design Tokens)** | Custom CSS variables defined in `design.md`; zero heavy external CSS frameworks unless requested |
-| **Alpine.js (v3.x via CDN/Vendored)** | Lightweight reactive micro-interactions (cart drawer, modals, dropdowns, tabs) |
-| **HTMX (v1.9+ optional)** | Dynamic partial page updates (live filter updates, instant cart badge increment) |
-| **Lucide Icons / Feather Icons** | Clean, minimalist SVG iconography |
+
+| Technology / Asset                    | Usage Guideline                                                                                  |
+| :------------------------------------ | :----------------------------------------------------------------------------------------------- |
+| **Django Templates (DTL)**            | Clean, semantic server-rendered markup with template inheritance                                 |
+| **Vanilla CSS3 (Design Tokens)**      | Custom CSS variables defined in `design.md`; zero heavy external CSS frameworks unless requested |
+| **Alpine.js (v3.x via CDN/Vendored)** | Lightweight reactive micro-interactions (cart drawer, modals, dropdowns, tabs)                   |
+| **HTMX (v1.9+ optional)**             | Dynamic partial page updates (live filter updates, instant cart badge increment)                 |
+| **Lucide Icons / Feather Icons**      | Clean, minimalist SVG iconography                                                                |
 
 ---
 
 ## 2. Architectural & Code Organization Rules
 
 ### 2.1. Layered Architecture Discipline
+
 To keep code maintainable and prevent "Fat Models / Fat Views", code within every app must adhere to this file structure:
 
 ```
@@ -56,11 +60,13 @@ apps/<app_name>/
 ```
 
 ### 2.2. Service Layer Rule
+
 - **Rule:** Never put checkout math, payment gateway calls, or multi-table updates directly into a view function or class-based view.
 - **Implementation:** Always delegate to `services.py` (e.g., `OrderService.place_order(user, cart, address_data)`).
 - **Return Type:** Return domain objects or explicit results (`ServiceResult(success=True, order=...)`).
 
 ### 2.3. Query Optimization & Zero N+1 Rule
+
 - **Rule:** Every list or relational query must explicitly declare needed relationships.
 - **Guideline:**
   - Use `.select_related()` for `ForeignKey` and `OneToOneField`.
@@ -69,6 +75,7 @@ apps/<app_name>/
   - Never execute ORM queries inside template loop tags.
 
 ### 2.4. Concurrency & Transaction Integrity Rule
+
 - **Rule:** Any write operation involving money, orders, or stock inventory must be wrapped in `transaction.atomic()`.
 - **Rule:** When modifying product stock during checkout, use row-level locking via `select_for_update()` to prevent race conditions:
   ```python
@@ -125,15 +132,14 @@ All AJAX endpoints (Cart modifications, Wishlist toggles, Dynamic filter queries
 ```
 
 On failure:
+
 ```json
 {
   "success": false,
   "status_code": 400,
   "message": "Requested quantity exceeds available stock.",
   "data": null,
-  "errors": [
-    { "field": "quantity", "detail": "Only 2 units remaining." }
-  ]
+  "errors": [{ "field": "quantity", "detail": "Only 2 units remaining." }]
 }
 ```
 

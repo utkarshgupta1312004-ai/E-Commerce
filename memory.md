@@ -37,23 +37,51 @@
 
 ## 2. Core Architectural Decisions Locked In
 
-1. **Custom User Model First:**
+1. **20 Decoupled Modular Domain Apps (`apps/`):**
+   - The platform architecture is organized into 20 single-responsibility domain apps: `accounts`, `catalog`, `inventory`, `search`, `cart`, `wishlist`, `checkout`, `payments`, `orders`, `shipping`, `fulfillment`, `promotions`, `reviews`, `notifications`, `recommendations`, `cms`, `analytics`, `support`, `audit`, and `settings`.
+   - Templates for each app strictly follow the convention `templates/<app_name>/<template_name>.html`.
+2. **Custom User Model First:**
    - Must implement `CustomUser` in `apps/accounts` before running the very first database migration to prevent Django auth migration conflicts.
-2. **Modular Service Layer Pattern:**
+3. **Modular Service Layer Pattern:**
    - Views will stay thin; business logic (checkout math, cart sync, payments) lives exclusively in `apps/<domain>/services.py`.
    - Complex queries, filters, and aggregations live in `apps/<domain>/selectors.py`.
-3. **Dual Cart Architecture:**
+4. **Dual Cart Architecture:**
    - Guest cart stored in secure session.
-   - User cart stored in database (`Cart` & `CartItem` models).
+   - User cart stored in database (`Cart` & `CartItem` models in `apps/cart`).
    - Unified `CartService.merge_session_cart_to_user()` automatically executed upon login.
-4. **Concurrency & Inventory Protection:**
+5. **Concurrency & Inventory Protection:**
    - Database transactions wrapped in `transaction.atomic()`.
-   - Stock deduction protected by row-level locking (`select_for_update()`).
-5. **Design System & Styling:**
+   - Stock deduction protected by row-level locking (`select_for_update()`) in `apps/inventory`.
+6. **Design System & Styling:**
    - **Framework:** Tailwind CSS v4 via `@tailwindcss/cli`.
    - **Typography:** Google Fonts `'Poppins'` (`300, 400, 500, 600, 700, 800`).
    - **Directives:** Strictly pure Tailwind utility classes; zero internal `<style>` or inline styling.
    - **Iconography:** Lucide Icons via CDN (`unpkg.com/lucide@latest`).
+
+### 2.1. Master Application & Domain Matrix
+
+| App Name | Contains Data Of | Dashboard Shows | Templates |
+| :--- | :--- | :--- | :--- |
+| `accounts` | Users, profiles, addresses, roles | Total users, active users, new users, blocked users | `login`, `register`, `profile`, `users`, `user_detail` |
+| `catalog` | Products, categories, brands, attributes, variants | Total products, categories, active products, out-of-stock products | `products`, `product_detail`, `categories`, `brands`, `variants` |
+| `inventory` | Stock, warehouses, stock movements | Total stock, low stock, out of stock, reserved stock | `inventory`, `stock_detail`, `warehouses`, `stock_movements` |
+| `search` | Search queries, filters, search results | Popular searches, zero-result searches, search trends | `search`, `search_results`, `search_analytics` |
+| `cart` | Carts, cart items, abandoned carts | Active carts, abandoned carts, cart value, cart conversion | `cart`, `cart_detail`, `abandoned_carts` |
+| `wishlist` | Wishlists, wishlist items | Total wishlists, popular products, wishlist conversions | `wishlist`, `wishlist_detail` |
+| `checkout` | Checkout sessions, addresses, shipping selections | Active checkouts, completed checkouts, abandoned checkouts | `checkout`, `address`, `shipping`, `review` |
+| `payments` | Transactions, payment methods, refunds | Successful payments, failed payments, pending payments, refunds | `payments`, `transaction_detail`, `refunds` |
+| `orders` | Orders, order items, order status, order history | Total orders, pending, processing, shipped, delivered, cancelled | `orders`, `order_detail`, `order_invoice` |
+| `shipping` | Shipments, carriers, tracking, shipping zones | Pending shipments, shipped, in-transit, delivered, delayed | `shipments`, `shipment_detail`, `tracking`, `carriers` |
+| `fulfillment` | Picking, packing, fulfillment tasks | Pending fulfillment, picking, packing, ready to ship | `fulfillment`, `picking`, `packing`, `tasks` |
+| `promotions` | Coupons, discounts, campaigns | Active offers, coupon usage, discount amount, campaign revenue | `promotions`, `coupons`, `campaigns`, `promotion_detail` |
+| `reviews` | Reviews, ratings, moderation | Total reviews, average rating, pending/reported reviews | `reviews`, `review_detail`, `moderation` |
+| `notifications` | Email, SMS, push notifications, templates | Sent, delivered, failed, opened notifications | `notifications`, `templates`, `notification_detail` |
+| `recommendations` | Product recommendations, recommendation rules | Recommendation clicks, CTR, attributed revenue | `recommendations`, `rules`, `recommendation_analytics` |
+| `cms` | Pages, banners, menus, content blocks | Published pages, banners, drafts, scheduled content | `pages`, `page_editor`, `banners`, `menus` |
+| `analytics` | Sales, customers, products, conversion metrics | Revenue, sales, conversion, AOV, customer analytics | `dashboard`, `sales`, `customers`, `products`, `reports` |
+| `support` | Tickets, customer queries, complaints | Open tickets, pending, resolved, response time | `tickets`, `ticket_detail`, `customers`, `knowledge_base` |
+| `audit` | Admin actions, login activity, system events | Recent activities, security events, admin actions | `logs`, `activity_detail`, `security_events` |
+| `settings` | Store settings, payment settings, shipping settings | Store configuration status | `settings`, `general`, `payment`, `shipping`, `email` |
 
 ---
 
@@ -111,18 +139,35 @@
     - Updated [design.md](file:///d:/django_project/E-Commerce/E-Commerce/design.md) with Brand Identity & Logo Assets section.
   - **Tablet & Mobile Responsiveness + Skeleton Shimmer Animations:**
     - Configured `@keyframes shimmer` and `shimmer-effect` in [input.css](file:///d:/django_project/E-Commerce/E-Commerce/ecom/userview/static/src/input.css) and recompiled to [output.css](file:///d:/django_project/E-Commerce/E-Commerce/ecom/userview/static/src/output.css).
-    - Updated [homepage.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/userview/templates/homepage.html) with:
-      - Responsive navigation with interactive slide-over mobile drawer navigation.
-      - Mobile slide-down search bar.
-      - Native app-style fixed bottom navigation bar on mobile devices (`md:hidden`).
-      - Responsive grid adaptations across Mobile (2-col product grid), Tablet (3-col product grid, 2x2 categories), and Desktop (4-col grid).
-      - Skeleton shimmer loading placeholders with smooth `opacity-0` to `opacity-100` image reveal on `onload`.
-      - Text entrance animations (`animate-fade-in-up`) on hero and headline elements.
-    - Documented Breakpoints and Shimmer animation specs in [design.md](file:///d:/django_project/E-Commerce/E-Commerce/design.md).
-    - Verified Django checks: 0 issues reported.
-
-
-
-
-
-
+    - Updated [homepage.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/userview/templates/homepage.html) with responsive navigation drawer, mobile search, and bottom app bar.
+  - **Multi-Offer Interactive Hero Slider:**
+    - Implemented a 4-slide carousel in [homepage.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/userview/templates/homepage.html) with distinct promotional campaigns:
+      - **Slide 1:** Autumn / Winter Drop & 20% Off Storewide (`CARTIVO20`) &bull; Studio ANC Pro spotlight.
+      - **Slide 2:** Horology Week & Flat $100 Off (`CHRONO100`) &bull; Titanium Smart Chronograph spotlight.
+      - **Slide 3:** Sartorial Clearance & Up to 40% Off Outerwear &bull; Atelier Merino Coat spotlight.
+      - **Slide 4:** Audio Weekend & Buy 1 Get 50% Off Earbuds &bull; Aura ANC Pro Earbuds spotlight.
+  - **Category Sub-Menu Bar Below Navbar:**
+    - Inserted directly below `<header>` navigation matching user reference design:
+      - 14 distinct category items: For You, Fashion, Mobiles, Electronics, Beauty, Home, Appliances, Toys & Baby, Food & Grocery, Auto Acc., Sports & Fitness, Furniture, Books & Media, 2 Wheelers.
+      - Styled matching the visual reference with amber icons, rounded icon cards (`w-10 h-10 rounded-xl`), hover lift, and active blue indicator line under "For You".
+      - Fully responsive with zero scrollbars on overflow (`no-scrollbar`).
+  - **Flipkart-Style Multi-Banner Promotional Carousel & Large Slider Removal:**
+    - Completely removed obsolete full-width `#hero-slider-section` (4 full-screen slides).
+    - Directly below Category Sub-Menu, implemented the modern Flipkart-style promotional offer banners carousel matching the user's reference image:
+      - Multi-card landscape view (`w-[88vw] sm:w-[500px] md:w-[540px] lg:w-[570px] xl:w-[600px] h-[195px] sm:h-[225px] md:h-[240px] rounded-3xl`) with multi-card peek on desktop and mobile.
+      - **Banner 1 (Dark Carbon):** VIRAT V1 5G &bull; From ₹14,499 &bull; Now with 128 GB storage &bull; BIG BACHAT DAYS badge.
+      - **Banner 2 (Cyan Grid):** Ortho slippers &bull; Under ₹399 &bull; Comfy picks, going fast! &bull; PNB Up to ₹4,200 Instant Discount bank pill &bull; Framed product showcase.
+      - **Banner 3 (Mint Teal):** Best fragrance picks &bull; Min. 50% Off &bull; PARK AVENUE, BEARDO... &bull; PNB bank discount pill &bull; Framed luxury perfume showcase.
+      - **Banner 4 (Midnight Indigo):** Studio Wireless ANC &bull; Flat 45% Off &bull; Spatial audio with 40H playtime &bull; HDFC bank cashback pill.
+      - **Banner 5 (Warm Sunset):** Smart Chronographs &bull; Under ₹2,999 &bull; Titanium build &bull; No-Cost EMI pill.
+      - Centered pagination dots matching the screenshot (`. . . . - . .`) with active pill width expansion (`w-6 sm:w-8 bg-slate-900`).
+      - Smooth CSS snap-scroll (`snap-x snap-mandatory`), desktop hover navigation arrows, touch-swipe gestures, and 4.5s autoplay with pause-on-hover/touch.
+    - Recompiled Tailwind CSS production output (0 errors, 132ms) and validated zero Django check errors.
+    - Updated [design.md](file:///d:/django_project/E-Commerce/E-Commerce/design.md) (Section 5.6) and synchronized [memory.md](file:///d:/django_project/E-Commerce/E-Commerce/memory.md).
+- **2026-09-05:**
+  - Integrated the comprehensive **20-App Modular Domain Architecture** across all specification and planning documents:
+    - Updated [prd.md](file:///d:/django_project/E-Commerce/E-Commerce/prd.md) with the Master Domain Architecture Table and detailed capability breakdowns for all 20 apps (`accounts`, `catalog`, `inventory`, `search`, `cart`, `wishlist`, `checkout`, `payments`, `orders`, `shipping`, `fulfillment`, `promotions`, `reviews`, `notifications`, `recommendations`, `cms`, `analytics`, `support`, `audit`, `settings`).
+    - Updated [architecture.md](file:///d:/django_project/E-Commerce/E-Commerce/architecture.md) with the directory structure reflecting all 20 apps under `apps/`, template hierarchy (`templates/<app_name>/<template_name>.html`), and the Master Domain Matrix.
+    - Updated [phases.md](file:///d:/django_project/E-Commerce/E-Commerce/phases.md) aligning the 10-phase chronological implementation roadmap and checklists directly with the 20 target apps.
+    - Updated [rules.md](file:///d:/django_project/E-Commerce/E-Commerce/rules.md) adding the 20 modular apps registry and template directory conventions.
+    - Updated [memory.md](file:///d:/django_project/E-Commerce/E-Commerce/memory.md) with core architectural decisions and session tracking.

@@ -66,54 +66,115 @@ The application follows a **Modular Monolith** architecture pattern with a **Dom
 
 ## 2. Django Apps & Modular Directory Structure
 
+The platform is partitioned into 20 modular domain applications under `apps/`, accompanied by `userview` for the storefront presentation layer and `core` for shared utilities:
+
 ```
 d:\django_project\E-Commerce\E-Commerce\
 │
-├── ecom/                          # Project Root
+├── ecom/                                  # Project Root
 │   ├── manage.py
-│   ├── ecom/                      # Core Configuration Package
+│   ├── ecom/                              # Core Configuration Package
 │   │   ├── __init__.py
 │   │   ├── asgi.py
 │   │   ├── wsgi.py
 │   │   ├── settings/
 │   │   │   ├── __init__.py
-│   │   │   ├── base.py            # Shared settings, installed apps, middleware
-│   │   │   ├── development.py     # Local debug settings
-│   │   │   └── production.py      # Hardened security, S3, Redis settings
-│   │   └── urls.py                # Root URL configuration
+│   │   │   ├── base.py                    # Shared settings, installed apps, middleware
+│   │   │   ├── development.py             # Local debug settings
+│   │   │   └── production.py              # Hardened security, S3, Redis settings
+│   │   └── urls.py                        # Root URL configuration
 │   │
-│   ├── apps/                      # Dedicated Domain Apps
-│   │   ├── core/                  # Base models, custom mixins, global templatetags
-│   │   ├── accounts/              # Custom User, Address, Profiles, Auth
-│   │   ├── products/              # Categories, Brands, Products, Variants, Inventory
-│   │   ├── cart/                  # Session Cart, Database Cart, Cart Sync
-│   │   ├── orders/                # Orders, OrderItems, Tracking, State Machine
-│   │   ├── payments/              # Gateways (Stripe/Razorpay), Webhook listeners
-│   │   ├── promotions/            # Coupons, Discounts, Banner announcements
-│   │   ├── reviews/               # Verified buyer reviews, ratings
-│   │   └── dashboard/             # Customer Portal & Admin/Vendor views
+│   ├── apps/                              # 20 Modular Domain Applications
+│   │   ├── accounts/                      # Users, profiles, addresses, roles
+│   │   ├── catalog/                       # Products, categories, brands, attributes, variants
+│   │   ├── inventory/                     # Stock, warehouses, stock movements
+│   │   ├── search/                        # Search queries, filters, search results
+│   │   ├── cart/                          # Carts, cart items, abandoned carts
+│   │   ├── wishlist/                      # Wishlists, wishlist items
+│   │   ├── checkout/                      # Checkout sessions, addresses, shipping selections
+│   │   ├── payments/                      # Transactions, payment methods, refunds
+│   │   ├── orders/                        # Orders, order items, order status, order history
+│   │   ├── shipping/                      # Shipments, carriers, tracking, shipping zones
+│   │   ├── fulfillment/                   # Picking, packing, fulfillment tasks
+│   │   ├── promotions/                    # Coupons, discounts, campaigns
+│   │   ├── reviews/                       # Reviews, ratings, moderation
+│   │   ├── notifications/                 # Email, SMS, push notifications, templates
+│   │   ├── recommendations/               # Product recommendations, recommendation rules
+│   │   ├── cms/                           # Pages, banners, menus, content blocks
+│   │   ├── analytics/                     # Sales, customers, products, conversion metrics
+│   │   ├── support/                       # Tickets, customer queries, complaints
+│   │   ├── audit/                         # Admin actions, login activity, system events
+│   │   ├── settings/                      # Store settings, payment settings, shipping settings
+│   │   └── core/                          # Base abstract models, common mixins, custom validators
 │   │
-│   ├── static/                    # CSS, JS, Branding Assets
-│   │   ├── css/                   # Design token styles & vanilla styling
-│   │   ├── js/                    # Cart drawers, Alpine/HTMX scripts
-│   │   └── img/                   # Logos, fallbacks, placeholders
-│   ├── media/                     # User uploads (local dev)
-│   └── templates/                 # Global UI Templates
-│       ├── base.html              # Master layout
-│       ├── components/            # Reusable header, footer, cards, modals, toasts
-│       ├── accounts/
-│       ├── products/
-│       ├── cart/
-│       ├── checkout/
-│       └── orders/
+│   ├── userview/                          # Storefront Presentation App
+│   │   ├── views.py                       # Storefront views (homepage, landing pages)
+│   │   ├── urls.py                        # Storefront user routes
+│   │   └── static/                        # Compiled CSS, images, brand assets
+│   │
+│   ├── static/                            # Global Static Assets
+│   │   ├── css/                           # Global stylesheets & design tokens
+│   │   ├── js/                            # Global scripts, Alpine components, HTMX
+│   │   └── images/                        # Branding, logos, favicons
+│   │
+│   ├── media/                             # User & product media uploads (local dev)
+│   │
+│   └── templates/                         # Domain & Presentation Templates
+│       ├── base.html                      # Master HTML5 layout skeleton
+│       ├── components/                    # Reusable UI partials (header, footer, drawer, toast)
+│       ├── accounts/                      # login.html, register.html, profile.html, users.html, user_detail.html
+│       ├── catalog/                       # products.html, product_detail.html, categories.html, brands.html, variants.html
+│       ├── inventory/                     # inventory.html, stock_detail.html, warehouses.html, stock_movements.html
+│       ├── search/                        # search.html, search_results.html, search_analytics.html
+│       ├── cart/                          # cart.html, cart_detail.html, abandoned_carts.html
+│       ├── wishlist/                      # wishlist.html, wishlist_detail.html
+│       ├── checkout/                      # checkout.html, address.html, shipping.html, review.html
+│       ├── payments/                      # payments.html, transaction_detail.html, refunds.html
+│       ├── orders/                        # orders.html, order_detail.html, order_invoice.html
+│       ├── shipping/                      # shipments.html, shipment_detail.html, tracking.html, carriers.html
+│       ├── fulfillment/                   # fulfillment.html, picking.html, packing.html, tasks.html
+│       ├── promotions/                    # promotions.html, coupons.html, campaigns.html, promotion_detail.html
+│       ├── reviews/                       # reviews.html, review_detail.html, moderation.html
+│       ├── notifications/                 # notifications.html, templates.html, notification_detail.html
+│       ├── recommendations/               # recommendations.html, rules.html, recommendation_analytics.html
+│       ├── cms/                           # pages.html, page_editor.html, banners.html, menus.html
+│       ├── analytics/                     # dashboard.html, sales.html, customers.html, products.html, reports.html
+│       ├── support/                       # tickets.html, ticket_detail.html, customers.html, knowledge_base.html
+│       ├── audit/                         # logs.html, activity_detail.html, security_events.html
+│       └── settings/                      # settings.html, general.html, payment.html, shipping.html, email.html
 │
-├── prd.md                         # Product Requirements Document
-├── architecture.md                # System Architecture & Technical Flow
-├── rules.md                       # Coding Standards, Stack & Library Directives
-├── phases.md                      # Milestone & Phase-wise Creation Plan
-├── design.md                      # Design System, Palette & Typography
-└── memory.md                      # Project Status & Current Working File Index
+├── prd.md                                 # Product Requirements Document
+├── architecture.md                        # System Architecture & Technical Flow
+├── rules.md                               # Coding Standards, Stack & Library Directives
+├── phases.md                              # Milestone & Phase-wise Creation Plan
+├── design.md                              # Design System, Palette & Typography
+└── memory.md                              # Project Status & Current Working File Index
 ```
+
+### 2.1. Master Application & Domain Architecture Matrix
+
+| App Name | Contains Data Of | Dashboard Shows | Templates |
+| :--- | :--- | :--- | :--- |
+| `accounts` | Users, profiles, addresses, roles | Total users, active users, new users, blocked users | `login`, `register`, `profile`, `users`, `user_detail` |
+| `catalog` | Products, categories, brands, attributes, variants | Total products, categories, active products, out-of-stock products | `products`, `product_detail`, `categories`, `brands`, `variants` |
+| `inventory` | Stock, warehouses, stock movements | Total stock, low stock, out of stock, reserved stock | `inventory`, `stock_detail`, `warehouses`, `stock_movements` |
+| `search` | Search queries, filters, search results | Popular searches, zero-result searches, search trends | `search`, `search_results`, `search_analytics` |
+| `cart` | Carts, cart items, abandoned carts | Active carts, abandoned carts, cart value, cart conversion | `cart`, `cart_detail`, `abandoned_carts` |
+| `wishlist` | Wishlists, wishlist items | Total wishlists, popular products, wishlist conversions | `wishlist`, `wishlist_detail` |
+| `checkout` | Checkout sessions, addresses, shipping selections | Active checkouts, completed checkouts, abandoned checkouts | `checkout`, `address`, `shipping`, `review` |
+| `payments` | Transactions, payment methods, refunds | Successful payments, failed payments, pending payments, refunds | `payments`, `transaction_detail`, `refunds` |
+| `orders` | Orders, order items, order status, order history | Total orders, pending, processing, shipped, delivered, cancelled | `orders`, `order_detail`, `order_invoice` |
+| `shipping` | Shipments, carriers, tracking, shipping zones | Pending shipments, shipped, in-transit, delivered, delayed | `shipments`, `shipment_detail`, `tracking`, `carriers` |
+| `fulfillment` | Picking, packing, fulfillment tasks | Pending fulfillment, picking, packing, ready to ship | `fulfillment`, `picking`, `packing`, `tasks` |
+| `promotions` | Coupons, discounts, campaigns | Active offers, coupon usage, discount amount, campaign revenue | `promotions`, `coupons`, `campaigns`, `promotion_detail` |
+| `reviews` | Reviews, ratings, moderation | Total reviews, average rating, pending/reported reviews | `reviews`, `review_detail`, `moderation` |
+| `notifications` | Email, SMS, push notifications, templates | Sent, delivered, failed, opened notifications | `notifications`, `templates`, `notification_detail` |
+| `recommendations` | Product recommendations, recommendation rules | Recommendation clicks, CTR, attributed revenue | `recommendations`, `rules`, `recommendation_analytics` |
+| `cms` | Pages, banners, menus, content blocks | Published pages, banners, drafts, scheduled content | `pages`, `page_editor`, `banners`, `menus` |
+| `analytics` | Sales, customers, products, conversion metrics | Revenue, sales, conversion, AOV, customer analytics | `dashboard`, `sales`, `customers`, `products`, `reports` |
+| `support` | Tickets, customer queries, complaints | Open tickets, pending, resolved, response time | `tickets`, `ticket_detail`, `customers`, `knowledge_base` |
+| `audit` | Admin actions, login activity, system events | Recent activities, security events, admin actions | `logs`, `activity_detail`, `security_events` |
+| `settings` | Store settings, payment settings, shipping settings | Store configuration status | `settings`, `general`, `payment`, `shipping`, `email` |
 
 ---
 

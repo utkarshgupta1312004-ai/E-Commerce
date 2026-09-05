@@ -59,13 +59,40 @@ apps/<app_name>/
 └── admin.py        # Clean admin dashboards with list filters and search
 ```
 
-### 2.2. Service Layer Rule
+### 2.2. Approved 20 Modular Domain Apps & Template Mapping
+
+Each domain belongs to its dedicated app under `apps/`, and its templates must reside in `templates/<app_name>/<template_name>.html`:
+
+| App Name | Domain Data | Dashboard Metrics | Templates (`templates/<app>/`) |
+| :--- | :--- | :--- | :--- |
+| `accounts` | Users, profiles, addresses, roles | Total users, active, new, blocked | `login`, `register`, `profile`, `users`, `user_detail` |
+| `catalog` | Products, categories, brands, variants | Total products, categories, active, out-of-stock | `products`, `product_detail`, `categories`, `brands`, `variants` |
+| `inventory` | Stock, warehouses, stock movements | Total stock, low stock, out of stock, reserved stock | `inventory`, `stock_detail`, `warehouses`, `stock_movements` |
+| `search` | Search queries, filters, search results | Popular searches, zero-result searches, trends | `search`, `search_results`, `search_analytics` |
+| `cart` | Carts, cart items, abandoned carts | Active carts, abandoned carts, cart value, conversion | `cart`, `cart_detail`, `abandoned_carts` |
+| `wishlist` | Wishlists, wishlist items | Total wishlists, popular products, conversions | `wishlist`, `wishlist_detail` |
+| `checkout` | Checkout sessions, addresses, shipping | Active checkouts, completed, abandoned | `checkout`, `address`, `shipping`, `review` |
+| `payments` | Transactions, payment methods, refunds | Successful, failed, pending, refunds | `payments`, `transaction_detail`, `refunds` |
+| `orders` | Orders, order items, status, history | Total orders, pending, processing, shipped, delivered, cancelled | `orders`, `order_detail`, `order_invoice` |
+| `shipping` | Shipments, carriers, tracking, zones | Pending shipments, shipped, in-transit, delivered, delayed | `shipments`, `shipment_detail`, `tracking`, `carriers` |
+| `fulfillment`| Picking, packing, fulfillment tasks | Pending fulfillment, picking, packing, ready to ship | `fulfillment`, `picking`, `packing`, `tasks` |
+| `promotions` | Coupons, discounts, campaigns | Active offers, coupon usage, discount amount, revenue | `promotions`, `coupons`, `campaigns`, `promotion_detail` |
+| `reviews` | Reviews, ratings, moderation | Total reviews, average rating, pending/reported | `reviews`, `review_detail`, `moderation` |
+| `notifications`| Email, SMS, push notifications, templates| Sent, delivered, failed, opened | `notifications`, `templates`, `notification_detail` |
+| `recommendations`| Product recommendations, rules | Clicks, CTR, attributed revenue | `recommendations`, `rules`, `recommendation_analytics` |
+| `cms` | Pages, banners, menus, content blocks | Published pages, banners, drafts, scheduled content | `pages`, `page_editor`, `banners`, `menus` |
+| `analytics` | Sales, customers, products, metrics | Revenue, sales, conversion, AOV, customer analytics | `dashboard`, `sales`, `customers`, `products`, `reports` |
+| `support` | Tickets, customer queries, complaints | Open tickets, pending, resolved, response time | `tickets`, `ticket_detail`, `customers`, `knowledge_base` |
+| `audit` | Admin actions, login activity, system events | Recent activities, security events, admin actions | `logs`, `activity_detail`, `security_events` |
+| `settings` | Store, payment, and shipping settings | Store configuration status | `settings`, `general`, `payment`, `shipping`, `email` |
+
+### 2.3. Service Layer Rule
 
 - **Rule:** Never put checkout math, payment gateway calls, or multi-table updates directly into a view function or class-based view.
 - **Implementation:** Always delegate to `services.py` (e.g., `OrderService.place_order(user, cart, address_data)`).
 - **Return Type:** Return domain objects or explicit results (`ServiceResult(success=True, order=...)`).
 
-### 2.3. Query Optimization & Zero N+1 Rule
+### 2.4. Query Optimization & Zero N+1 Rule
 
 - **Rule:** Every list or relational query must explicitly declare needed relationships.
 - **Guideline:**
@@ -74,7 +101,7 @@ apps/<app_name>/
   - Use `.only()` or `.defer()` when querying tables with large text/JSON fields that are not rendered on the list view.
   - Never execute ORM queries inside template loop tags.
 
-### 2.4. Concurrency & Transaction Integrity Rule
+### 2.5. Concurrency & Transaction Integrity Rule
 
 - **Rule:** Any write operation involving money, orders, or stock inventory must be wrapped in `transaction.atomic()`.
 - **Rule:** When modifying product stock during checkout, use row-level locking via `select_for_update()` to prevent race conditions:

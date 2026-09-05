@@ -153,6 +153,30 @@ The visual design is engineered around a **Modern Luxury-Minimalist & High-Conve
 - Mobile Drawer: Quick access to Categories, Collections, Sale tags, and Account links.
 - Mobile Bottom Navigation Bar: Fixed bottom bar (`md:hidden`) with Home, Shop, Wishlist, Bag, and Account icons for native app feel.
 
+### 5.5. Category Sub-Menu Bar (Directly Below Navbar)
+- **Placement:** Immediately below sticky navigation header (`sticky top-16 sm:top-20 z-30`).
+- **Design & Layout:**
+  - Clean white surface with subtle bottom border (`border-b border-slate-200`) and shadow.
+  - Horizontally scrollable without scrollbars (`no-scrollbar`).
+  - Visual items matching category screenshot: Rounded icon square (`w-10 h-10 rounded-xl`) with amber icon highlights and smooth scaling on hover (`group-hover:scale-105`).
+  - 14 Categories: For You, Fashion, Mobiles, Electronics, Beauty, Home, Appliances, Toys & Baby, Food & Grocery, Auto Acc., Sports & Fitness, Furniture, Books & Media, 2 Wheelers.
+  - Active State: Vibrant blue indicator line (`h-0.5 bg-blue-600 rounded-full`) under active tab with blue highlighted icon container (`bg-blue-50 text-blue-600`).
+
+### 5.6. Flipkart-Style Promotional Offer Banners (Continuous Animated Infinite Loop)
+- **Placement:** Directly below Category Sub-Menu Bar.
+- **Card Anatomy & Dimensions:**
+  - Card Dimensions: Landscape aspect ratio (`w-[300px] sm:w-[460px] md:w-[520px] lg:w-[560px] xl:w-[580px] h-[190px] sm:h-[220px] md:h-[235px]`) with `rounded-3xl` corners.
+  - Multi-card view: Shows ~2.2 to 2.5 cards on desktop screens with smooth continuous movement; 1 full card + peek on mobile.
+  - Campaign Badge: Scalloped yellow starburst/stamp badge (`bg-amber-400 text-blue-950 font-black text-[9px] sm:text-[10px] uppercase`) with lightning icon: **BIG BACHAT DAYS**.
+  - Typography: Punchy bold headlines and prices (e.g. `VIRAT V1 5G From ₹14,499`, `Ortho slippers Under ₹399`, `Best fragrance picks Min. 50% Off`, `Studio Wireless ANC Flat 45% Off`, `Smart Chronographs Under ₹2,999`).
+  - Bank Offer Pill: Floating white pill tag with bank emblem (`PNB Up to ₹4,200 Instant Discount*`, `HDFC Flat 10% Instant Cashback*`, `No-Cost EMI Available*`).
+  - Product Cutout / Framed Image: High-resolution angled product showcase on the right side with smooth zoom (`group-hover/card:scale-108 transition-transform duration-500`).
+- **Continuous Infinite Animation Mechanics:**
+  - **Animation Track:** `.animate-marquee-smooth` running a silky 40s linear infinite CSS marquee (`translateX(0%)` to `translateX(-50%)`).
+  - **Seamless Loop:** 5 primary promotional banners + 5 duplicate banners (`aria-hidden="true"`) for zero-jump, perpetual horizontal scrolling.
+  - **Interaction:** Hover or touch pauses the animation immediately (`animation-play-state: paused`) allowing users to comfortably read deals and click links.
+  - **Ambient Masks:** Left and right gradient fade masks (`from-slate-100 to-transparent`) for seamless viewport edge transitions.
+
 ---
 
 ## 6. Loading States & Micro-Animations

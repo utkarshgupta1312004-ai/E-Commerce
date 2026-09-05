@@ -10,10 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Add apps directory to sys.path
+sys.path.insert(0, str(BASE_DIR / 'apps'))
 
 
 # Quick-start development settings - unsuitable for production
@@ -25,7 +29,7 @@ SECRET_KEY = 'django-insecure-*_5j)@e$pk-67i8v)@n)f3rtlxeb7*u$++^(y30*78y^#vv)+i
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -38,8 +42,28 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Custom Local Apps
-    'userview.apps.UserviewConfig',
+    # Domain Applications
+    'apps.accounts',
+    'apps.catalog',
+    'apps.inventory',
+    'apps.search',
+    'apps.cart',
+    'apps.wishlist',
+    'apps.checkout',
+    'apps.payments',
+    'apps.orders',
+    'apps.shipping',
+    'apps.fulfillment',
+    'apps.promotions',
+    'apps.reviews',
+    'apps.notifications',
+    'apps.recommendations',
+    'apps.cms',
+    'apps.analytics',
+    'apps.support',
+    'apps.audit',
+    'apps.settings',
+    'apps.core',
 ]
 
 
@@ -58,7 +82,7 @@ ROOT_URLCONF = 'ecom.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -119,6 +143,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

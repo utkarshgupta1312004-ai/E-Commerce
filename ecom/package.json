@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "dev": "tailwindcss -i ./userview/static/src/input.css -o ./userview/static/src/output.css --watch"
+    "dev": "tailwindcss -i ./static/src/input.css -o ./static/src/output.css --watch",
+    "build": "tailwindcss -i ./static/src/input.css -o ./static/src/output.css --minify"
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.3.3",

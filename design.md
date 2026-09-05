@@ -8,7 +8,7 @@
 ## 1. Brand Identity & Logo Assets
 - **Brand Name:** **Cartivo**
 - **Logo Graphic:** Stylized speed shopping cart with aerodynamic trailing motion bars and warm sunrise orange/amber gradient bowl supported on a dark navy frame and wheels.
-- **Logo Assets in `userview/static/images/`:**
+- **Logo Assets in `static/images/`:**
   - `cartivo-logo.png`: Full master vertical logo with emblem, "Cartivo" wordmark, and tagline.
   - `cartivo-horizontal.png`: Optimized horizontal lockup for desktop/mobile headers and sticky navigation.
   - `cartivo-icon.png`: Standalone shopping cart emblem for avatars, app icons, and loading states.

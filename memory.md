@@ -18,20 +18,24 @@
 | [design.md](file:///d:/django_project/E-Commerce/E-Commerce/design.md) | Design system: Poppins Google Font, Tailwind CSS v4 design tokens, UI specs | Updated |
 | [rules.md](file:///d:/django_project/E-Commerce/E-Commerce/rules.md) | Tech stack: Tailwind CSS v4, Poppins font, zero-inline-CSS directives | Updated |
 | [memory.md](file:///d:/django_project/E-Commerce/E-Commerce/memory.md) | Current working file index, session state, decisions, and immediate next steps | Active |
-| [userview/templates/homepage.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/userview/templates/homepage.html) | Modern luxury storefront homepage using pure Tailwind CSS & Poppins | Implemented |
-| [userview/static/images/cartivo-horizontal.png](file:///d:/django_project/E-Commerce/E-Commerce/ecom/userview/static/images/cartivo-horizontal.png) | Horizontal header brand logo (Cartivo emblem + wordmark) | Active |
-| [userview/static/images/cartivo-logo.png](file:///d:/django_project/E-Commerce/E-Commerce/ecom/userview/static/images/cartivo-logo.png) | Master full brand logo with tagline ("Shop Smarter. Live Better.") | Active |
-| [userview/static/images/cartivo-icon.png](file:///d:/django_project/E-Commerce/E-Commerce/ecom/userview/static/images/cartivo-icon.png) | Standalone speed cart emblem | Active |
-| [userview/static/images/favicon.png](file:///d:/django_project/E-Commerce/E-Commerce/ecom/userview/static/images/favicon.png) | 192x192 high-resolution PNG favicon | Active |
-| [userview/static/images/favicon.ico](file:///d:/django_project/E-Commerce/E-Commerce/ecom/userview/static/images/favicon.ico) | Multi-size browser favicon ICO (16px, 32px, 48px, 64px) | Active |
-| [userview/static/src/input.css](file:///d:/django_project/E-Commerce/E-Commerce/ecom/userview/static/src/input.css) | Tailwind CSS v4 input file with `@theme` config (Poppins & brand tokens) | Configured |
-
-| [userview/static/src/output.css](file:///d:/django_project/E-Commerce/E-Commerce/ecom/userview/static/src/output.css) | Compiled Tailwind CSS production output stylesheet | Built (44KB) |
-| [userview/urls.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/userview/urls.py) | Storefront user routes (Home root path routed to `home_view`) | Active |
-| [userview/views.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/userview/views.py) | `home_view` rendering `homepage.html` | Active |
-| [ecom/urls.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/ecom/urls.py) | Root URL routing including `userview.urls` | Active |
-| [ecom/settings.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/ecom/settings.py) | Project settings with `userview.apps.UserviewConfig` registered in `INSTALLED_APPS` | Active |
-| [ecom/package.json](file:///d:/django_project/E-Commerce/E-Commerce/ecom/package.json) | Node package config with `@tailwindcss/cli` and `dev` watch script | Active |
+| [ecom/templates/base.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/templates/base.html) | Global master skeleton template with meta, fonts, icons, drawer, toast, and slots | Active |
+| [ecom/templates/components/](file:///d:/django_project/E-Commerce/E-Commerce/ecom/templates/components/) | Reusable partials: `header`, `footer`, `announcement_bar`, `category_nav`, `promo_banners`, `mobile_drawer`, `newsletter`, `mobile_bottom_nav`, `toast`, `ai_agent_widget` | Active |
+| [ecom/templates/accounts/login.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/templates/accounts/login.html) | Customer login template with 1-click Google OAuth and email/password form | Active |
+| [ecom/apps/accounts/urls.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/apps/accounts/urls.py) | Accounts app URLs (`/accounts/login/`) | Active |
+| [ecom/apps/accounts/views.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/apps/accounts/views.py) | Customer authentication view (`login_view`) | Active |
+| [ecom/templates/homepage.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/templates/homepage.html) | Modern luxury storefront homepage extending `base.html` and including modular components | Implemented |
+| [ecom/static/images/cartivo-horizontal.png](file:///d:/django_project/E-Commerce/E-Commerce/ecom/static/images/cartivo-horizontal.png) | Horizontal header brand logo (Cartivo emblem + wordmark) | Active |
+| [ecom/static/images/cartivo-logo.png](file:///d:/django_project/E-Commerce/E-Commerce/ecom/static/images/cartivo-logo.png) | Master full brand logo with tagline ("Shop Smarter. Live Better.") | Active |
+| [ecom/static/images/cartivo-icon.png](file:///d:/django_project/E-Commerce/E-Commerce/ecom/static/images/cartivo-icon.png) | Standalone speed cart emblem | Active |
+| [ecom/static/images/favicon.png](file:///d:/django_project/E-Commerce/E-Commerce/ecom/static/images/favicon.png) | 192x192 high-resolution PNG favicon | Active |
+| [ecom/static/images/favicon.ico](file:///d:/django_project/E-Commerce/E-Commerce/ecom/static/images/favicon.ico) | Multi-size browser favicon ICO (16px, 32px, 48px, 64px) | Active |
+| [ecom/static/src/input.css](file:///d:/django_project/E-Commerce/E-Commerce/ecom/static/src/input.css) | Tailwind CSS v4 input file with `@theme` config (Poppins & brand tokens) | Configured |
+| [ecom/static/src/output.css](file:///d:/django_project/E-Commerce/E-Commerce/ecom/static/src/output.css) | Compiled Tailwind CSS production output stylesheet | Built (56KB) |
+| [ecom/apps/cms/urls.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/apps/cms/urls.py) | CMS routes (Home root path routed to `home_view`) | Active |
+| [ecom/apps/cms/views.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/apps/cms/views.py) | `home_view` rendering `homepage.html` | Active |
+| [ecom/ecom/urls.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/ecom/urls.py) | Root URL routing including `apps.cms.urls` | Active |
+| [ecom/ecom/settings.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/ecom/settings.py) | Project settings with 20 modular apps registered in `INSTALLED_APPS` | Active |
+| [ecom/package.json](file:///d:/django_project/E-Commerce/E-Commerce/ecom/package.json) | Node package config with `@tailwindcss/cli` build & dev watch scripts | Active |
 
 ---
 
@@ -89,10 +93,12 @@
 
 - Root folder: `d:\django_project\E-Commerce\E-Commerce\`
 - Django project folder: `d:\django_project\E-Commerce\E-Commerce\ecom\`
-- Active Apps: `userview` (`ecom/userview/`)
-- Active Front-end: Tailwind CSS v4 compiled to `ecom/userview/static/src/output.css`.
+- Domain Apps directory: `ecom/apps/`
+- Active Registered Apps (21): `userview`, `apps.accounts`, `apps.catalog`, `apps.inventory`, `apps.search`, `apps.cart`, `apps.wishlist`, `apps.checkout`, `apps.payments`, `apps.orders`, `apps.shipping`, `apps.fulfillment`, `apps.promotions`, `apps.reviews`, `apps.notifications`, `apps.recommendations`, `apps.cms`, `apps.analytics`, `apps.support`, `apps.audit`, `apps.settings`, `apps.core`.
+- Active Templates directory: `ecom/templates/` with subfolders for all 20 apps and `components/`.
+- Active Static & Media directories: `ecom/static/` (`css/`, `js/`, `images/`), `ecom/media/`.
 - Active Storefront View: `home_view` rendering `homepage.html`.
-- Dev Server: Running on `ecom`.
+- Dev Server: Running on `ecom` (Django 5.2, zero check errors).
 
 ---
 
@@ -171,3 +177,60 @@
     - Updated [phases.md](file:///d:/django_project/E-Commerce/E-Commerce/phases.md) aligning the 10-phase chronological implementation roadmap and checklists directly with the 20 target apps.
     - Updated [rules.md](file:///d:/django_project/E-Commerce/E-Commerce/rules.md) adding the 20 modular apps registry and template directory conventions.
     - Updated [memory.md](file:///d:/django_project/E-Commerce/E-Commerce/memory.md) with core architectural decisions and session tracking.
+  - **Modular App Scaffolding & Settings Registration:**
+    - Scaffolded all 20 modular domain app directories under `ecom/apps/` (`accounts`, `catalog`, `inventory`, `search`, `cart`, `wishlist`, `checkout`, `payments`, `orders`, `shipping`, `fulfillment`, `promotions`, `reviews`, `notifications`, `recommendations`, `cms`, `analytics`, `support`, `audit`, `settings`, and `core`).
+    - Configured `apps.py`, `models.py`, `views.py`, `admin.py`, and `__init__.py` for each domain app.
+    - Scaffolded `ecom/templates/` with folders for all 20 apps and `components/`.
+    - Scaffolded `ecom/static/` (`css/`, `js/`, `images/`) and `ecom/media/`.
+    - Updated [settings.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/ecom/settings.py): Added `apps/` to `sys.path`, registered all domain apps in `INSTALLED_APPS`, updated `TEMPLATES['DIRS']`, and configured `STATICFILES_DIRS` & `MEDIA_ROOT`.
+    - Validated Django system check (0 issues identified).
+  - **Userview Migration & Cleanup to Architecture Specification:**
+    - Migrated all brand images (`cartivo-horizontal.png`, `cartivo-logo.png`, `cartivo-icon.png`, `favicon.png`, `favicon.ico`) to `ecom/static/images/`.
+    - Migrated Tailwind CSS source and output (`input.css`, `output.css`) to `ecom/static/src/` and `ecom/static/css/`.
+    - Migrated `homepage.html` to `ecom/templates/homepage.html` and `ecom/templates/cms/homepage.html`.
+    - Routed storefront homepage through `apps.cms.views.home_view` and `apps.cms.urls`.
+    - Completely removed `userview` app directory and unregistered it from `INSTALLED_APPS`.
+    - Updated [package.json](file:///d:/django_project/E-Commerce/E-Commerce/ecom/package.json) to compile Tailwind from `./static/src/input.css` to `./static/src/output.css`.
+    - Validated complete HTTP request resolution (Status 200) and verified all static finders resolve cleanly.
+    - Updated [architecture.md](file:///d:/django_project/E-Commerce/E-Commerce/architecture.md) and [design.md](file:///d:/django_project/E-Commerce/E-Commerce/design.md) removing all `userview` references.
+    - Resolved IDE module resolution by using canonical relative import `from . import views` in [apps/cms/urls.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/apps/cms/urls.py) and configuring `extraPaths` in `pyrightconfig.json` and `.vscode/settings.json`.
+  - **Template Modularization & Base Layout Breakdown:**
+    - Authored master base template [ecom/templates/base.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/templates/base.html) containing HTML5 boilerplate, Google Fonts (Poppins), Lucide Icons, compiled Tailwind CSS v4, dynamic `title` / `meta` / `extra_head` / `content` blocks, mobile drawer, toast container, and global JS logic.
+    - Modularized storefront into 9 reusable component partials inside `ecom/templates/components/`:
+      - [announcement_bar.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/templates/components/announcement_bar.html): Top notification bar with promo code and concierge links.
+      - [header.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/templates/components/header.html): Sticky top navigation with mobile trigger, horizontal Cartivo logo, search bar, wishlist counter badge, account modal trigger, and bag drawer.
+      - [category_nav.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/templates/components/category_nav.html): Sticky sub-menu bar featuring all 14 curated category icons and links.
+      - [promo_banners.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/templates/components/promo_banners.html): Flipkart-style continuous marquee promotional deal cards carousel with interactive pagination and touch snap-scrolling.
+      - [mobile_drawer.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/templates/components/mobile_drawer.html): Off-canvas mobile navigation drawer.
+      - [newsletter.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/templates/components/newsletter.html): VIP Club subscription banner.
+      - [footer.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/templates/components/footer.html): Multi-column responsive footer with brand info, category/support links, and payment trust badges.
+      - [mobile_bottom_nav.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/templates/components/mobile_bottom_nav.html): Fixed bottom app navigation bar for mobile viewports.
+      - [toast.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/templates/components/toast.html): Floating toast notification container for Django messages.
+    - Refactored [ecom/templates/homepage.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/templates/homepage.html) and [ecom/templates/cms/homepage.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/templates/cms/homepage.html) to extend `base.html` and include modular components cleanly.
+    - Verified all components render with HTTP 200 via Django test client (93,671 bytes output).
+  - **Floating AI Shopping Agent Concierge Widget:**
+    - Authored [ecom/templates/components/ai_agent_widget.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/templates/components/ai_agent_widget.html):
+      - Sleek circular floating action button (FAB) positioned at bottom-right (`bottom-20 md:bottom-7 right-4 md:right-7 z-50`) above mobile navigation.
+      - Glowing ambient halo, gradient styling (`slate-950` to `blue-700`), live pulsing online status indicator, and desktop hover tooltip ("Ask Cartivo AI Agent").
+      - Expandable interactive chat window with welcome message, quick inquiry suggestion chips (headphones, chronographs, coupons, order tracking), typing animation, and responsive conversation thread.
+      - Input field with voice search trigger and send action, structured to connect seamlessly to backend AI agent APIs.
+    - Included `{% block ai_widget %}` in [ecom/templates/base.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/templates/base.html).
+    - Recompiled Tailwind CSS v4 and verified successful rendering with zero Django errors.
+  - **Customer Authentication Login Template with Google Sign-In:**
+    - Authored [ecom/templates/accounts/login.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/templates/accounts/login.html) extending `base.html`:
+      - Dedicated customer/user layout with "Welcome Back" greeting and member perks overview.
+      - Official **1-click Sign in with Google** button with Google 4-color SVG icon.
+      - Email & password form with toggle password visibility button (eye/eye-off icons).
+      - "Remember me" checkbox, "Forgot password?" link, CSRF protection, and Django messages integration.
+      - Trust badges: 256-bit SSL encryption, VIP member benefits, and link to register.
+    - Wired [apps/accounts/views.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/apps/accounts/views.py) (`login_view`), [apps/accounts/urls.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/apps/accounts/urls.py), and mounted `/accounts/` in [ecom/urls.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/ecom/urls.py).
+    - Updated account navigation links across `header.html`, `mobile_drawer.html`, and `mobile_bottom_nav.html` to point to `/accounts/login/`.
+    - Verified HTTP 200 response with all security and OAuth landmarks via Django test client.
+  - **IDE & Standalone Module Resolution Fix for `urls.py`:**
+    - Upgraded view imports in both [ecom/apps/accounts/urls.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/apps/accounts/urls.py) and [ecom/apps/cms/urls.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/apps/cms/urls.py) to a multi-tier fallback pattern (`from . import views` -> `from apps.<domain> import views` -> `import views`).
+    - Eliminates `ImportError: attempted relative import with no known parent package` when scripts or IDE language servers inspect files outside full package context.
+    - Verified standalone execution and Django route checks exit with code 0.
+
+
+
+

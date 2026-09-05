@@ -66,7 +66,7 @@ The application follows a **Modular Monolith** architecture pattern with a **Dom
 
 ## 2. Django Apps & Modular Directory Structure
 
-The platform is partitioned into 20 modular domain applications under `apps/`, accompanied by `userview` for the storefront presentation layer and `core` for shared utilities:
+The platform is partitioned into 20 modular domain applications under `apps/`, accompanied by `core` for shared utilities:
 
 ```
 d:\django_project\E-Commerce\E-Commerce\
@@ -77,12 +77,8 @@ d:\django_project\E-Commerce\E-Commerce\
 │   │   ├── __init__.py
 │   │   ├── asgi.py
 │   │   ├── wsgi.py
-│   │   ├── settings/
-│   │   │   ├── __init__.py
-│   │   │   ├── base.py                    # Shared settings, installed apps, middleware
-│   │   │   ├── development.py             # Local debug settings
-│   │   │   └── production.py              # Hardened security, S3, Redis settings
-│   │   └── urls.py                        # Root URL configuration
+│   │   ├── settings.py                    # Settings (with modular env configuration)
+│   │   └── urls.py                        # Root URL configuration (routes to apps.cms.urls)
 │   │
 │   ├── apps/                              # 20 Modular Domain Applications
 │   │   ├── accounts/                      # Users, profiles, addresses, roles
@@ -100,21 +96,17 @@ d:\django_project\E-Commerce\E-Commerce\
 │   │   ├── reviews/                       # Reviews, ratings, moderation
 │   │   ├── notifications/                 # Email, SMS, push notifications, templates
 │   │   ├── recommendations/               # Product recommendations, recommendation rules
-│   │   ├── cms/                           # Pages, banners, menus, content blocks
+│   │   ├── cms/                           # Pages, banners, menus, content blocks (serves homepage)
 │   │   ├── analytics/                     # Sales, customers, products, conversion metrics
 │   │   ├── support/                       # Tickets, customer queries, complaints
 │   │   ├── audit/                         # Admin actions, login activity, system events
 │   │   ├── settings/                      # Store settings, payment settings, shipping settings
 │   │   └── core/                          # Base abstract models, common mixins, custom validators
 │   │
-│   ├── userview/                          # Storefront Presentation App
-│   │   ├── views.py                       # Storefront views (homepage, landing pages)
-│   │   ├── urls.py                        # Storefront user routes
-│   │   └── static/                        # Compiled CSS, images, brand assets
-│   │
 │   ├── static/                            # Global Static Assets
 │   │   ├── css/                           # Global stylesheets & design tokens
 │   │   ├── js/                            # Global scripts, Alpine components, HTMX
+│   │   ├── src/                           # Tailwind CSS source (input.css, output.css)
 │   │   └── images/                        # Branding, logos, favicons
 │   │
 │   ├── media/                             # User & product media uploads (local dev)

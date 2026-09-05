@@ -1,0 +1,116 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Cartivo &bull; Shop Smarter. Live Better.{% endblock %}</title>
+
+    {% block meta %}
+    <meta name="description" content="Cartivo is a modern luxury e-commerce platform offering premium lifestyle essentials, acoustics, timepieces, and apparel.">
+    {% endblock %}
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="{% static 'images/favicon.png' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/favicon.png' %}">
+    
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind CSS Compiled Output -->
+    <link rel="stylesheet" href="{% static 'src/output.css' %}">
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans antialiased selection:bg-blue-600 selection:text-white pb-16 md:pb-0">
+
+    <!-- Top Announcement Bar -->
+    {% block announcement %}
+        {% include 'components/announcement_bar.html' %}
+    {% endblock %}
+
+    <!-- Navigation Header -->
+    {% block header %}
+        {% include 'components/header.html' %}
+    {% endblock %}
+
+    <!-- Mobile Drawer -->
+    {% include 'components/mobile_drawer.html' %}
+
+    <!-- Toast Notifications -->
+    {% include 'components/toast.html' %}
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    {% block footer %}
+        {% include 'components/footer.html' %}
+    {% endblock %}
+
+    <!-- Mobile Bottom Navigation Bar -->
+    {% block mobile_nav %}
+        {% include 'components/mobile_bottom_nav.html' %}
+    {% endblock %}
+
+    <!-- Floating AI Shopping Agent Concierge Widget -->
+    {% block ai_widget %}
+        {% include 'components/ai_agent_widget.html' %}
+    {% endblock %}
+
+    <!-- Global JavaScript Interactions -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Mobile Drawer Controller
+        const menuToggle = document.getElementById('mobile-menu-toggle');
+        const drawer = document.getElementById('mobile-drawer');
+        const backdrop = document.getElementById('mobile-drawer-backdrop');
+        const drawerClose = document.getElementById('mobile-drawer-close');
+
+        function openDrawer() {
+            if (drawer && backdrop) {
+                drawer.classList.remove('-translate-x-full');
+                backdrop.classList.remove('opacity-0', 'pointer-events-none');
+                document.body.classList.add('overflow-hidden');
+            }
+        }
+
+        function closeDrawer() {
+            if (drawer && backdrop) {
+                drawer.classList.add('-translate-x-full');
+                backdrop.classList.add('opacity-0', 'pointer-events-none');
+                document.body.classList.remove('overflow-hidden');
+            }
+        }
+
+        if (menuToggle) menuToggle.addEventListener('click', openDrawer);
+        if (drawerClose) drawerClose.addEventListener('click', closeDrawer);
+        if (backdrop) backdrop.addEventListener('click', closeDrawer);
+
+        // Mobile Search Toggle
+        const searchToggle = document.getElementById('mobile-search-toggle');
+        const mobileSearchBar = document.getElementById('mobile-search-bar');
+
+        if (searchToggle && mobileSearchBar) {
+            searchToggle.addEventListener('click', () => {
+                mobileSearchBar.classList.toggle('hidden');
+                if (!mobileSearchBar.classList.contains('hidden')) {
+                    mobileSearchBar.querySelector('input')?.focus();
+                }
+            });
+        }
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

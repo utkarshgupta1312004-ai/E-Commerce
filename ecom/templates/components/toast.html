@@ -1,0 +1,16 @@
+<!-- ============================================================================== -->
+<!-- Reusable Toast Notification Container                                          -->
+<!-- ============================================================================== -->
+<div id="toast-container" class="fixed bottom-20 md:bottom-6 right-4 sm:right-6 z-50 flex flex-col gap-2 pointer-events-none">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl border text-xs sm:text-sm font-medium transition-all duration-300 animate-fade-in-up {% if message.tags == 'success' %}bg-emerald-950 text-emerald-200 border-emerald-800{% elif message.tags == 'error' %}bg-rose-950 text-rose-200 border-rose-800{% else %}bg-slate-900 text-white border-slate-800{% endif %}">
+                <i data-lucide="{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}alert-circle{% else %}info{% endif %}" class="w-4 h-4 shrink-0"></i>
+                <span>{{ message }}</span>
+                <button onclick="this.parentElement.remove()" class="ml-2 text-slate-400 hover:text-white cursor-pointer" aria-label="Close notification">
+                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                </button>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>

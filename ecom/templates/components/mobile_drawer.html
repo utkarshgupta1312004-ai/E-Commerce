@@ -1,0 +1,89 @@
+{% load static %}
+<!-- ============================================================================== -->
+<!-- Mobile & Tablet Slide-Over Drawer Navigation                                   -->
+<!-- ============================================================================== -->
+<div id="mobile-drawer-backdrop" class="fixed inset-0 bg-slate-950/50 backdrop-blur-xs z-50 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+<div 
+    id="mobile-drawer"
+    class="fixed inset-y-0 left-0 max-w-xs sm:max-w-sm w-full bg-white z-50 shadow-2xl transform -translate-x-full transition-transform duration-300 ease-out flex flex-col"
+>
+    <!-- Drawer Header -->
+    <div class="p-5 border-b border-slate-200 flex items-center justify-between">
+        <img src="{% static 'images/cartivo-horizontal.png' %}" alt="Cartivo" class="h-8 w-auto">
+        <button id="mobile-drawer-close" class="p-2 text-slate-500 hover:text-slate-950 hover:bg-slate-100 rounded-xl cursor-pointer">
+            <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+    </div>
+
+    <!-- Drawer Links -->
+    <div class="flex-1 overflow-y-auto p-5 space-y-6">
+        <div class="space-y-1">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3">Menu</span>
+            <a href="/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-950 hover:bg-slate-100 transition-colors">
+                <i data-lucide="home" class="w-4 h-4 text-slate-500"></i>
+                <span>Home Storefront</span>
+            </a>
+            <a href="/products/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-100 transition-colors">
+                <i data-lucide="sparkles" class="w-4 h-4 text-blue-600"></i>
+                <span>New Arrivals</span>
+            </a>
+            <a href="/products/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-100 transition-colors">
+                <i data-lucide="layers" class="w-4 h-4 text-slate-500"></i>
+                <span>All Collections</span>
+            </a>
+            <a href="/products/" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold text-amber-600 hover:bg-amber-50 transition-colors">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="tag" class="w-4 h-4 text-amber-500"></i>
+                    <span>Flash Sale</span>
+                </div>
+                <span class="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">20% Off</span>
+            </a>
+        </div>
+
+        <div class="space-y-1 border-t border-slate-100 pt-4">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3">Categories</span>
+            <a href="/category/audio/" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-blue-600">
+                <i data-lucide="headphones" class="w-4 h-4 text-slate-400"></i>
+                <span>Acoustic Audio</span>
+            </a>
+            <a href="/category/timepieces/" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-blue-600">
+                <i data-lucide="watch" class="w-4 h-4 text-slate-400"></i>
+                <span>Luxury Timepieces</span>
+            </a>
+            <a href="/category/apparel/" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-blue-600">
+                <i data-lucide="shirt" class="w-4 h-4 text-slate-400"></i>
+                <span>Minimal Apparel</span>
+            </a>
+            <a href="/category/accessories/" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-blue-600">
+                <i data-lucide="briefcase" class="w-4 h-4 text-slate-400"></i>
+                <span>Leather Goods</span>
+            </a>
+        </div>
+
+        <div class="space-y-1 border-t border-slate-100 pt-4">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3">Account & Orders</span>
+            <a href="/accounts/login/" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-slate-950">
+                <i data-lucide="user" class="w-4 h-4 text-slate-400"></i>
+                <span>Sign In / My Account</span>
+            </a>
+            <a href="/account/orders/" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-slate-950">
+                <i data-lucide="package" class="w-4 h-4 text-slate-400"></i>
+                <span>Track Orders</span>
+            </a>
+            <a href="/wishlist/" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-slate-950">
+                <i data-lucide="heart" class="w-4 h-4 text-rose-500"></i>
+                <span>Saved Wishlist (3)</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="p-5 border-t border-slate-200 bg-slate-50 space-y-3">
+        <div class="flex items-center justify-between text-xs text-slate-500">
+            <span>Currency</span>
+            <button class="font-semibold text-slate-800">USD ($)</button>
+        </div>
+        <p class="text-[11px] text-slate-400">Cartivo &bull; Shop Smarter. Live Better.</p>
+    </div>
+</div>

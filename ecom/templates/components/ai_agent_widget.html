@@ -1,0 +1,351 @@
+<!-- ============================================================================== -->
+<!-- Cartivo AI Concierge / Agent Floating Chat Widget                              -->
+<!-- ============================================================================== -->
+<div id="ai-agent-widget-container" class="fixed bottom-20 md:bottom-7 right-4 md:right-7 z-50 flex flex-col items-end pointer-events-none select-none">
+    
+    <!-- Floating Chat Window (Hidden by default) -->
+    <div id="ai-agent-chat-window" class="pointer-events-auto mb-3 w-[calc(100vw-2rem)] sm:w-[380px] md:w-[410px] h-[540px] max-h-[78vh] bg-white rounded-3xl shadow-2xl border border-slate-200/80 flex flex-col overflow-hidden transition-all duration-300 transform scale-95 opacity-0 pointer-events-none origin-bottom-right">
+        
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-blue-900 text-white p-4 flex items-center justify-between relative overflow-hidden">
+            <!-- Ambient Glow Background -->
+            <div class="absolute -top-12 -right-12 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl pointer-events-none"></div>
+            
+            <div class="flex items-center gap-3 relative z-10">
+                <div class="relative">
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-500 flex items-center justify-center shadow-md shadow-blue-500/30 ring-2 ring-white/20">
+                        <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-slate-900 rounded-full"></span>
+                </div>
+                <div>
+                    <div class="flex items-center gap-1.5">
+                        <h3 class="font-semibold text-sm tracking-tight text-white">Cartivo AI Concierge</h3>
+                        <span class="px-1.5 py-0.5 text-[9px] font-bold bg-blue-500/30 text-blue-200 border border-blue-400/30 rounded-full tracking-wider uppercase">Agent</span>
+                    </div>
+                    <p class="text-[11px] text-slate-300 flex items-center gap-1">
+                        <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        Product advisor & customer care
+                    </p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-1 relative z-10">
+                <button type="button" id="ai-agent-minimize-btn" class="p-1.5 text-slate-300 hover:text-white hover:bg-white/10 rounded-xl transition-colors" title="Minimize">
+                    <i data-lucide="minus" class="w-4 h-4"></i>
+                </button>
+                <button type="button" id="ai-agent-close-btn" class="p-1.5 text-slate-300 hover:text-white hover:bg-white/10 rounded-xl transition-colors" title="Close chat">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Messages Area -->
+        <div id="ai-agent-messages" class="flex-1 overflow-y-auto p-4 space-y-3.5 bg-slate-50/70 text-xs text-slate-700">
+            <!-- Bot Initial Greeting -->
+            <div class="flex items-start gap-2.5">
+                <div class="w-7 h-7 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+                    <i data-lucide="bot" class="w-3.5 h-3.5"></i>
+                </div>
+                <div class="space-y-1.5 max-w-[85%]">
+                    <div class="bg-white p-3 rounded-2xl rounded-tl-sm shadow-sm border border-slate-200/80 leading-relaxed text-slate-800">
+                        Hello! 👋 I'm your <strong>Cartivo AI Shopping Concierge</strong>.
+                        <br><br>
+                        I can help you explore technical specs, find product deals, compare models, or check order delivery. How may I assist you today?
+                    </div>
+                    <span class="text-[10px] text-slate-400 pl-1">Just now &bull; Cartivo AI</span>
+                </div>
+            </div>
+
+            <!-- Suggestion Prompt Pills -->
+            <div id="ai-agent-suggestions" class="pt-1 space-y-1.5 pl-9">
+                <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Quick Inquiries</p>
+                <div class="flex flex-wrap gap-1.5">
+                    <button type="button" class="ai-prompt-chip text-left px-2.5 py-1.5 rounded-xl bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 shadow-2xs text-[11px] text-slate-700 transition-all">
+                        🎧 Show top noise-canceling headphones
+                    </button>
+                    <button type="button" class="ai-prompt-chip text-left px-2.5 py-1.5 rounded-xl bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 shadow-2xs text-[11px] text-slate-700 transition-all">
+                        ⌚ Titanium chronographs under ₹2,999
+                    </button>
+                    <button type="button" class="ai-prompt-chip text-left px-2.5 py-1.5 rounded-xl bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 shadow-2xs text-[11px] text-slate-700 transition-all">
+                        🔥 What are today's active coupon codes?
+                    </button>
+                    <button type="button" class="ai-prompt-chip text-left px-2.5 py-1.5 rounded-xl bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 shadow-2xs text-[11px] text-slate-700 transition-all">
+                        📦 How do I track an existing order?
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Box -->
+        <div class="p-3 bg-white border-t border-slate-200">
+            <form id="ai-agent-form" class="flex items-center gap-2" onsubmit="return false;">
+                <div class="relative flex-1">
+                    <input 
+                        type="text" 
+                        id="ai-agent-input" 
+                        placeholder="Ask about products, specs, offers..." 
+                        class="w-full pl-3.5 pr-8 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all text-slate-900 placeholder:text-slate-400"
+                        autocomplete="off"
+                    >
+                    <button type="button" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 transition-colors" title="Voice Search">
+                        <i data-lucide="mic" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+                <button 
+                    type="submit" 
+                    id="ai-agent-send-btn" 
+                    class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white flex items-center justify-center shrink-0 shadow-md shadow-blue-600/25 active:scale-95 transition-all disabled:opacity-50"
+                    title="Send message"
+                >
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                </button>
+            </form>
+            <div class="flex items-center justify-between mt-2 px-1 text-[10px] text-slate-400">
+                <span class="flex items-center gap-1">
+                    <i data-lucide="shield" class="w-3 h-3 text-emerald-500"></i>
+                    Cartivo AI Shopping Assistant
+                </span>
+                <span>Press Enter to send</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Action Button (FAB) / Launcher -->
+    <div class="pointer-events-auto relative group flex items-center gap-3">
+        <!-- Floating Prompt Tooltip Pill -->
+        <div id="ai-agent-bubble-tooltip" class="hidden sm:flex items-center gap-2 bg-slate-900/90 backdrop-blur-md text-white text-xs font-medium py-1.5 px-3.5 rounded-full shadow-xl border border-slate-700/50 transition-all duration-300 transform translate-x-1 group-hover:translate-x-0 cursor-pointer" onclick="document.getElementById('ai-agent-toggle-btn').click();">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Ask Cartivo AI Agent</span>
+            <span class="px-1 py-0.2 bg-blue-500/40 text-blue-200 text-[9px] rounded-md font-mono">Chat</span>
+        </div>
+
+        <!-- Launcher Button -->
+        <button 
+            type="button" 
+            id="ai-agent-toggle-btn" 
+            aria-label="Open Cartivo AI Concierge" 
+            class="relative w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-slate-950 via-indigo-950 to-blue-700 text-white flex items-center justify-center shadow-xl shadow-blue-900/30 border-2 border-white/20 hover:scale-105 active:scale-95 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-400/40 cursor-pointer group"
+        >
+            <!-- Glowing ambient halo -->
+            <div class="absolute inset-0 rounded-full bg-blue-500/20 blur-md group-hover:bg-blue-500/40 transition-all animate-pulse pointer-events-none"></div>
+
+            <!-- Icon State 1: Sparkles / Bot (Visible when closed) -->
+            <div id="ai-icon-closed" class="relative z-10 flex items-center justify-center transition-transform duration-200">
+                <i data-lucide="sparkles" class="w-6 h-6 text-white group-hover:rotate-12 transition-transform"></i>
+            </div>
+
+            <!-- Icon State 2: Close X (Visible when open) -->
+            <div id="ai-icon-open" class="relative z-10 hidden items-center justify-center transition-transform duration-200">
+                <i data-lucide="chevron-down" class="w-6 h-6 text-white"></i>
+            </div>
+
+            <!-- Live Online Status Ping -->
+            <span class="absolute top-0 right-0 flex h-3.5 w-3.5">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-slate-900"></span>
+            </span>
+        </button>
+    </div>
+</div>
+
+<!-- AI Agent Interactive Controller Script -->
+<script>
+    (function initCartivoAIAgent() {
+        const toggleBtn = document.getElementById('ai-agent-toggle-btn');
+        const closeBtn = document.getElementById('ai-agent-close-btn');
+        const minimizeBtn = document.getElementById('ai-agent-minimize-btn');
+        const chatWindow = document.getElementById('ai-agent-chat-window');
+        const iconClosed = document.getElementById('ai-icon-closed');
+        const iconOpen = document.getElementById('ai-icon-open');
+        const tooltip = document.getElementById('ai-agent-bubble-tooltip');
+        const form = document.getElementById('ai-agent-form');
+        const input = document.getElementById('ai-agent-input');
+        const messagesContainer = document.getElementById('ai-agent-messages');
+        const suggestionChips = document.querySelectorAll('.ai-prompt-chip');
+
+        let isOpen = false;
+
+        function toggleChat(forceState) {
+            isOpen = typeof forceState === 'boolean' ? forceState : !isOpen;
+            
+            if (isOpen) {
+                chatWindow.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+                chatWindow.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
+                iconClosed.classList.add('hidden');
+                iconClosed.classList.remove('flex');
+                iconOpen.classList.remove('hidden');
+                iconOpen.classList.add('flex');
+                if (tooltip) tooltip.classList.add('hidden');
+                setTimeout(() => input?.focus(), 150);
+            } else {
+                chatWindow.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+                chatWindow.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+                iconClosed.classList.remove('hidden');
+                iconClosed.classList.add('flex');
+                iconOpen.classList.add('hidden');
+                iconOpen.classList.remove('flex');
+                if (tooltip) tooltip.classList.remove('hidden');
+            }
+        }
+
+        if (toggleBtn) toggleBtn.addEventListener('click', () => toggleChat());
+        if (closeBtn) closeBtn.addEventListener('click', () => toggleChat(false));
+        if (minimizeBtn) minimizeBtn.addEventListener('click', () => toggleChat(false));
+
+        // Close when pressing Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && isOpen) {
+                toggleChat(false);
+            }
+        });
+
+        // Add user & bot message rendering
+        function appendUserMessage(text) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'flex justify-end';
+            msgDiv.innerHTML = `
+                <div class="max-w-[85%] space-y-1">
+                    <div class="bg-gradient-to-tr from-blue-600 to-indigo-600 text-white p-3 rounded-2xl rounded-tr-sm shadow-sm leading-relaxed">
+                        ${escapeHtml(text)}
+                    </div>
+                    <span class="text-[10px] text-slate-400 block text-right pr-1">You &bull; Just now</span>
+                </div>
+            `;
+            messagesContainer.appendChild(msgDiv);
+            scrollToBottom();
+        }
+
+        function appendBotMessage(htmlContent) {
+            const botDiv = document.createElement('div');
+            botDiv.className = 'flex items-start gap-2.5';
+            botDiv.innerHTML = `
+                <div class="w-7 h-7 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+                    <i data-lucide="bot" class="w-3.5 h-3.5"></i>
+                </div>
+                <div class="space-y-1.5 max-w-[85%]">
+                    <div class="bg-white p-3 rounded-2xl rounded-tl-sm shadow-sm border border-slate-200/80 leading-relaxed text-slate-800">
+                        ${htmlContent}
+                    </div>
+                    <span class="text-[10px] text-slate-400 pl-1">Cartivo AI &bull; Just now</span>
+                </div>
+            `;
+            messagesContainer.appendChild(botDiv);
+            if (window.lucide) window.lucide.createIcons({ root: botDiv });
+            scrollToBottom();
+        }
+
+        function showTypingIndicator() {
+            const id = 'typing-' + Date.now();
+            const typingDiv = document.createElement('div');
+            typingDiv.id = id;
+            typingDiv.className = 'flex items-start gap-2.5';
+            typingDiv.innerHTML = `
+                <div class="w-7 h-7 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+                    <i data-lucide="bot" class="w-3.5 h-3.5"></i>
+                </div>
+                <div class="bg-white py-2.5 px-3.5 rounded-2xl rounded-tl-sm shadow-sm border border-slate-200/80 flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce"></span>
+                    <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                    <span class="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                </div>
+            `;
+            messagesContainer.appendChild(typingDiv);
+            scrollToBottom();
+            return id;
+        }
+
+        function removeTypingIndicator(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        function scrollToBottom() {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        // Handle user submission
+        function handleSend(text) {
+            const query = (text || input.value || '').trim();
+            if (!query) return;
+
+            appendUserMessage(query);
+            if (input) input.value = '';
+
+            const typingId = showTypingIndicator();
+
+            // Simulate AI Agent response (ready to plug into backend API e.g. /api/agent/chat/)
+            setTimeout(() => {
+                removeTypingIndicator(typingId);
+                generateAgentResponse(query);
+            }, 800);
+        }
+
+        function generateAgentResponse(query) {
+            const lower = query.toLowerCase();
+            let responseHtml = "";
+
+            if (lower.includes('headphone') || lower.includes('anc') || lower.includes('audio')) {
+                responseHtml = `
+                    Great choice! We have the <strong>Studio ANC Pro Wireless Headphones</strong> on spotlight:
+                    <div class="mt-2 p-2 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="font-semibold text-slate-900">Studio ANC Pro (Midnight Obsidian)</div>
+                        <div class="text-[11px] text-blue-600 font-bold mt-0.5">$299.00 <span class="text-slate-400 line-through text-[10px]">$349.00</span></div>
+                        <div class="text-[10px] text-slate-500 mt-1">&bull; Active Noise Cancellation &bull; 40-hour Battery &bull; High-Res Spatial Audio</div>
+                        <a href="#trending" class="mt-2 inline-flex items-center gap-1 text-[10px] font-semibold text-blue-600 hover:text-blue-700">View Product Details &rarr;</a>
+                    </div>
+                `;
+            } else if (lower.includes('watch') || lower.includes('chronograph')) {
+                responseHtml = `
+                    Here's our top-rated timepiece:
+                    <div class="mt-2 p-2 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="font-semibold text-slate-900">Titanium Smart Chronograph</div>
+                        <div class="text-[11px] text-blue-600 font-bold mt-0.5">₹2,999 <span class="text-slate-400 line-through text-[10px]">₹5,499</span></div>
+                        <div class="text-[10px] text-slate-500 mt-1">&bull; Aerospace Grade Titanium &bull; Sapphire Glass &bull; 14-day Battery</div>
+                        <a href="#trending" class="mt-2 inline-flex items-center gap-1 text-[10px] font-semibold text-blue-600 hover:text-blue-700">View Specifications &rarr;</a>
+                    </div>
+                `;
+            } else if (lower.includes('coupon') || lower.includes('code') || lower.includes('offer') || lower.includes('discount')) {
+                responseHtml = `
+                    Here are today's active coupon codes:
+                    <ul class="mt-1.5 space-y-1 list-disc list-inside">
+                        <li><strong>CARTIVO20</strong> &bull; 20% off storewide on orders $100+</li>
+                        <li><strong>CHRONO100</strong> &bull; Flat $100 off premium timepieces</li>
+                        <li><strong>FREESHIP</strong> &bull; Free expedited delivery worldwide</li>
+                    </ul>
+                `;
+            } else if (lower.includes('track') || lower.includes('order')) {
+                responseHtml = `
+                    To track an existing shipment, visit your <a href="/orders/" class="text-blue-600 underline font-medium">Orders Dashboard</a> or provide your <strong>Cartivo Order ID</strong> (e.g. #CR-8921) and I will look up the carrier tracking status.
+                `;
+            } else {
+                responseHtml = `
+                    I've noted: <em>"${escapeHtml(query)}"</em>.
+                    <br><br>
+                    You can browse our curated catalog or tell me specific specs, price range, or category (Fashion, Electronics, Home, Watches) to narrow down the best match!
+                `;
+            }
+
+            appendBotMessage(responseHtml);
+        }
+
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                handleSend();
+            });
+        }
+
+        // Connect suggestion chips
+        suggestionChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                const prompt = chip.textContent.trim();
+                handleSend(prompt);
+            });
+        });
+    })();
+</script>

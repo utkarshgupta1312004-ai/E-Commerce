@@ -1,0 +1,27 @@
+<!-- ============================================================================== -->
+<!-- Mobile Bottom Navigation Bar (Fixed for Mobile Screens)                       -->
+<!-- ============================================================================== -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 py-2 px-4 flex items-center justify-around shadow-lg">
+    <a href="/" class="flex flex-col items-center gap-1 text-blue-600 text-[10px] font-medium">
+        <i data-lucide="home" class="w-5 h-5"></i>
+        <span>Home</span>
+    </a>
+    <a href="/products/" class="flex flex-col items-center gap-1 text-slate-600 hover:text-slate-950 text-[10px] font-medium">
+        <i data-lucide="grid" class="w-5 h-5"></i>
+        <span>Shop</span>
+    </a>
+    <a href="/wishlist/" class="relative flex flex-col items-center gap-1 text-slate-600 hover:text-slate-950 text-[10px] font-medium">
+        <i data-lucide="heart" class="w-5 h-5"></i>
+        <span class="absolute -top-1 right-1 w-3.5 h-3.5 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center">3</span>
+        <span>Wishlist</span>
+    </a>
+    <a href="/cart/" class="relative flex flex-col items-center gap-1 text-slate-600 hover:text-slate-950 text-[10px] font-medium">
+        <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+        <span class="absolute -top-1 right-0 w-3.5 h-3.5 rounded-full bg-blue-600 text-white text-[9px] font-bold flex items-center justify-center">2</span>
+        <span>Bag</span>
+    </a>
+    <a href="/accounts/login/" class="flex flex-col items-center gap-1 text-slate-600 hover:text-slate-950 text-[10px] font-medium">
+        <i data-lucide="user" class="w-5 h-5"></i>
+        <span>Account</span>
+    </a>
+</nav>

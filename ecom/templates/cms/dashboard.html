@@ -1,0 +1,1379 @@
+{% extends "cms/cms_base.html" %}
+
+{% block title %}CMS Studio Dashboard{% endblock %}
+
+{% block page_title %}CMS Studio Overview{% endblock %}
+
+{% block page_breadcrumb %}
+<i data-lucide="layout-template" class="w-3.5 h-3.5 text-blue-400"></i>
+<span>Storefront Content &amp; Media Matrix</span>
+{% endblock %}
+
+{% block cms_content %}
+<!-- =============================================================== -->
+<!-- ROW 1: 6 Executive CMS KPI Metric Cards                         -->
+<!-- =============================================================== -->
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+    
+    <!-- 1. Hero Banners -->
+    <a href="{% url 'cms:banners' %}" class="p-4 rounded-3xl bg-[#131c2e] border border-[#1e293b] hover:border-emerald-500/40 shadow-xl flex flex-col justify-between transition-all group cursor-pointer block">
+        <div class="flex items-center justify-between">
+            <span class="text-[11px] font-semibold text-slate-400 group-hover:text-emerald-300 transition-colors">Hero Banners</span>
+            <div class="w-7 h-7 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center border border-emerald-500/25 group-hover:scale-110 transition-transform">
+                <i data-lucide="image" class="w-3.5 h-3.5"></i>
+            </div>
+        </div>
+        <div class="mt-2.5">
+            <div class="text-xl font-black text-white tracking-tight">{{ kpis.total_banners }}</div>
+            <div class="text-[10px] text-emerald-400 font-semibold mt-0.5 flex items-center gap-1">
+                <span>{{ kpis.active_banners }} Live on Storefront</span>
+                <i data-lucide="arrow-right" class="w-2.5 h-2.5 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+            </div>
+        </div>
+    </a>
+
+    <!-- 2. Homepage Sections -->
+    <a href="{% url 'cms:sections' %}" class="p-4 rounded-3xl bg-[#131c2e] border border-[#1e293b] hover:border-cyan-500/40 shadow-xl flex flex-col justify-between transition-all group cursor-pointer block">
+        <div class="flex items-center justify-between">
+            <span class="text-[11px] font-semibold text-slate-400 group-hover:text-cyan-300 transition-colors">Page Sections</span>
+            <div class="w-7 h-7 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center border border-cyan-500/25 group-hover:scale-110 transition-transform">
+                <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+            </div>
+        </div>
+        <div class="mt-2.5">
+            <div class="text-xl font-black text-cyan-400 tracking-tight">{{ kpis.total_sections }}</div>
+            <div class="text-[10px] text-slate-400 font-medium mt-0.5 flex items-center gap-1">
+                <span>{{ kpis.active_sections }} Active Blocks</span>
+                <i data-lucide="arrow-right" class="w-2.5 h-2.5 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+            </div>
+        </div>
+    </a>
+
+    <!-- 3. Category Sub-Menu -->
+    <a href="{% url 'cms:category_nav' %}" class="p-4 rounded-3xl bg-[#131c2e] border border-[#1e293b] hover:border-amber-500/40 shadow-xl flex flex-col justify-between transition-all group cursor-pointer block">
+        <div class="flex items-center justify-between">
+            <span class="text-[11px] font-semibold text-slate-400 group-hover:text-amber-300 transition-colors">Sub-Nav Items</span>
+            <div class="w-7 h-7 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center border border-amber-500/25 group-hover:scale-110 transition-transform">
+                <i data-lucide="compass" class="w-3.5 h-3.5"></i>
+            </div>
+        </div>
+        <div class="mt-2.5">
+            <div class="text-xl font-black text-amber-400 tracking-tight">{{ kpis.total_nav_items }}</div>
+            <div class="text-[10px] text-slate-400 font-medium mt-0.5 flex items-center gap-1">
+                <span>{{ kpis.active_nav_items }} Active Links</span>
+                <i data-lucide="arrow-right" class="w-2.5 h-2.5 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+            </div>
+        </div>
+    </a>
+
+    <!-- 4. Curated Showcases -->
+    <a href="{% url 'cms:curations' %}" class="p-4 rounded-3xl bg-[#131c2e] border border-[#1e293b] hover:border-purple-500/40 shadow-xl flex flex-col justify-between transition-all group cursor-pointer block">
+        <div class="flex items-center justify-between">
+            <span class="text-[11px] font-semibold text-slate-400 group-hover:text-purple-300 transition-colors">Curated Cards</span>
+            <div class="w-7 h-7 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center border border-purple-500/25 group-hover:scale-110 transition-transform">
+                <i data-lucide="grid-2x2" class="w-3.5 h-3.5"></i>
+            </div>
+        </div>
+        <div class="mt-2.5">
+            <div class="text-xl font-black text-purple-400 tracking-tight">{{ kpis.total_curations }}</div>
+            <div class="text-[10px] text-slate-400 font-medium mt-0.5 flex items-center gap-1">
+                <span>{{ kpis.active_curations }} Active Showcases</span>
+                <i data-lucide="arrow-right" class="w-2.5 h-2.5 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+            </div>
+        </div>
+    </a>
+
+    <!-- 5. Value Propositions -->
+    <a href="{% url 'cms:trust_badges' %}" class="p-4 rounded-3xl bg-[#131c2e] border border-[#1e293b] hover:border-rose-500/40 shadow-xl flex flex-col justify-between transition-all group cursor-pointer block">
+        <div class="flex items-center justify-between">
+            <span class="text-[11px] font-semibold text-slate-400 group-hover:text-rose-300 transition-colors">Trust Badges</span>
+            <div class="w-7 h-7 rounded-xl bg-rose-500/15 text-rose-400 flex items-center justify-center border border-rose-500/25 group-hover:scale-110 transition-transform">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+            </div>
+        </div>
+        <div class="mt-2.5">
+            <div class="text-xl font-black text-rose-400 tracking-tight">{{ kpis.total_trust_badges }}</div>
+            <div class="text-[10px] text-slate-400 font-medium mt-0.5 flex items-center gap-1">
+                <span>Value Propositions</span>
+                <i data-lucide="arrow-right" class="w-2.5 h-2.5 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+            </div>
+        </div>
+    </a>
+
+    <!-- 6. Navbar Hierarchy -->
+    <a href="{% url 'cms:navbar' %}" class="p-4 rounded-3xl bg-[#131c2e] border border-[#1e293b] hover:border-indigo-500/40 shadow-xl flex flex-col justify-between transition-all group cursor-pointer block">
+        <div class="flex items-center justify-between">
+            <span class="text-[11px] font-semibold text-slate-400 group-hover:text-indigo-300 transition-colors">Navbar Menu</span>
+            <div class="w-7 h-7 rounded-xl bg-indigo-500/15 text-indigo-400 flex items-center justify-center border border-indigo-500/25 group-hover:scale-110 transition-transform">
+                <i data-lucide="menu" class="w-3.5 h-3.5"></i>
+            </div>
+        </div>
+        <div class="mt-2.5">
+            <div class="text-xl font-black text-indigo-400 tracking-tight">{{ kpis.total_navbar_items }}</div>
+            <div class="text-[10px] text-slate-400 font-medium mt-0.5 flex items-center gap-1">
+                <span>Nav &amp; Dropdowns</span>
+                <i data-lucide="arrow-right" class="w-2.5 h-2.5 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+            </div>
+        </div>
+    </a>
+
+</div>
+
+<!-- =============================================================== -->
+<!-- ROW 2: Promotional Hero Banners Console (PromoBanner)           -->
+<!-- =============================================================== -->
+<div id="banners" class="rounded-3xl bg-[#131c2e] border border-[#1e293b] p-5 sm:p-6 shadow-xl space-y-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#1e293b]">
+        <div>
+            <div class="flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></div>
+                <h3 class="text-base font-bold text-white tracking-tight">Hero Carousel &amp; Promotional Marquee</h3>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">Configured banner promotions, gradient aesthetics, and automated scheduling</p>
+        </div>
+
+        <div class="flex items-center gap-2.5 flex-wrap">
+            <div class="relative">
+                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                <input 
+                    type="text" 
+                    id="banners-search" 
+                    placeholder="Search banner headline..." 
+                    class="pl-8 pr-3 py-1.5 rounded-xl bg-[#0f172a] border border-[#1e293b] text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                >
+            </div>
+            <select id="banners-page-size" class="px-2.5 py-1.5 rounded-xl bg-[#0f172a] border border-[#1e293b] text-xs text-slate-300 focus:outline-none">
+                <option value="5">5 per page</option>
+                <option value="10" selected>10 per page</option>
+                <option value="25">25 per page</option>
+            </select>
+            <button 
+                type="button" 
+                id="banners-print-btn" 
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#0f172a] hover:bg-slate-800 text-slate-300 hover:text-white border border-[#1e293b] transition-colors cursor-pointer"
+            >
+                <i data-lucide="printer" class="w-3.5 h-3.5 text-slate-400"></i>
+                <span>Print</span>
+            </button>
+            <a 
+                href="{% url 'cms:banners' %}" 
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-600/15 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-500/30 transition-all"
+            >
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                <span>Open Banners Page</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Banners Table -->
+    <div class="overflow-x-auto rounded-2xl border border-[#1e293b]">
+        <table class="w-full text-left text-xs border-collapse">
+            <thead>
+                <tr class="bg-[#0f172a] text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-[#1e293b]">
+                    <th class="py-3 px-3.5 w-16 text-center">Rank</th>
+                    <th class="py-3 px-4 w-72">Headline &amp; Subtitle</th>
+                    <th class="py-3 px-4 w-32">Badge &amp; Price</th>
+                    <th class="py-3 px-4 w-40">Schedule Window</th>
+                    <th class="py-3 px-4 w-44">Target CTA</th>
+                    <th class="py-3 px-3.5 w-28 text-center">Status</th>
+                    <th class="py-3 px-3.5 w-20 text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody id="banners-tbody" class="divide-y divide-[#1e293b] bg-[#131c2e]">
+                {% for b in banners %}
+                <tr class="hover:bg-slate-800/40 transition-colors banner-row" data-search="{{ b.title|lower }} {{ b.subtitle|lower }} {{ b.badge_text|lower }}">
+                    <td class="py-3 px-3.5 text-center font-mono text-slate-400 font-bold">#{{ b.display_order }}</td>
+                    <td class="py-3 px-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl overflow-hidden border border-[#1e293b] shrink-0 flex items-center justify-center text-[10px] font-bold" style="{{ b.gradient_style }}">
+                                {% if b.effective_image_url %}
+                                <img src="{{ b.effective_image_url }}" alt="{{ b.title }}" class="w-full h-full object-cover">
+                                {% else %}
+                                <span class="text-white/80">CMS</span>
+                                {% endif %}
+                            </div>
+                            <div class="min-w-0">
+                                <div class="font-bold text-white text-xs truncate max-w-[210px]">{{ b.title }}</div>
+                                <div class="text-[11px] text-slate-400 truncate max-w-[210px]">{{ b.subtitle|default:"—" }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-3 px-4">
+                        <div>
+                            {% if b.badge_text %}
+                            <span class="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-amber-500/15 text-amber-300 border border-amber-500/30">{{ b.badge_text }}</span>
+                            {% endif %}
+                            <div class="text-[11px] text-emerald-400 font-bold mt-0.5">{{ b.price_tag|default:"—" }}</div>
+                        </div>
+                    </td>
+                    <td class="py-3 px-4 text-[11px] text-slate-400">
+                        {% if b.start_date or b.end_date %}
+                            <div>{{ b.start_date|date:"M d, H:i"|default:"Immediate" }}</div>
+                            <div class="text-[10px] text-slate-500">to {{ b.end_date|date:"M d, H:i"|default:"Ongoing" }}</div>
+                        {% else %}
+                            <span class="text-slate-500">Always Visible</span>
+                        {% endif %}
+                    </td>
+                    <td class="py-3 px-4">
+                        <div class="font-medium text-slate-300 truncate max-w-[150px]">{{ b.button_text|default:"Shop Now" }}</div>
+                        <div class="text-[10px] font-mono text-cyan-400/80 truncate max-w-[150px]">{{ b.button_url }}</div>
+                    </td>
+                    <td class="py-3 px-3.5 text-center">
+                        {% if b.status_badge == 'Live' %}
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 live-dot"></span>
+                            Live
+                        </span>
+                        {% elif b.status_badge == 'Scheduled' %}
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/15 text-blue-400 border border-blue-500/30">
+                            Scheduled
+                        </span>
+                        {% elif b.status_badge == 'Expired' %}
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30">
+                            Expired
+                        </span>
+                        {% else %}
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-500/15 text-slate-400 border border-slate-500/30">
+                            Inactive
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td class="py-3 px-3.5 text-center">
+                        <button 
+                            type="button" 
+                            onclick="openEditBannerModal({
+                                id: {{ b.id }},
+                                title: '{{ b.title|escapejs }}',
+                                subtitle: '{{ b.subtitle|escapejs }}',
+                                badge_text: '{{ b.badge_text|escapejs }}',
+                                price_tag: '{{ b.price_tag|escapejs }}',
+                                button_text: '{{ b.button_text|escapejs }}',
+                                button_url: '{{ b.button_url|escapejs }}',
+                                bg_gradient: '{{ b.bg_gradient|escapejs }}',
+                                border_color: '{{ b.border_color|escapejs }}',
+                                text_color_theme: '{{ b.text_color_theme|escapejs }}',
+                                start_date: '{{ b.start_date|date:"Y-m-d\\TH:i" }}',
+                                end_date: '{{ b.end_date|date:"Y-m-d\\TH:i" }}',
+                                image_url: '{{ b.image_url|escapejs }}',
+                                effective_image_url: '{{ b.effective_image_url|escapejs }}',
+                                display_order: {{ b.display_order }},
+                                is_active: {% if b.is_active %}true{% else %}false{% endif %}
+                            })" 
+                            class="p-1.5 rounded-lg bg-[#0f172a] hover:bg-slate-800 text-slate-300 hover:text-white border border-[#1e293b] inline-flex items-center justify-center transition-colors cursor-pointer" 
+                            title="Edit banner in CMS Studio"
+                        >
+                            <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="py-8 text-center text-slate-500">No promotional banners configured yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Paginator Footer -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 text-xs">
+        <div class="text-slate-400" id="banners-page-info">Showing all banners</div>
+        <div class="flex items-center gap-2" id="banners-pagination-controls"></div>
+    </div>
+</div>
+
+<!-- =============================================================== -->
+<!-- ROW 3: Homepage Orchestrator Matrix & Category Sub-Menu         -->
+<!-- =============================================================== -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+    <!-- Left: Homepage Section Composition (HomepageSection) -->
+    <div id="sections" class="rounded-3xl bg-[#131c2e] border border-[#1e293b] p-5 shadow-xl space-y-4 flex flex-col justify-between">
+        <div>
+            <div class="flex items-center justify-between pb-3 border-b border-[#1e293b]">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center border border-cyan-500/25">
+                        <i data-lucide="layers" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-white tracking-tight">Homepage Section Blocks</h4>
+                        <p class="text-[11px] text-slate-400">Dynamic vertical rendering pipeline</p>
+                    </div>
+                </div>
+                <a href="{% url 'cms:sections' %}" class="text-xs font-semibold text-cyan-400 hover:underline flex items-center gap-1">
+                    <span>Manage Page</span>
+                    <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                </a>
+            </div>
+
+            <div class="mt-4 space-y-2.5 max-h-96 overflow-y-auto pr-1">
+                {% for sec in homepage_sections %}
+                <div class="p-3 rounded-2xl bg-[#0f172a] border border-[#1e293b] hover:border-cyan-500/30 transition-colors flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-7 h-7 rounded-lg bg-slate-800 text-slate-300 font-mono text-xs font-bold flex items-center justify-center shrink-0">
+                            #{{ sec.display_order }}
+                        </div>
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="font-bold text-white text-xs truncate">{{ sec.name }}</span>
+                                <span class="px-1.5 py-0.2 rounded text-[9px] font-semibold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
+                                    {{ sec.get_section_type_display }}
+                                </span>
+                            </div>
+                            <div class="text-[11px] text-slate-400 truncate mt-0.5">
+                                {{ sec.title|default:"(System Rendered)" }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        {% if sec.is_active %}
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 live-dot" title="Active"></span>
+                        {% else %}
+                        <span class="w-2 h-2 rounded-full bg-slate-600" title="Disabled"></span>
+                        {% endif %}
+                        <button 
+                            type="button" 
+                            onclick="openEditSectionModal({
+                                id: {{ sec.id }},
+                                name: '{{ sec.name|escapejs }}',
+                                section_type: '{{ sec.section_type|escapejs }}',
+                                title: '{{ sec.title|escapejs }}',
+                                subtitle: '{{ sec.subtitle|escapejs }}',
+                                product_filter_type: '{{ sec.product_filter_type|escapejs }}',
+                                max_items: {{ sec.max_items }},
+                                view_all_text: '{{ sec.view_all_text|escapejs }}',
+                                view_all_url: '{{ sec.view_all_url|escapejs }}',
+                                image_url: '{{ sec.image_url|escapejs }}',
+                                effective_image_url: '{{ sec.effective_image_url|escapejs }}',
+                                display_order: {{ sec.display_order }},
+                                is_active: {% if sec.is_active %}true{% else %}false{% endif %}
+                            })" 
+                            class="p-1 text-slate-400 hover:text-cyan-300 transition-colors cursor-pointer" 
+                            title="Edit section in CMS Studio"
+                        >
+                            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="py-8 text-center text-xs text-slate-500">No homepage sections registered.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="pt-3 border-t border-[#1e293b] flex items-center justify-between text-[11px] text-slate-400">
+            <span>Total Sections: {{ kpis.total_sections }}</span>
+            <span class="text-cyan-400 font-medium">Reorder via Display Order field</span>
+        </div>
+    </div>
+
+    <!-- Right: Category Sub-Menu Bar (CategoryNavItem) -->
+    <div id="categories" class="rounded-3xl bg-[#131c2e] border border-[#1e293b] p-5 shadow-xl space-y-4 flex flex-col justify-between">
+        <div>
+            <div class="flex items-center justify-between pb-3 border-b border-[#1e293b]">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center border border-amber-500/25">
+                        <i data-lucide="compass" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-white tracking-tight">Category Sub-Menu Bar</h4>
+                        <p class="text-[11px] text-slate-400">Flipkart-style sticky navigation chips</p>
+                    </div>
+                </div>
+                <a href="{% url 'cms:category_nav' %}" class="text-xs font-semibold text-amber-400 hover:underline flex items-center gap-1">
+                    <span>Manage Page</span>
+                    <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                </a>
+            </div>
+
+            <div class="mt-4 space-y-2.5 max-h-96 overflow-y-auto pr-1">
+                {% for item in category_nav_items %}
+                <div class="p-3 rounded-2xl bg-[#0f172a] border border-[#1e293b] hover:border-amber-500/30 transition-colors flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center border border-amber-500/20 shrink-0">
+                            <i data-lucide="{{ item.icon_name }}" class="w-4 h-4"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-white text-xs truncate">{{ item.title }}</span>
+                                {% if item.is_highlighted %}
+                                <span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">Hot</span>
+                                {% endif %}
+                            </div>
+                            <div class="text-[10px] font-mono text-slate-400 truncate mt-0.5">
+                                {{ item.effective_url }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <span class="text-[10px] font-mono text-slate-500 font-bold">#{{ item.display_order }}</span>
+                        <button 
+                            type="button" 
+                            onclick="openEditCategoryNavModal({
+                                id: {{ item.id }},
+                                title: '{{ item.title|escapejs }}',
+                                category: '{% if item.category %}{{ item.category.id }}{% endif %}',
+                                custom_url: '{{ item.custom_url|escapejs }}',
+                                icon_name: '{{ item.icon_name|escapejs }}',
+                                image_url: '{{ item.image_url|escapejs }}',
+                                effective_image_url: '{{ item.effective_image_url|escapejs }}',
+                                display_order: {{ item.display_order }},
+                                is_highlighted: {% if item.is_highlighted %}true{% else %}false{% endif %},
+                                is_active: {% if item.is_active %}true{% else %}false{% endif %}
+                            })" 
+                            class="p-1 text-slate-400 hover:text-amber-300 transition-colors cursor-pointer"
+                            title="Edit sub-nav item in CMS Studio"
+                        >
+                            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="py-8 text-center text-xs text-slate-500">No sub-nav category chips found.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="pt-3 border-t border-[#1e293b] flex items-center justify-between text-[11px] text-slate-400">
+            <span>Sub-Menu Chips: {{ kpis.total_nav_items }}</span>
+            <span class="text-amber-400 font-medium">Supports dynamic Lucide icon rendering</span>
+        </div>
+    </div>
+
+</div>
+
+<!-- =============================================================== -->
+<!-- ROW 4: Curated Showcases & Value Propositions                   -->
+<!-- =============================================================== -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+    <!-- Curated Category Cards (HomepageCategoryItem) -->
+    <div id="curations" class="rounded-3xl bg-[#131c2e] border border-[#1e293b] p-5 shadow-xl space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-[#1e293b]">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center border border-purple-500/25">
+                    <i data-lucide="grid-2x2" class="w-4 h-4"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-white tracking-tight">Curated Category Showcases</h4>
+                    <p class="text-[11px] text-slate-400">Visual product discovery category tiles</p>
+                </div>
+            </div>
+            <a href="{% url 'cms:curations' %}" class="text-xs font-semibold text-purple-400 hover:underline flex items-center gap-1">
+                <span>Manage Page</span>
+                <i data-lucide="arrow-right" class="w-3 h-3"></i>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-80 overflow-y-auto pr-1">
+            {% for c in curated_categories %}
+            <div class="p-3 rounded-2xl bg-[#0f172a] border border-[#1e293b] hover:border-purple-500/30 transition-colors flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-12 h-12 rounded-xl bg-slate-800 border border-[#1e293b] overflow-hidden shrink-0 flex items-center justify-center">
+                        {% if c.effective_image_url %}
+                        <img src="{{ c.effective_image_url }}" alt="{{ c.display_title }}" class="w-full h-full object-cover">
+                        {% else %}
+                        <i data-lucide="folder" class="w-5 h-5 text-slate-500"></i>
+                        {% endif %}
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="font-bold text-white text-xs truncate">{{ c.display_title }}</div>
+                        <div class="text-[10px] text-slate-400 truncate">{{ c.custom_subtitle|default:c.category.name }}</div>
+                        {% if c.badge_text %}
+                        <span class="inline-block mt-1 px-1.5 py-0.2 rounded text-[8px] font-bold uppercase bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                            {{ c.badge_text }}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="flex items-center gap-1 shrink-0">
+                    <button 
+                        type="button" 
+                        onclick="openEditCurationModal({
+                            id: {{ c.id }},
+                            category: '{% if c.category %}{{ c.category.id }}{% endif %}',
+                            custom_title: '{{ c.custom_title|escapejs }}',
+                            custom_subtitle: '{{ c.custom_subtitle|escapejs }}',
+                            custom_image_url: '{{ c.custom_image_url|escapejs }}',
+                            effective_image_url: '{{ c.effective_image_url|escapejs }}',
+                            badge_text: '{{ c.badge_text|escapejs }}',
+                            badge_color: '{{ c.badge_color|escapejs }}',
+                            link_url: '{{ c.link_url|escapejs }}',
+                            display_order: {{ c.display_order }},
+                            is_active: {% if c.is_active %}true{% else %}false{% endif %}
+                        })" 
+                        class="p-1.5 rounded-lg bg-[#131c2e] hover:bg-slate-800 text-slate-400 hover:text-purple-300 border border-[#1e293b] inline-flex items-center justify-center transition-colors cursor-pointer"
+                        title="Edit showcase in CMS Studio"
+                    >
+                        <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-2 py-8 text-center text-xs text-slate-500">No category curations defined.</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Value Propositions & Trust Badges (TrustBadge) -->
+    <div id="trust" class="rounded-3xl bg-[#131c2e] border border-[#1e293b] p-5 shadow-xl space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-[#1e293b]">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-rose-500/15 text-rose-400 flex items-center justify-center border border-rose-500/25">
+                    <i data-lucide="shield-check" class="w-4 h-4"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-white tracking-tight">Trust &amp; Value Propositions</h4>
+                    <p class="text-[11px] text-slate-400">Confidence signals on storefront footer &amp; bar</p>
+                </div>
+            </div>
+            <a href="{% url 'cms:trust_badges' %}" class="text-xs font-semibold text-rose-400 hover:underline flex items-center gap-1">
+                <span>Manage Page</span>
+                <i data-lucide="arrow-right" class="w-3 h-3"></i>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-80 overflow-y-auto pr-1">
+            {% for t in trust_badges %}
+            <div class="p-3 rounded-2xl bg-[#0f172a] border border-[#1e293b] hover:border-rose-500/30 transition-colors flex items-center justify-between gap-3">
+                <div class="flex items-start gap-3 min-w-0">
+                    <div class="w-9 h-9 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center border border-rose-500/20 shrink-0">
+                        <i data-lucide="{{ t.icon_name }}" class="w-4 h-4"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="font-bold text-white text-xs truncate">{{ t.title }}</div>
+                        <div class="text-[10px] text-slate-400 leading-snug mt-0.5">{{ t.subtitle }}</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1 shrink-0">
+                    <button 
+                        type="button" 
+                        onclick="openEditTrustBadgeModal({
+                            id: {{ t.id }},
+                            title: '{{ t.title|escapejs }}',
+                            subtitle: '{{ t.subtitle|escapejs }}',
+                            icon_name: '{{ t.icon_name|escapejs }}',
+                            color_theme: '{{ t.color_theme|escapejs }}',
+                            display_order: {{ t.display_order }},
+                            is_active: {% if t.is_active %}true{% else %}false{% endif %}
+                        })" 
+                        class="p-1.5 rounded-lg bg-[#131c2e] hover:bg-slate-800 text-slate-400 hover:text-rose-300 border border-[#1e293b] inline-flex items-center justify-center transition-colors cursor-pointer"
+                        title="Edit badge in CMS Studio"
+                    >
+                        <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-2 py-8 text-center text-xs text-slate-500">No trust badges configured.</div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+<!-- =============================================================== -->
+<!-- ROW 5: Main Navigation Bar Hierarchy (NavbarItem)               -->
+<!-- =============================================================== -->
+<div id="navbar" class="rounded-3xl bg-[#131c2e] border border-[#1e293b] p-5 sm:p-6 shadow-xl space-y-4">
+    <div class="flex items-center justify-between pb-3 border-b border-[#1e293b]">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-indigo-500/15 text-indigo-400 flex items-center justify-center border border-indigo-500/25">
+                <i data-lucide="menu" class="w-4 h-4"></i>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold text-white tracking-tight">Main Navigation Bar Hierarchy</h4>
+                <p class="text-[11px] text-slate-400">Global header links and nested dropdown navigation</p>
+            </div>
+        </div>
+        <a href="{% url 'cms:navbar' %}" class="text-xs font-semibold text-indigo-400 hover:underline flex items-center gap-1">
+            <span>Manage Page</span>
+            <i data-lucide="arrow-right" class="w-3 h-3"></i>
+        </a>
+    </div>
+
+    <div class="overflow-x-auto rounded-2xl border border-[#1e293b]">
+        <table class="w-full text-left text-xs border-collapse">
+            <thead>
+                <tr class="bg-[#0f172a] text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-[#1e293b]">
+                    <th class="py-3 px-3.5 w-16 text-center">Order</th>
+                    <th class="py-3 px-4 w-60">Menu Item</th>
+                    <th class="py-3 px-4 w-40">Structure</th>
+                    <th class="py-3 px-4 w-48">URL Target</th>
+                    <th class="py-3 px-3.5 w-28 text-center">Badge</th>
+                    <th class="py-3 px-3.5 w-20 text-center">Status</th>
+                    <th class="py-3 px-3.5 w-20 text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-[#1e293b] bg-[#131c2e]">
+                {% for nav in navbar_items %}
+                <tr class="hover:bg-slate-800/40 transition-colors">
+                    <td class="py-2.5 px-3.5 text-center font-mono text-slate-400 font-bold">#{{ nav.display_order }}</td>
+                    <td class="py-2.5 px-4 font-bold text-white">
+                        {% if nav.parent %}
+                        <span class="text-slate-500 mr-1.5">↳</span>{{ nav.title }}
+                        {% else %}
+                        {{ nav.title }}
+                        {% endif %}
+                    </td>
+                    <td class="py-2.5 px-4 text-[11px] text-slate-400">
+                        {% if nav.parent %}
+                        <span class="text-slate-500">Child of {{ nav.parent.title }}</span>
+                        {% elif nav.is_dropdown %}
+                        <span class="text-blue-400 font-semibold">Dropdown Parent</span>
+                        {% else %}
+                        <span class="text-slate-300">Direct Link</span>
+                        {% endif %}
+                    </td>
+                    <td class="py-2.5 px-4 font-mono text-[10px] text-cyan-400/80 truncate max-w-[180px]">{{ nav.url }}</td>
+                    <td class="py-2.5 px-3.5 text-center">
+                        {% if nav.badge_text %}
+                        <span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">{{ nav.badge_text }}</span>
+                        {% else %}
+                        <span class="text-slate-500">—</span>
+                        {% endif %}
+                    </td>
+                    <td class="py-2.5 px-3.5 text-center">
+                        {% if nav.is_active %}
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block" title="Active"></span>
+                        {% else %}
+                        <span class="w-2 h-2 rounded-full bg-slate-600 inline-block" title="Inactive"></span>
+                        {% endif %}
+                    </td>
+                    <td class="py-2.5 px-3.5 text-center">
+                        <button 
+                            type="button" 
+                            onclick="openEditNavbarModal({
+                                id: {{ nav.id }},
+                                title: '{{ nav.title|escapejs }}',
+                                url: '{{ nav.url|escapejs }}',
+                                parent: '{% if nav.parent %}{{ nav.parent.id }}{% endif %}',
+                                badge_text: '{{ nav.badge_text|escapejs }}',
+                                badge_color: '{{ nav.badge_color|escapejs }}',
+                                display_order: {{ nav.display_order }},
+                                open_in_new_tab: {% if nav.open_in_new_tab %}true{% else %}false{% endif %},
+                                is_active: {% if nav.is_active %}true{% else %}false{% endif %}
+                            })" 
+                            class="p-1.5 rounded-lg bg-[#0f172a] hover:bg-slate-800 text-slate-400 hover:text-indigo-300 border border-[#1e293b] inline-flex items-center justify-center transition-colors cursor-pointer"
+                            title="Edit menu item in CMS Studio"
+                        >
+                            <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="py-6 text-center text-slate-500 text-xs">No navbar items defined.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- =============================================================== -->
+<!-- IN-APP EDIT MODALS FOR CMS DASHBOARD                           -->
+<!-- =============================================================== -->
+
+<!-- 1. Edit Banner Modal -->
+<div id="editBannerModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm overflow-y-auto p-4 sm:p-6 flex items-center justify-center" onclick="if(event.target===this) closeModal('editBannerModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl my-auto max-h-[90vh] flex flex-col shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 shrink-0">
+            <div class="flex items-center gap-2">
+                <h3 class="text-lg font-bold text-white font-display">Edit Promotional Banner</h3>
+                <span id="editBannerIdBadge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/15 text-blue-400 border border-blue-500/20"></span>
+            </div>
+            <button type="button" onclick="closeModal('editBannerModal')" class="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-slate-800">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <form method="POST" id="editBannerForm" action="" enctype="multipart/form-data" class="flex flex-col flex-1 overflow-hidden min-h-0">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <div class="p-6 space-y-4 overflow-y-auto flex-1">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Banner Title *</label>
+                        <input type="text" name="title" id="edit_banner_title" required class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Subtitle</label>
+                        <input type="text" name="subtitle" id="edit_banner_subtitle" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Badge Text</label>
+                        <input type="text" name="badge_text" id="edit_banner_badge_text" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Price / Offer Tag</label>
+                        <input type="text" name="price_tag" id="edit_banner_price_tag" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Button Label</label>
+                        <input type="text" name="button_text" id="edit_banner_button_text" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Destination URL</label>
+                        <input type="text" name="button_url" id="edit_banner_button_url" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Schedule Start (Optional)</label>
+                        <input type="datetime-local" name="start_date" id="edit_banner_start_date" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Schedule End (Optional)</label>
+                        <input type="datetime-local" name="end_date" id="edit_banner_end_date" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Background Gradient Preset</label>
+                        <select name="bg_gradient" id="edit_banner_bg_gradient" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                            <option value="from-neutral-950 via-slate-900 to-neutral-950">Slate Night (Dark Slate)</option>
+                            <option value="from-blue-950 via-indigo-950 to-slate-950">Electric Indigo (Indigo / Slate)</option>
+                            <option value="from-emerald-950 via-slate-900 to-black">Emerald Aura (Dark Green)</option>
+                            <option value="from-purple-950 via-slate-900 to-black">Midnight Violet (Purple)</option>
+                            <option value="from-amber-950 via-orange-950 to-neutral-950">Solar Flare (Warm Amber)</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2 p-3 bg-slate-950/60 border border-slate-800 rounded-xl space-y-2.5">
+                        <label class="block text-xs font-semibold uppercase text-slate-300">Banner Visual (Upload or Web URL)</label>
+                        <div id="dashBannerImagePreviewWrapper" class="hidden items-center gap-3 p-2 bg-slate-900 border border-slate-800 rounded-lg">
+                            <img id="dashBannerImagePreview" src="" alt="Banner Preview" class="w-16 h-10 object-cover rounded border border-slate-700">
+                            <div class="flex-1 min-w-0">
+                                <span class="text-xs text-slate-300 block font-medium">Current Image Active</span>
+                                <label class="inline-flex items-center gap-1.5 text-xs text-rose-400 hover:text-rose-300 cursor-pointer mt-0.5">
+                                    <input type="checkbox" name="clear_image" value="true" class="rounded bg-slate-800 border-slate-700 text-rose-600 focus:ring-0">
+                                    <span>Remove current image</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] text-slate-400 mb-1">📁 Upload Replacement File (Saved to media)</label>
+                                <input type="file" name="image" accept="image/*" class="w-full text-xs text-slate-400 file:mr-2.5 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600/20 file:text-blue-400 hover:file:bg-blue-600/30 border border-slate-800 rounded-lg p-1 bg-slate-900">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] text-slate-400 mb-1">🔗 Or Image URL (Google / Web)</label>
+                                <input type="url" name="image_url" id="edit_banner_image_url" placeholder="https://images.unsplash.com/..." class="w-full px-3 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-blue-500">
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Display Priority (Order)</label>
+                        <input type="number" name="display_order" id="edit_banner_display_order" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="flex items-center gap-3 pt-6">
+                        <label class="relative flex items-center cursor-pointer">
+                            <input type="checkbox" name="is_active" id="edit_banner_is_active" class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            <span class="ml-3 text-sm font-medium text-white">Active Status</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-800 bg-slate-900 shrink-0">
+                <button type="button" onclick="closeModal('editBannerModal')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors">Cancel</button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-all shadow-lg shadow-blue-600/25">Update Banner</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 2. Edit Section Modal -->
+<div id="editSectionModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm overflow-y-auto p-4 sm:p-6 flex items-center justify-center" onclick="if(event.target===this) closeModal('editSectionModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl my-auto max-h-[90vh] flex flex-col shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 shrink-0">
+            <div class="flex items-center gap-2">
+                <h3 class="text-lg font-bold text-white font-display">Edit Homepage Section</h3>
+                <span id="editSectionIdBadge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/15 text-blue-400 border border-blue-500/20"></span>
+            </div>
+            <button type="button" onclick="closeModal('editSectionModal')" class="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-slate-800">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <form method="POST" id="editSectionForm" action="" enctype="multipart/form-data" class="flex flex-col flex-1 overflow-hidden min-h-0">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <div class="p-6 space-y-4 overflow-y-auto flex-1">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Internal Name *</label>
+                        <input type="text" name="name" id="edit_section_name" required class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Section Type *</label>
+                        <select name="section_type" id="edit_section_type" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                            {% for key, val in section_types %}
+                            <option value="{{ key }}">{{ val }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Display Title</label>
+                        <input type="text" name="title" id="edit_section_title" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Subtitle</label>
+                        <input type="text" name="subtitle" id="edit_section_subtitle" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Product Filter Feed</label>
+                        <select name="product_filter_type" id="edit_section_filter_type" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                            {% for key, val in filter_types %}
+                            <option value="{{ key }}">{{ val }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Max Items to Show</label>
+                        <input type="number" name="max_items" id="edit_section_max_items" value="4" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">View All Button Text</label>
+                        <input type="text" name="view_all_text" id="edit_section_view_all_text" value="Explore All" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">View All Target URL</label>
+                        <input type="text" name="view_all_url" id="edit_section_view_all_url" value="/products/" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="md:col-span-2 p-3 bg-slate-950/60 border border-slate-800 rounded-xl space-y-2.5">
+                        <label class="block text-xs font-semibold uppercase text-slate-300">Section Header Image / Banner (Upload or Web URL)</label>
+                        <div id="dashSectionImagePreviewWrapper" class="hidden items-center gap-3 p-2 bg-slate-900 border border-slate-800 rounded-lg">
+                            <img id="dashSectionImagePreview" src="" alt="Section Preview" class="w-14 h-10 object-cover rounded border border-slate-700">
+                            <div class="flex-1 min-w-0">
+                                <span class="text-xs text-slate-300 block font-medium">Current Image Active</span>
+                                <label class="inline-flex items-center gap-1.5 text-xs text-rose-400 hover:text-rose-300 cursor-pointer mt-0.5">
+                                    <input type="checkbox" name="clear_image" value="true" class="rounded bg-slate-800 border-slate-700 text-rose-600 focus:ring-0">
+                                    <span>Remove current image</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] text-slate-400 mb-1">📁 Upload File (Saved to media)</label>
+                                <input type="file" name="image" accept="image/*" class="w-full text-xs text-slate-400 file:mr-2.5 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600/20 file:text-blue-400 hover:file:bg-blue-600/30 border border-slate-800 rounded-lg p-1 bg-slate-900">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] text-slate-400 mb-1">🔗 Or Image URL (Google / Web)</label>
+                                <input type="url" name="image_url" id="edit_section_image_url" placeholder="https://images.unsplash.com/..." class="w-full px-3 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-blue-500">
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Display Order Priority</label>
+                        <input type="number" name="display_order" id="edit_section_display_order" value="0" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="flex items-center gap-3 pt-6">
+                        <label class="relative flex items-center cursor-pointer">
+                            <input type="checkbox" name="is_active" id="edit_section_is_active" class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            <span class="ml-3 text-sm font-medium text-white">Active Status</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-800 bg-slate-900 shrink-0">
+                <button type="button" onclick="closeModal('editSectionModal')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors">Cancel</button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-all shadow-lg shadow-blue-600/25">Update Section</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 3. Edit Sub-Nav Category Item Modal -->
+<div id="editNavModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm overflow-y-auto p-4 sm:p-6 flex items-center justify-center" onclick="if(event.target===this) closeModal('editNavModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-xl my-auto max-h-[90vh] flex flex-col shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 shrink-0">
+            <div class="flex items-center gap-2">
+                <h3 class="text-lg font-bold text-white font-display">Edit Sub-Nav Item</h3>
+                <span id="editNavIdBadge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/15 text-blue-400 border border-blue-500/20"></span>
+            </div>
+            <button type="button" onclick="closeModal('editNavModal')" class="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-slate-800">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <form method="POST" id="editNavForm" action="" enctype="multipart/form-data" class="flex flex-col flex-1 overflow-hidden min-h-0">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <div class="p-6 space-y-4 overflow-y-auto flex-1">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Item Title *</label>
+                    <input type="text" name="title" id="edit_nav_title" required class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Linked Catalog Category (Optional)</label>
+                    <select name="category" id="edit_nav_category" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                        <option value="">-- No Catalog Category (Use Custom URL) --</option>
+                        {% for cat in catalog_categories %}
+                        <option value="{{ cat.id }}">{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Custom URL (Optional)</label>
+                    <input type="text" name="custom_url" id="edit_nav_custom_url" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="p-3 bg-slate-950/60 border border-slate-800 rounded-xl space-y-2.5">
+                    <label class="block text-xs font-semibold uppercase text-slate-300">Thumbnail / Icon Image (Upload or Web URL)</label>
+                    <div id="dashNavImagePreviewWrapper" class="hidden items-center gap-3 p-2 bg-slate-900 border border-slate-800 rounded-lg">
+                        <img id="dashNavImagePreview" src="" alt="Nav Preview" class="w-10 h-10 object-cover rounded border border-slate-700">
+                        <div class="flex-1 min-w-0">
+                            <span class="text-xs text-slate-300 block font-medium">Current Image Active</span>
+                            <label class="inline-flex items-center gap-1.5 text-xs text-rose-400 hover:text-rose-300 cursor-pointer mt-0.5">
+                                <input type="checkbox" name="clear_image" value="true" class="rounded bg-slate-800 border-slate-700 text-rose-600 focus:ring-0">
+                                <span>Remove current image</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] text-slate-400 mb-1">📁 Upload File (Saved to media)</label>
+                            <input type="file" name="image" accept="image/*" class="w-full text-xs text-slate-400 file:mr-2.5 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600/20 file:text-blue-400 hover:file:bg-blue-600/30 border border-slate-800 rounded-lg p-1 bg-slate-900">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-slate-400 mb-1">🔗 Or Image URL (Google / Web)</label>
+                            <input type="url" name="image_url" id="edit_nav_image_url" placeholder="https://images.unsplash.com/..." class="w-full px-3 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-blue-500">
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Icon Keyword</label>
+                        <input type="text" name="icon_name" id="edit_nav_icon_name" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Display Order</label>
+                        <input type="number" name="display_order" id="edit_nav_display_order" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                </div>
+                <div class="flex items-center gap-6 pt-2">
+                    <label class="relative flex items-center cursor-pointer">
+                        <input type="checkbox" name="is_highlighted" id="edit_nav_is_highlighted" class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                        <span class="ml-3 text-sm font-medium text-white">Highlight / Hot Badge</span>
+                    </label>
+                    <label class="relative flex items-center cursor-pointer">
+                        <input type="checkbox" name="is_active" id="edit_nav_is_active" class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        <span class="ml-3 text-sm font-medium text-white">Active</span>
+                    </label>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-800 bg-slate-900 shrink-0">
+                <button type="button" onclick="closeModal('editNavModal')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors">Cancel</button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-all shadow-lg shadow-blue-600/25">Update Item</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 4. Edit Curation Modal -->
+<div id="editCurationModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm overflow-y-auto p-4 sm:p-6 flex items-center justify-center" onclick="if(event.target===this) closeModal('editCurationModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-xl my-auto max-h-[90vh] flex flex-col shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 shrink-0">
+            <div class="flex items-center gap-2">
+                <h3 class="text-lg font-bold text-white font-display">Edit Category Showcase</h3>
+                <span id="editCurationIdBadge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/15 text-blue-400 border border-blue-500/20"></span>
+            </div>
+            <button type="button" onclick="closeModal('editCurationModal')" class="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-slate-800">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <form method="POST" id="editCurationForm" action="" enctype="multipart/form-data" class="flex flex-col flex-1 overflow-hidden min-h-0">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <div class="p-6 space-y-4 overflow-y-auto flex-1">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Catalog Category *</label>
+                    <select name="category" id="edit_curation_category" required class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                        {% for cat in catalog_categories %}
+                        <option value="{{ cat.id }}">{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Custom Title (Optional)</label>
+                    <input type="text" name="custom_title" id="edit_curation_title" placeholder="Leave empty to use category name" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Custom Subtitle</label>
+                    <input type="text" name="custom_subtitle" id="edit_curation_subtitle" placeholder="e.g. Modern workstation gear" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="p-3 bg-slate-950/60 border border-slate-800 rounded-xl space-y-2.5">
+                    <label class="block text-xs font-semibold uppercase text-slate-300">Custom Showcase Image (Upload or Web URL)</label>
+                    <div id="dashCurationImagePreviewWrapper" class="hidden items-center gap-3 p-2 bg-slate-900 border border-slate-800 rounded-lg">
+                        <img id="dashCurationImagePreview" src="" alt="Curation Preview" class="w-12 h-12 object-cover rounded-lg border border-slate-700">
+                        <div class="flex-1 min-w-0">
+                            <span class="text-xs text-slate-300 block font-medium">Custom Image Active</span>
+                            <label class="inline-flex items-center gap-1.5 text-xs text-rose-400 hover:text-rose-300 cursor-pointer mt-0.5">
+                                <input type="checkbox" name="clear_image" value="true" class="rounded bg-slate-800 border-slate-700 text-rose-600 focus:ring-0">
+                                <span>Remove custom image</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] text-slate-400 mb-1">📁 Upload File (Saved to media)</label>
+                            <input type="file" name="custom_image" accept="image/*" class="w-full text-xs text-slate-400 file:mr-2.5 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600/20 file:text-blue-400 hover:file:bg-blue-600/30 border border-slate-800 rounded-lg p-1 bg-slate-900">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-slate-400 mb-1">🔗 Or Image URL (Google / Web)</label>
+                            <input type="url" name="custom_image_url" id="edit_curation_image_url" placeholder="https://images.unsplash.com/..." class="w-full px-3 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-blue-500">
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Badge Text</label>
+                        <input type="text" name="badge_text" id="edit_curation_badge_text" placeholder="e.g. HOT, 30% OFF" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Badge Color</label>
+                        <select name="badge_color" id="edit_curation_badge_color" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                            <option value="blue">Blue</option>
+                            <option value="purple">Purple</option>
+                            <option value="emerald">Emerald</option>
+                            <option value="amber">Amber</option>
+                            <option value="rose">Rose</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Custom Link URL (Optional)</label>
+                    <input type="text" name="link_url" id="edit_curation_link_url" placeholder="Leave empty to use category URL" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Display Order</label>
+                    <input type="number" name="display_order" id="edit_curation_display_order" value="0" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="pt-2">
+                    <label class="relative flex items-center cursor-pointer">
+                        <input type="checkbox" name="is_active" id="edit_curation_is_active" class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        <span class="ml-3 text-sm font-medium text-white">Active Status</span>
+                    </label>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-800 bg-slate-900 shrink-0">
+                <button type="button" onclick="closeModal('editCurationModal')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors">Cancel</button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-all shadow-lg shadow-blue-600/25">Update Showcase</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 5. Edit Badge Modal -->
+<div id="editBadgeModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm overflow-y-auto p-4 sm:p-6 flex items-center justify-center" onclick="if(event.target===this) closeModal('editBadgeModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg my-auto max-h-[90vh] flex flex-col shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 shrink-0">
+            <div class="flex items-center gap-2">
+                <h3 class="text-lg font-bold text-white font-display">Edit Trust Badge</h3>
+                <span id="editBadgeIdBadge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/15 text-blue-400 border border-blue-500/20"></span>
+            </div>
+            <button type="button" onclick="closeModal('editBadgeModal')" class="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-slate-800">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <form method="POST" id="editBadgeForm" action="" class="flex flex-col flex-1 overflow-hidden min-h-0">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <div class="p-6 space-y-4 overflow-y-auto flex-1">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Badge Title *</label>
+                    <input type="text" name="title" id="edit_badge_title" required class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Subtitle *</label>
+                    <input type="text" name="subtitle" id="edit_badge_subtitle" required class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Icon Keyword</label>
+                        <select name="icon_name" id="edit_badge_icon_name" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                            <option value="truck">truck (Shipping)</option>
+                            <option value="shield-check">shield-check (Security / Guarantee)</option>
+                            <option value="rotate-ccw">rotate-ccw (Returns)</option>
+                            <option value="headphones">headphones (Support)</option>
+                            <option value="award">award (Certified)</option>
+                            <option value="credit-card">credit-card (Payment)</option>
+                            <option value="zap">zap (Fast / Instant)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Color Palette</label>
+                        <select name="color_theme" id="edit_badge_color_theme" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                            <option value="blue">Blue</option>
+                            <option value="emerald">Emerald</option>
+                            <option value="purple">Purple</option>
+                            <option value="amber">Amber</option>
+                            <option value="rose">Rose</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Display Order</label>
+                    <input type="number" name="display_order" id="edit_badge_display_order" value="0" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="pt-2">
+                    <label class="relative flex items-center cursor-pointer">
+                        <input type="checkbox" name="is_active" id="edit_badge_is_active" class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        <span class="ml-3 text-sm font-medium text-white">Active Status</span>
+                    </label>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-800 bg-slate-900 shrink-0">
+                <button type="button" onclick="closeModal('editBadgeModal')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors">Cancel</button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-all shadow-lg shadow-blue-600/25">Update Badge</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 6. Edit Navbar Item Modal -->
+<div id="editNavbarModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm overflow-y-auto p-4 sm:p-6 flex items-center justify-center" onclick="if(event.target===this) closeModal('editNavbarModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-xl my-auto max-h-[90vh] flex flex-col shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 shrink-0">
+            <div class="flex items-center gap-2">
+                <h3 class="text-lg font-bold text-white font-display">Edit Navbar Menu Item</h3>
+                <span id="editNavbarIdBadge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/15 text-blue-400 border border-blue-500/20"></span>
+            </div>
+            <button type="button" onclick="closeModal('editNavbarModal')" class="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-slate-800">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <form method="POST" id="editNavbarForm" action="" class="flex flex-col flex-1 overflow-hidden min-h-0">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <div class="p-6 space-y-4 overflow-y-auto flex-1">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Menu Title *</label>
+                    <input type="text" name="title" id="edit_navbar_title" required class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Target Destination URL *</label>
+                    <input type="text" name="url" id="edit_navbar_url" required class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Parent Item (For Dropdowns)</label>
+                    <select name="parent" id="edit_navbar_parent" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                        <option value="">-- None (Top-Level / Root Menu) --</option>
+                        {% for root in root_navbar_items %}
+                        <option value="{{ root.id }}">{{ root.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Badge Text (Optional)</label>
+                        <input type="text" name="badge_text" id="edit_navbar_badge_text" placeholder="e.g. NEW, HOT" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Badge Color</label>
+                        <select name="badge_color" id="edit_navbar_badge_color" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                            <option value="amber">Amber</option>
+                            <option value="blue">Blue</option>
+                            <option value="rose">Rose</option>
+                            <option value="emerald">Emerald</option>
+                            <option value="purple">Purple</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Display Order</label>
+                    <input type="number" name="display_order" id="edit_navbar_display_order" value="0" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="flex items-center gap-6 pt-2">
+                    <label class="relative flex items-center cursor-pointer">
+                        <input type="checkbox" name="open_in_new_tab" id="edit_navbar_open_in_new_tab" class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                        <span class="ml-3 text-sm font-medium text-white">Open in New Tab</span>
+                    </label>
+                    <label class="relative flex items-center cursor-pointer">
+                        <input type="checkbox" name="is_active" id="edit_navbar_is_active" class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        <span class="ml-3 text-sm font-medium text-white">Active</span>
+                    </label>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-800 bg-slate-900 shrink-0">
+                <button type="button" onclick="closeModal('editNavbarModal')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors">Cancel</button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-all shadow-lg shadow-blue-600/25">Update Menu Item</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Initialize TablePaginator for Hero & Promotional Banners
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof TablePaginator !== 'undefined') {
+            new TablePaginator({
+                tableBodyId: 'banners-tbody',
+                rowSelector: '.banner-row',
+                searchInputId: 'banners-search',
+                pageSizeSelectId: 'banners-page-size',
+                infoId: 'banners-page-info',
+                paginationControlsId: 'banners-pagination-controls',
+                printBtnId: 'banners-print-btn',
+                defaultPageSize: 10,
+                itemLabel: 'banners'
+            });
+        }
+    });
+
+    // 1. Banner Edit Opener
+    function openEditBannerModal(data) {
+        document.getElementById('editBannerIdBadge').textContent = '#' + data.id;
+        document.getElementById('editBannerForm').action = '/cms/banners/edit/' + data.id + '/';
+        document.getElementById('edit_banner_title').value = data.title || '';
+        document.getElementById('edit_banner_subtitle').value = data.subtitle || '';
+        document.getElementById('edit_banner_badge_text').value = data.badge_text || '';
+        document.getElementById('edit_banner_price_tag').value = data.price_tag || '';
+        document.getElementById('edit_banner_button_text').value = data.button_text || 'Shop Now';
+        document.getElementById('edit_banner_button_url').value = data.button_url || '/products/';
+        document.getElementById('edit_banner_start_date').value = data.start_date || '';
+        document.getElementById('edit_banner_end_date').value = data.end_date || '';
+        if (data.bg_gradient) document.getElementById('edit_banner_bg_gradient').value = data.bg_gradient;
+        document.getElementById('edit_banner_image_url').value = data.image_url || '';
+        document.getElementById('edit_banner_display_order').value = data.display_order ?? 0;
+        document.getElementById('edit_banner_is_active').checked = !!data.is_active;
+
+        const previewWrapper = document.getElementById('dashBannerImagePreviewWrapper');
+        const previewImg = document.getElementById('dashBannerImagePreview');
+        const clearCheckbox = document.querySelector('#editBannerModal input[name="clear_image"]');
+        if (clearCheckbox) clearCheckbox.checked = false;
+        if (data.effective_image_url) {
+            previewImg.src = data.effective_image_url;
+            previewWrapper.classList.remove('hidden');
+            previewWrapper.classList.add('flex');
+        } else {
+            previewWrapper.classList.remove('flex');
+            previewWrapper.classList.add('hidden');
+        }
+
+        openModal('editBannerModal');
+    }
+
+    // 2. Section Edit Opener
+    function openEditSectionModal(data) {
+        document.getElementById('editSectionIdBadge').textContent = '#' + data.id;
+        document.getElementById('editSectionForm').action = '/cms/sections/edit/' + data.id + '/';
+        document.getElementById('edit_section_name').value = data.name || '';
+        if (data.section_type) document.getElementById('edit_section_type').value = data.section_type;
+        document.getElementById('edit_section_title').value = data.title || '';
+        document.getElementById('edit_section_subtitle').value = data.subtitle || '';
+        if (data.product_filter_type) document.getElementById('edit_section_filter_type').value = data.product_filter_type;
+        document.getElementById('edit_section_max_items').value = data.max_items ?? 4;
+        document.getElementById('edit_section_view_all_text').value = data.view_all_text || 'Explore All';
+        document.getElementById('edit_section_view_all_url').value = data.view_all_url || '/products/';
+        document.getElementById('edit_section_image_url').value = data.image_url || '';
+        document.getElementById('edit_section_display_order').value = data.display_order ?? 0;
+        document.getElementById('edit_section_is_active').checked = !!data.is_active;
+
+        const previewWrapper = document.getElementById('dashSectionImagePreviewWrapper');
+        const previewImg = document.getElementById('dashSectionImagePreview');
+        const clearCheckbox = document.querySelector('#editSectionModal input[name="clear_image"]');
+        if (clearCheckbox) clearCheckbox.checked = false;
+        if (data.effective_image_url) {
+            previewImg.src = data.effective_image_url;
+            previewWrapper.classList.remove('hidden');
+            previewWrapper.classList.add('flex');
+        } else {
+            previewWrapper.classList.remove('flex');
+            previewWrapper.classList.add('hidden');
+        }
+
+        openModal('editSectionModal');
+    }
+
+    // 3. Category Nav Edit Opener
+    function openEditCategoryNavModal(data) {
+        document.getElementById('editNavIdBadge').textContent = '#' + data.id;
+        document.getElementById('editNavForm').action = '/cms/category-nav/edit/' + data.id + '/';
+        document.getElementById('edit_nav_title').value = data.title || '';
+        document.getElementById('edit_nav_category').value = data.category || '';
+        document.getElementById('edit_nav_custom_url').value = data.custom_url || '';
+        document.getElementById('edit_nav_icon_name').value = data.icon_name || 'sparkles';
+        document.getElementById('edit_nav_image_url').value = data.image_url || '';
+        document.getElementById('edit_nav_display_order').value = data.display_order ?? 0;
+        document.getElementById('edit_nav_is_highlighted').checked = !!data.is_highlighted;
+        document.getElementById('edit_nav_is_active').checked = !!data.is_active;
+
+        const previewWrapper = document.getElementById('dashNavImagePreviewWrapper');
+        const previewImg = document.getElementById('dashNavImagePreview');
+        const clearCheckbox = document.querySelector('#editNavModal input[name="clear_image"]');
+        if (clearCheckbox) clearCheckbox.checked = false;
+        if (data.effective_image_url) {
+            previewImg.src = data.effective_image_url;
+            previewWrapper.classList.remove('hidden');
+            previewWrapper.classList.add('flex');
+        } else {
+            previewWrapper.classList.remove('flex');
+            previewWrapper.classList.add('hidden');
+        }
+
+        openModal('editNavModal');
+    }
+
+    // 4. Curation Edit Opener
+    function openEditCurationModal(data) {
+        document.getElementById('editCurationIdBadge').textContent = '#' + data.id;
+        document.getElementById('editCurationForm').action = '/cms/curations/edit/' + data.id + '/';
+        document.getElementById('edit_curation_category').value = data.category || '';
+        document.getElementById('edit_curation_title').value = data.custom_title || '';
+        document.getElementById('edit_curation_subtitle').value = data.custom_subtitle || '';
+        document.getElementById('edit_curation_image_url').value = data.custom_image_url || '';
+        document.getElementById('edit_curation_badge_text').value = data.badge_text || '';
+        if (data.badge_color) document.getElementById('edit_curation_badge_color').value = data.badge_color;
+        document.getElementById('edit_curation_link_url').value = data.link_url || '';
+        document.getElementById('edit_curation_display_order').value = data.display_order ?? 0;
+        document.getElementById('edit_curation_is_active').checked = !!data.is_active;
+
+        const previewWrapper = document.getElementById('dashCurationImagePreviewWrapper');
+        const previewImg = document.getElementById('dashCurationImagePreview');
+        const clearCheckbox = document.querySelector('#editCurationModal input[name="clear_image"]');
+        if (clearCheckbox) clearCheckbox.checked = false;
+        if (data.effective_image_url) {
+            previewImg.src = data.effective_image_url;
+            previewWrapper.classList.remove('hidden');
+            previewWrapper.classList.add('flex');
+        } else {
+            previewWrapper.classList.remove('flex');
+            previewWrapper.classList.add('hidden');
+        }
+
+        openModal('editCurationModal');
+    }
+
+    // 5. Trust Badge Edit Opener
+    function openEditTrustBadgeModal(data) {
+        document.getElementById('editBadgeIdBadge').textContent = '#' + data.id;
+        document.getElementById('editBadgeForm').action = '/cms/trust-badges/edit/' + data.id + '/';
+        document.getElementById('edit_badge_title').value = data.title || '';
+        document.getElementById('edit_badge_subtitle').value = data.subtitle || '';
+        if (data.icon_name) document.getElementById('edit_badge_icon_name').value = data.icon_name;
+        if (data.color_theme) document.getElementById('edit_badge_color_theme').value = data.color_theme;
+        document.getElementById('edit_badge_display_order').value = data.display_order ?? 0;
+        document.getElementById('edit_badge_is_active').checked = !!data.is_active;
+        openModal('editBadgeModal');
+    }
+
+    // 6. Navbar Edit Opener
+    function openEditNavbarModal(data) {
+        document.getElementById('editNavbarIdBadge').textContent = '#' + data.id;
+        document.getElementById('editNavbarForm').action = '/cms/navbar/edit/' + data.id + '/';
+        document.getElementById('edit_navbar_title').value = data.title || '';
+        document.getElementById('edit_navbar_url').value = data.url || '#';
+        document.getElementById('edit_navbar_parent').value = data.parent || '';
+        document.getElementById('edit_navbar_badge_text').value = data.badge_text || '';
+        if (data.badge_color) document.getElementById('edit_navbar_badge_color').value = data.badge_color;
+        document.getElementById('edit_navbar_display_order').value = data.display_order ?? 0;
+        document.getElementById('edit_navbar_open_in_new_tab').checked = !!data.open_in_new_tab;
+        document.getElementById('edit_navbar_is_active').checked = !!data.is_active;
+        openModal('editNavbarModal');
+    }
+</script>
+{% endblock %}

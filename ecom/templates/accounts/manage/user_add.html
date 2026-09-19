@@ -1,0 +1,197 @@
+{% extends "accounts/manage/accounts_base.html" %}
+
+{% block title %}Provision New User Account{% endblock %}
+{% block page_title %}User Management{% endblock %}
+{% block page_breadcrumb %}Provision Identity{% endblock %}
+
+{% block page_actions %}
+<a href="{% url 'accounts:dashboard' %}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#131c2e] hover:bg-slate-800 text-slate-300 hover:text-white border border-[#1e293b] transition-all">
+    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+    <span>Back to Directory</span>
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="p-6 rounded-2xl bg-[#0d1424] border border-[#1e293b] shadow-sm space-y-6">
+        
+        <!-- Header -->
+        <div class="flex items-center gap-3 pb-4 border-b border-[#1e293b]">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
+                <i data-lucide="user-plus" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h2 class="text-base font-bold text-white">Provision New Platform Account</h2>
+                <p class="text-xs text-slate-400">Create a customer or department staff identity without Django Admin</p>
+            </div>
+        </div>
+
+        <form method="POST" action="{% url 'accounts:user_add' %}" class="space-y-6">
+            {% csrf_token %}
+
+            <!-- Core Credentials -->
+            <div class="space-y-4">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-400">1. Account Credentials</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Username <span class="text-rose-400">*</span></label>
+                        <input 
+                            type="text" 
+                            name="username" 
+                            required 
+                            placeholder="e.g., jsmith or STF001" 
+                            class="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-xs text-white focus:outline-none focus:border-emerald-500 font-mono transition-all"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Email Address <span class="text-rose-400">*</span></label>
+                        <input 
+                            type="email" 
+                            name="email" 
+                            required 
+                            placeholder="user@cartivo.com" 
+                            class="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-xs text-white focus:outline-none focus:border-emerald-500 font-mono transition-all"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Password <span class="text-rose-400">*</span></label>
+                        <input 
+                            type="password" 
+                            name="password" 
+                            required 
+                            minlength="6" 
+                            placeholder="Minimum 6 characters" 
+                            class="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-xs text-white focus:outline-none focus:border-emerald-500 font-mono transition-all"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Confirm Password <span class="text-rose-400">*</span></label>
+                        <input 
+                            type="password" 
+                            name="confirm_password" 
+                            required 
+                            minlength="6" 
+                            placeholder="Repeat password" 
+                            class="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-xs text-white focus:outline-none focus:border-emerald-500 font-mono transition-all"
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile & Personal Details -->
+            <div class="space-y-4 pt-4 border-t border-[#1e293b]">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-teal-400">2. Profile &amp; Contact Information</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">First Name</label>
+                        <input 
+                            type="text" 
+                            name="first_name" 
+                            placeholder="John" 
+                            class="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-xs text-white focus:outline-none focus:border-teal-500 transition-all"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Last Name</label>
+                        <input 
+                            type="text" 
+                            name="last_name" 
+                            placeholder="Doe" 
+                            class="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-xs text-white focus:outline-none focus:border-teal-500 transition-all"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Phone Number</label>
+                        <input 
+                            type="text" 
+                            name="phone_number" 
+                            placeholder="+1 (555) 000-0000" 
+                            class="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-xs text-white focus:outline-none focus:border-teal-500 font-mono transition-all"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Job Title</label>
+                        <input 
+                            type="text" 
+                            name="job_title" 
+                            placeholder="e.g., Accounts Specialist" 
+                            class="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-xs text-white focus:outline-none focus:border-teal-500 transition-all"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Access Role</label>
+                        <select 
+                            name="role" 
+                            class="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-xs text-white focus:outline-none focus:border-teal-500 transition-all"
+                        >
+                            <option value="">Standard Customer</option>
+                            {% for r in roles %}
+                            <option value="{{ r.id }}">{{ r.name }} ({{ r.code }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="flex items-center gap-6 pt-5">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input 
+                                type="checkbox" 
+                                name="is_active" 
+                                checked 
+                                class="w-4 h-4 rounded bg-[#131c2e] border-[#1e293b] text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                            >
+                            <span class="text-xs font-semibold text-slate-200">Active Account</span>
+                        </label>
+
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input 
+                                type="checkbox" 
+                                name="is_staff" 
+                                class="w-4 h-4 rounded bg-[#131c2e] border-[#1e293b] text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                            >
+                            <span class="text-xs font-semibold text-slate-200">Staff Access</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Department Permissions -->
+            <div class="space-y-3 pt-4 border-t border-[#1e293b]">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-indigo-400">3. Department Permissions (Staff Only)</h3>
+                <p class="text-[11px] text-slate-400">Optionally authorize this user to operate specific enterprise management departments:</p>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                    {% for dept in all_departments %}
+                    <label class="flex items-center gap-2 p-2.5 rounded-xl bg-[#131c2e] border border-[#1e293b] hover:border-slate-600 cursor-pointer transition-colors">
+                        <input 
+                            type="checkbox" 
+                            name="department_access" 
+                            value="{{ dept.slug }}" 
+                            class="w-3.5 h-3.5 rounded bg-[#0d1424] border-[#1e293b] text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                        >
+                        <span class="text-xs text-slate-200 truncate">{{ dept.name }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="pt-6 border-t border-[#1e293b] flex items-center justify-end gap-3">
+                <a href="{% url 'accounts:dashboard' %}" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition-colors">
+                    Cancel
+                </a>
+                <button type="submit" class="px-6 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-md shadow-emerald-600/25 transition-all flex items-center gap-2 cursor-pointer">
+                    <i data-lucide="user-plus" class="w-4 h-4"></i>
+                    <span>Provision User</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

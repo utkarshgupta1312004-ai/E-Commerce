@@ -4,13 +4,73 @@
 <div id="toast-container" class="fixed bottom-20 md:bottom-6 right-4 sm:right-6 z-50 flex flex-col gap-2 pointer-events-none">
     {% if messages %}
         {% for message in messages %}
-            <div class="pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl border text-xs sm:text-sm font-medium transition-all duration-300 animate-fade-in-up {% if message.tags == 'success' %}bg-emerald-950 text-emerald-200 border-emerald-800{% elif message.tags == 'error' %}bg-rose-950 text-rose-200 border-rose-800{% else %}bg-slate-900 text-white border-slate-800{% endif %}">
+            <div class="toast-item pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl border text-xs sm:text-sm font-medium transition-all duration-500 animate-fade-in-up {% if message.tags == 'success' %}bg-emerald-950 text-emerald-200 border-emerald-800{% elif message.tags == 'error' %}bg-rose-950 text-rose-200 border-rose-800{% else %}bg-slate-900 text-white border-slate-800{% endif %}">
                 <i data-lucide="{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}alert-circle{% else %}info{% endif %}" class="w-4 h-4 shrink-0"></i>
                 <span>{{ message }}</span>
-                <button onclick="this.parentElement.remove()" class="ml-2 text-slate-400 hover:text-white cursor-pointer" aria-label="Close notification">
+                <button onclick="dismissToast(this.parentElement)" class="ml-2 text-slate-400 hover:text-white cursor-pointer" aria-label="Close notification">
                     <i data-lucide="x" class="w-3.5 h-3.5"></i>
                 </button>
             </div>
         {% endfor %}
     {% endif %}
 </div>
+
+<script>
+    function dismissToast(el) {
+        if (!el) return;
+        el.style.transition = 'opacity 0.4s ease, transform 0.4s ease, max-height 0.4s ease';
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(10px) scale(0.95)';
+        setTimeout(() => {
+            if (el.parentNode) el.remove();
+        }, 400);
+    }
+
+    function initToastAutoDismiss() {
+        const toasts = document.querySelectorAll('#toast-container .toast-item');
+        toasts.forEach((toast) => {
+            if (!toast.dataset.autoDismissSet) {
+                toast.dataset.autoDismissSet = 'true';
+                setTimeout(() => {
+                    dismissToast(toast);
+                }, 3000);
+            }
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initToastAutoDismiss);
+    } else {
+        initToastAutoDismiss();
+    }
+
+    // Global utility so any JS logic across the project can display 3-second auto-expiring toasts
+    window.showToast = function(msg, type = 'info', duration = 3000) {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        const colorClasses = type === 'success'
+            ? 'bg-emerald-950 text-emerald-200 border-emerald-800'
+            : (type === 'error' ? 'bg-rose-950 text-rose-200 border-rose-800' : 'bg-slate-900 text-white border-slate-800');
+        const iconName = type === 'success' ? 'check-circle' : (type === 'error' ? 'alert-circle' : 'info');
+
+        toast.className = `toast-item pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl border text-xs sm:text-sm font-medium transition-all duration-500 animate-fade-in-up ${colorClasses}`;
+        toast.innerHTML = `
+            <i data-lucide="${iconName}" class="w-4 h-4 shrink-0"></i>
+            <span>${msg}</span>
+            <button onclick="dismissToast(this.parentElement)" class="ml-2 text-slate-400 hover:text-white cursor-pointer" aria-label="Close notification">
+                <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+        `;
+
+        container.appendChild(toast);
+        if (window.lucide && window.lucide.createIcons) {
+            window.lucide.createIcons({ root: toast });
+        }
+
+        setTimeout(() => {
+            dismissToast(toast);
+        }, duration);
+    };
+</script>

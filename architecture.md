@@ -449,3 +449,37 @@ sequenceDiagram
 | **PDF Invoice Generator** | Celery Worker | Async event on payment success | Renders and stores invoices without delaying checkout |
 | **Abandoned Cart Cleanup** | Celery Beat | Scheduled nightly (02:00 UTC) | Purges expired guest carts and stale reservations |
 | **Stock Alert Trigger** | Celery Worker | When inventory <= threshold | Alerts admin to restock low-inventory items |
+
+---
+
+## 7. Enterprise Superadmin Management Suite Architecture
+
+The administrative layer is decoupled from customer storefront views and provides comprehensive visibility and governance across all 20 domain microservices.
+
+### 7.1. Route & View Map
+
+| Endpoint | View Function | Security Guard | Template | Role / Capabilities |
+| :--- | :--- | :--- | :--- | :--- |
+| `/management/` | `management_page_view` | Public / Departmental | `management/portal.html` | Public domain overview with individual staff login modals |
+| `/management/login/` | `superadmin_login_view` | Unauthenticated | `management/superadmin_login.html` | Root administrator authentication gate |
+| `/management/logout/` | `superadmin_logout_view` | Authenticated | N/A (Redirect) | Terminate active administrative session |
+| `/management/dashboard/` | `superadmin_dashboard_view` | `is_superuser=True` | `management/superadmin_dashboard.html` | Executive KPIs, order breakdown donut, 12M sales/views dual bar, and security stream |
+| `/management/sales/` | `superadmin_sales_view` | `is_superuser=True` | `management/superadmin_sales.html` | 6 financial KPIs, SVG 30-day revenue curve, gateway distribution, and paginated ledger |
+| `/management/analytics/`| `superadmin_analytics_view`| `is_superuser=True` | `management/superadmin_analytics.html`| Storefront views, conversion funnel, revenue split donut, and regional traffic |
+| `/management/domains/` | `superadmin_domains_view` | `is_superuser=True` | `management/superadmin_domains.html` | 20-app infrastructure matrix, phase badges, category filtering, and direct admin DB links |
+| `/management/users/` | `superadmin_users_view` | `is_superuser=True` | `management/superadmin_users.html` | Account directory, role badges, active states, and permission controls |
+
+### 7.2. Centralized Base Architecture (`superadmin_base.html`)
+- **Executive Layout Structure:** Left sidebar + Top navigation header + Scrollable `<main>` viewport.
+- **Collapsible Mini-Rail Mode:**
+  - Desktop: Collapses from 16rem to 5rem mini-rail, hiding labels and centering icons.
+  - Mobile: Drawer overlay with backdrop blur.
+  - State Persistence: Synchronized with `localStorage` and restored immediately before initial render via synchronous script.
+- **Quick Command Palette (`Ctrl+K`):** Instant modal search and routing to any management screen or Django DB admin table.
+- **Zero-Network Dependency Engine:**
+  - Tailwind CSS compiled offline to `static/src/output.css` and `static/css/output.css`.
+  - Lucide icons loaded locally via `static/js/lucide.min.js`.
+
+### 7.3. Client-Side Table Engine & Print Pipeline (`table-paginator.js`)
+- **`TablePaginator` Class:** Provides zero-dependency pagination, search filtering, category filtering, and rows-per-page selection across all tabular views.
+- **Native Print Pipeline:** Intercepts `window.beforeprint` and `window.afterprint` to un-paginate the table into a clean multi-page document with repeating headers and print metadata, while hiding UI chrome via `@media print`.

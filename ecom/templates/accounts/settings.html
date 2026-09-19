@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Account Settings &bull; Cartivo{% endblock %}
+
+{% block content %}
+<div class="min-h-[calc(100vh-140px)] bg-slate-50/70 py-10 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto space-y-6">
+        
+        <!-- Breadcrumbs -->
+        <div>
+            <div class="flex items-center gap-2 text-xs font-semibold text-slate-400 mb-2">
+                <a href="/" class="hover:text-blue-600">Home</a>
+                <span>/</span>
+                <a href="{% url 'accounts:profile' %}" class="hover:text-blue-600">My Account</a>
+                <span>/</span>
+                <span class="text-blue-600">Account Settings</span>
+            </div>
+            <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Account Settings & Preferences</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">Manage notifications, security status, and general customer preferences.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <!-- Navigation Sidebar -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-1 h-fit">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3">Account Hub</span>
+                <a href="{% url 'accounts:profile' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                    <i data-lucide="user" class="w-4 h-4 text-slate-400"></i>
+                    <span>Profile Details</span>
+                </a>
+                <a href="/orders/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                    <i data-lucide="package" class="w-4 h-4 text-slate-400"></i>
+                    <span>My Orders</span>
+                </a>
+                <a href="/cart/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                    <i data-lucide="shopping-bag" class="w-4 h-4 text-slate-400"></i>
+                    <span>My Cart</span>
+                </a>
+                <a href="/wishlist/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                    <i data-lucide="heart" class="w-4 h-4 text-slate-400"></i>
+                    <span>Wishlist</span>
+                </a>
+                <a href="/notifications/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                    <i data-lucide="bell" class="w-4 h-4 text-slate-400"></i>
+                    <span>Notifications</span>
+                </a>
+                <a href="{% url 'accounts:change_password' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                    <i data-lucide="key" class="w-4 h-4 text-slate-400"></i>
+                    <span>Change Password</span>
+                </a>
+                <a href="{% url 'accounts:settings' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold bg-blue-50 text-blue-700">
+                    <i data-lucide="settings" class="w-4 h-4 text-blue-600"></i>
+                    <span>Account Settings</span>
+                </a>
+                <a href="{% url 'accounts:logout' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                    <span>Sign Out</span>
+                </a>
+            </div>
+
+            <!-- Settings Content -->
+            <div class="md:col-span-2 space-y-6">
+                
+                <!-- Security Overview Card -->
+                <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 bg-blue-50 text-blue-600 rounded-2xl">
+                            <i data-lucide="shield-check" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-900">Security & Sign In</h3>
+                            <p class="text-xs text-slate-500">Protection and credentials for your customer account.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-slate-800">Password</p>
+                            <p class="text-[11px] text-slate-400">Last changed recently</p>
+                        </div>
+                        <a href="{% url 'accounts:change_password' %}" class="px-3.5 py-1.5 rounded-xl border border-slate-200 hover:border-slate-300 text-xs font-semibold text-slate-700 transition-colors">
+                            Update
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Communication Preferences Card -->
+                <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 bg-purple-50 text-purple-600 rounded-2xl">
+                            <i data-lucide="bell-ring" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-900">Notifications & Alerts</h3>
+                            <p class="text-xs text-slate-500">Choose what notifications you receive from Cartivo.</p>
+                        </div>
+                    </div>
+
+                    <div class="pt-3 border-t border-slate-100 space-y-3">
+                        <label class="flex items-center justify-between cursor-pointer">
+                            <div>
+                                <p class="text-xs font-semibold text-slate-800">Order Updates</p>
+                                <p class="text-[11px] text-slate-400">Receive dispatch, tracking, and delivery notifications.</p>
+                            </div>
+                            <input type="checkbox" checked class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500">
+                        </label>
+
+                        <label class="flex items-center justify-between cursor-pointer pt-2 border-t border-slate-50">
+                            <div>
+                                <p class="text-xs font-semibold text-slate-800">Promotions & Exclusive Drops</p>
+                                <p class="text-[11px] text-slate-400">Get early access to sales and new collection arrivals.</p>
+                            </div>
+                            <input type="checkbox" checked class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Account Status Card -->
+                <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-800">Account Status</p>
+                        <p class="text-[11px] text-slate-400">Authenticated customer: {{ request.user.username }}</p>
+                    </div>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        Active
+                    </span>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,497 @@
+{% extends 'cms/cms_base.html' %}
+
+{% block page_title %}Hero & Promotional Banners | CMS Executive{% endblock %}
+
+{% block cms_content %}
+<div class="space-y-6">
+    <!-- Top Action & Statistics Header -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-3">
+                <h1 class="text-2xl font-bold tracking-tight text-white font-display">Hero & Promotional Banners</h1>
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                    {{ total_count }} Total
+                </span>
+            </div>
+            <p class="text-sm text-slate-400 mt-1">Manage scheduled marketing banners, promo campaigns, gradient themes, and call-to-actions.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button type="button" onclick="openModal('addBannerModal')" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm transition-all shadow-lg shadow-blue-600/20 active:scale-95">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                <span>Add Banner</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Django Admin-style Filter & Search Toolbar -->
+    <div class="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-4 shadow-sm backdrop-blur-md">
+        <form method="GET" action="{% url 'cms:banners' %}" class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <!-- Search Filter -->
+            <div class="relative flex-1 max-w-md">
+                <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <input type="text" name="q" value="{{ search_query }}" placeholder="Search by title, badge, or price..." class="w-full pl-10 pr-4 py-2 text-sm bg-slate-950/60 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors">
+            </div>
+
+            <!-- Multi-faceted Filter Selectors -->
+            <div class="flex flex-wrap items-center gap-3 text-xs">
+                <!-- Status Filter -->
+                <div class="flex items-center gap-1.5 bg-slate-950/60 p-1 rounded-xl border border-slate-800">
+                    <span class="px-2 text-slate-400 font-medium">Status:</span>
+                    <a href="?status=all&time={{ time_filter }}&q={{ search_query }}" class="px-2.5 py-1 rounded-lg transition-colors {% if status_filter == 'all' %}bg-blue-600 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">All</a>
+                    <a href="?status=active&time={{ time_filter }}&q={{ search_query }}" class="px-2.5 py-1 rounded-lg transition-colors {% if status_filter == 'active' %}bg-emerald-600 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">Active</a>
+                    <a href="?status=inactive&time={{ time_filter }}&q={{ search_query }}" class="px-2.5 py-1 rounded-lg transition-colors {% if status_filter == 'inactive' %}bg-rose-600 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">Inactive</a>
+                </div>
+
+                <!-- Timing Schedule Filter -->
+                <div class="flex items-center gap-1.5 bg-slate-950/60 p-1 rounded-xl border border-slate-800">
+                    <span class="px-2 text-slate-400 font-medium">Schedule:</span>
+                    <a href="?status={{ status_filter }}&time=all&q={{ search_query }}" class="px-2.5 py-1 rounded-lg transition-colors {% if time_filter == 'all' %}bg-blue-600 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">All</a>
+                    <a href="?status={{ status_filter }}&time=active_window&q={{ search_query }}" class="px-2.5 py-1 rounded-lg transition-colors {% if time_filter == 'active_window' %}bg-emerald-600 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">Currently Live</a>
+                    <a href="?status={{ status_filter }}&time=upcoming&q={{ search_query }}" class="px-2.5 py-1 rounded-lg transition-colors {% if time_filter == 'upcoming' %}bg-purple-600 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">Upcoming</a>
+                    <a href="?status={{ status_filter }}&time=expired&q={{ search_query }}" class="px-2.5 py-1 rounded-lg transition-colors {% if time_filter == 'expired' %}bg-rose-600 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">Expired</a>
+                </div>
+
+                {% if search_query or status_filter != 'all' or time_filter != 'all' %}
+                <a href="{% url 'cms:banners' %}" class="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-rose-400 transition-colors flex items-center gap-1 bg-slate-800/40 hover:bg-rose-500/10 border border-slate-700/50">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    <span>Reset</span>
+                </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <!-- Bulk Actions & Table Form -->
+    <form method="POST" action="{% url 'cms:banner_bulk' %}" id="bulkForm" class="space-y-4">
+        {% csrf_token %}
+
+        <!-- Django Admin Style Action Bar -->
+        <div class="flex items-center justify-between bg-slate-900/60 border border-slate-800/60 rounded-xl px-4 py-2.5 text-xs text-slate-300">
+            <div class="flex items-center gap-3">
+                <span class="font-semibold text-slate-400">Action:</span>
+                <select name="action" class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
+                    <option value="">--------- Choose Action ---------</option>
+                    <option value="activate">Mark selected as Active</option>
+                    <option value="deactivate">Mark selected as Inactive</option>
+                    <option value="delete">Delete selected Banners</option>
+                </select>
+                <button type="submit" onclick="return confirmAction(event)" class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-medium transition-colors border border-slate-700">
+                    Go / Apply
+                </button>
+            </div>
+            <div class="text-slate-400">
+                <span id="selectedCount">0</span> of {{ total_count }} selected
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="bg-slate-900/80 border border-slate-800/80 rounded-2xl overflow-hidden shadow-sm">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="bg-slate-950/80 border-b border-slate-800/80 text-xs uppercase font-semibold text-slate-400 tracking-wider">
+                            <th class="py-3.5 px-4 w-10">
+                                <input type="checkbox" id="selectAll" class="w-4 h-4 rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0 focus:ring-offset-0">
+                            </th>
+                            <th class="py-3.5 px-4">Banner Details</th>
+                            <th class="py-3.5 px-4">Schedule Window</th>
+                            <th class="py-3.5 px-4">Order</th>
+                            <th class="py-3.5 px-4 text-center">Status</th>
+                            <th class="py-3.5 px-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60 font-mono text-xs">
+                        {% for banner in banners %}
+                        <tr class="hover:bg-slate-800/30 transition-colors group">
+                            <!-- Checkbox -->
+                            <td class="py-3.5 px-4">
+                                <input type="checkbox" name="selected_ids" value="{{ banner.id }}" class="row-checkbox w-4 h-4 rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0 focus:ring-offset-0">
+                            </td>
+
+                            <!-- Details -->
+                            <td class="py-3.5 px-4 font-sans">
+                                <div class="flex items-center gap-3.5">
+                                    <div class="w-14 h-10 rounded-lg bg-gradient-to-br {{ banner.bg_gradient }} border border-slate-700/60 flex items-center justify-center overflow-hidden shrink-0">
+                                        {% if banner.effective_image_url %}
+                                        <img src="{{ banner.effective_image_url }}" alt="{{ banner.title }}" class="w-full h-full object-cover">
+                                        {% else %}
+                                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                        {% endif %}
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="flex items-center gap-2">
+                                            <span class="font-bold text-white text-sm truncate">{{ banner.title }}</span>
+                                            {% if banner.badge_text %}
+                                            <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">{{ banner.badge_text }}</span>
+                                            {% endif %}
+                                        </div>
+                                        <p class="text-xs text-slate-400 truncate mt-0.5">{{ banner.subtitle|default:"No subtitle set" }}</p>
+                                        <div class="flex items-center gap-3 text-[11px] text-slate-400 mt-1">
+                                            <span class="text-slate-300">{{ banner.button_text }} &rarr; <span class="text-blue-400">{{ banner.button_url }}</span></span>
+                                            {% if banner.price_tag %}<span class="text-emerald-400 font-semibold">{{ banner.price_tag }}</span>{% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Schedule Window -->
+                            <td class="py-3.5 px-4 font-sans text-xs text-slate-300">
+                                <div>
+                                    <span class="text-slate-400">From:</span> {{ banner.start_date|date:"M d, Y H:i"|default:"Immediate" }}
+                                </div>
+                                <div class="mt-0.5">
+                                    <span class="text-slate-400">Until:</span> {{ banner.end_date|date:"M d, Y H:i"|default:"Evergreen" }}
+                                </div>
+                            </td>
+
+                            <!-- Order -->
+                            <td class="py-3.5 px-4 text-slate-300">
+                                <span class="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-300 text-xs">#{{ banner.display_order }}</span>
+                            </td>
+
+                            <!-- Status Toggle Switch (Django Admin Tick/Cross equivalent) -->
+                            <td class="py-3.5 px-4 text-center">
+                                <a href="{% url 'cms:banner_toggle' banner.id %}" title="Click to toggle status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold transition-all hover:scale-105 active:scale-95 border {% if banner.is_active %}bg-emerald-500/15 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/25{% else %}bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700{% endif %}">
+                                    {% if banner.is_active %}
+                                    <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                    <span>Active</span>
+                                    {% else %}
+                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    <span>Inactive</span>
+                                    {% endif %}
+                                </a>
+                                {% if banner.status_badge != 'Active' and banner.status_badge != 'Inactive' %}
+                                <div class="mt-1">
+                                    <span class="text-[10px] text-{{ banner.status_color }}-400">({{ banner.status_badge }})</span>
+                                </div>
+                                {% endif %}
+                            </td>
+
+                            <!-- Actions -->
+                            <td class="py-3.5 px-4 text-right">
+                                <div class="flex items-center justify-end gap-2">
+                                    <button 
+                                        type="button" 
+                                        onclick="openEditBannerModal({
+                                            id: {{ banner.id }},
+                                            title: '{{ banner.title|escapejs }}',
+                                            subtitle: '{{ banner.subtitle|escapejs }}',
+                                            badge_text: '{{ banner.badge_text|escapejs }}',
+                                            price_tag: '{{ banner.price_tag|escapejs }}',
+                                            button_text: '{{ banner.button_text|escapejs }}',
+                                            button_url: '{{ banner.button_url|escapejs }}',
+                                            bg_gradient: '{{ banner.bg_gradient|escapejs }}',
+                                            border_color: '{{ banner.border_color|escapejs }}',
+                                            text_color_theme: '{{ banner.text_color_theme|escapejs }}',
+                                            start_date: '{{ banner.start_date|date:"Y-m-d\\TH:i" }}',
+                                            end_date: '{{ banner.end_date|date:"Y-m-d\\TH:i" }}',
+                                            image_url: '{{ banner.image_url|escapejs }}',
+                                            effective_image_url: '{{ banner.effective_image_url|escapejs }}',
+                                            display_order: {{ banner.display_order }},
+                                            is_active: {% if banner.is_active %}true{% else %}false{% endif %}
+                                        })" 
+                                        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 transition-colors text-xs font-semibold cursor-pointer"
+                                        title="Edit banner properties"
+                                    >
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                        <span>Edit</span>
+                                    </button>
+                                    <a href="{% url 'cms:banner_toggle' banner.id %}" class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors text-xs font-medium" title="Toggle active status">
+                                        Toggle
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="py-12 text-center text-slate-400 font-sans">
+                                <svg class="w-12 h-12 mx-auto text-slate-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                <p class="text-base font-semibold text-slate-300">No promotional banners found</p>
+                                <p class="text-xs text-slate-400 mt-1">Try changing your filters or create a new banner to display in the hero section.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Add Banner Modal (Scrollable with Sticky Header & Footer) -->
+<div id="addBannerModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm overflow-y-auto p-4 sm:p-6 flex items-center justify-center" onclick="if(event.target===this) closeModal('addBannerModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl my-auto max-h-[90vh] flex flex-col shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 shrink-0">
+            <h3 class="text-lg font-bold text-white font-display">Add Promotional Banner</h3>
+            <button type="button" onclick="closeModal('addBannerModal')" class="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-slate-800">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <form method="POST" action="{% url 'cms:banner_add' %}" enctype="multipart/form-data" class="flex flex-col flex-1 overflow-hidden min-h-0">
+            {% csrf_token %}
+            <div class="p-6 space-y-4 overflow-y-auto flex-1">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Banner Title *</label>
+                        <input type="text" name="title" required placeholder="e.g. Next-Gen Tech Drops" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Subtitle</label>
+                        <input type="text" name="subtitle" placeholder="e.g. Save up to 40% on cutting-edge audio & peripherals." class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Badge Text</label>
+                        <input type="text" name="badge_text" placeholder="e.g. EXCLUSIVE DROP" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Price / Offer Tag</label>
+                        <input type="text" name="price_tag" placeholder="e.g. Starting at ₹999" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Button Label</label>
+                        <input type="text" name="button_text" value="Shop Now" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Destination URL</label>
+                        <input type="text" name="button_url" value="/products/" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Schedule Start (Optional)</label>
+                        <input type="datetime-local" name="start_date" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Schedule End (Optional)</label>
+                        <input type="datetime-local" name="end_date" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Background Gradient Preset</label>
+                        <select name="bg_gradient" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                            <option value="from-neutral-950 via-slate-900 to-neutral-950">Slate Night (Dark Slate)</option>
+                            <option value="from-blue-950 via-indigo-950 to-slate-950">Electric Indigo (Indigo / Slate)</option>
+                            <option value="from-emerald-950 via-slate-900 to-black">Emerald Aura (Dark Green)</option>
+                            <option value="from-purple-950 via-slate-900 to-black">Midnight Violet (Purple)</option>
+                            <option value="from-amber-950 via-orange-950 to-neutral-950">Solar Flare (Warm Amber)</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2 p-3 bg-slate-950/60 border border-slate-800 rounded-xl space-y-2.5">
+                        <label class="block text-xs font-semibold uppercase text-slate-300">Banner Visual (Upload or Web URL)</label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] text-slate-400 mb-1">📁 Upload File (Saved to media)</label>
+                                <input type="file" name="image" accept="image/*" class="w-full text-xs text-slate-400 file:mr-2.5 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600/20 file:text-blue-400 hover:file:bg-blue-600/30 border border-slate-800 rounded-lg p-1 bg-slate-900">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] text-slate-400 mb-1">🔗 Or Paste Image URL (Google / Web)</label>
+                                <input type="url" name="image_url" placeholder="https://images.unsplash.com/..." class="w-full px-3 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-blue-500">
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-slate-400 font-sans">Upload an image file from your PC or paste any external image link (Google, Unsplash, CDN). Uploaded files are saved to media storage.</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Display Priority (Order)</label>
+                        <input type="number" name="display_order" value="0" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="flex items-center gap-3 pt-6">
+                        <label class="relative flex items-center cursor-pointer">
+                            <input type="checkbox" name="is_active" checked class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            <span class="ml-3 text-sm font-medium text-white">Active Status</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-800 bg-slate-900 shrink-0">
+                <button type="button" onclick="closeModal('addBannerModal')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors">Cancel</button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-all shadow-lg shadow-blue-600/25">Save Banner</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Banner Modal (Scrollable with Sticky Header & Footer) -->
+<div id="editBannerModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm overflow-y-auto p-4 sm:p-6 flex items-center justify-center" onclick="if(event.target===this) closeModal('editBannerModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl my-auto max-h-[90vh] flex flex-col shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 shrink-0">
+            <div class="flex items-center gap-2">
+                <h3 class="text-lg font-bold text-white font-display">Edit Promotional Banner</h3>
+                <span id="editBannerIdBadge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/15 text-blue-400 border border-blue-500/20"></span>
+            </div>
+            <button type="button" onclick="closeModal('editBannerModal')" class="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-slate-800">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <form method="POST" id="editBannerForm" action="" enctype="multipart/form-data" class="flex flex-col flex-1 overflow-hidden min-h-0">
+            {% csrf_token %}
+            <div class="p-6 space-y-4 overflow-y-auto flex-1">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Banner Title *</label>
+                        <input type="text" name="title" id="edit_banner_title" required class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Subtitle</label>
+                        <input type="text" name="subtitle" id="edit_banner_subtitle" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Badge Text</label>
+                        <input type="text" name="badge_text" id="edit_banner_badge_text" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Price / Offer Tag</label>
+                        <input type="text" name="price_tag" id="edit_banner_price_tag" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Button Label</label>
+                        <input type="text" name="button_text" id="edit_banner_button_text" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Destination URL</label>
+                        <input type="text" name="button_url" id="edit_banner_button_url" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Schedule Start (Optional)</label>
+                        <input type="datetime-local" name="start_date" id="edit_banner_start_date" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Schedule End (Optional)</label>
+                        <input type="datetime-local" name="end_date" id="edit_banner_end_date" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Background Gradient Preset</label>
+                        <select name="bg_gradient" id="edit_banner_bg_gradient" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                            <option value="from-neutral-950 via-slate-900 to-neutral-950">Slate Night (Dark Slate)</option>
+                            <option value="from-blue-950 via-indigo-950 to-slate-950">Electric Indigo (Indigo / Slate)</option>
+                            <option value="from-emerald-950 via-slate-900 to-black">Emerald Aura (Dark Green)</option>
+                            <option value="from-purple-950 via-slate-900 to-black">Midnight Violet (Purple)</option>
+                            <option value="from-amber-950 via-orange-950 to-neutral-950">Solar Flare (Warm Amber)</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2 p-3 bg-slate-950/60 border border-slate-800 rounded-xl space-y-2.5">
+                        <label class="block text-xs font-semibold uppercase text-slate-300">Banner Visual (Upload or Web URL)</label>
+                        <div id="editBannerImagePreviewWrapper" class="hidden items-center gap-3 p-2 bg-slate-900 border border-slate-800 rounded-lg">
+                            <img id="editBannerImagePreview" src="" alt="Banner Preview" class="w-16 h-10 object-cover rounded border border-slate-700">
+                            <div class="flex-1 min-w-0">
+                                <span class="text-xs text-slate-300 block font-medium">Current Image Active</span>
+                                <label class="inline-flex items-center gap-1.5 text-xs text-rose-400 hover:text-rose-300 cursor-pointer mt-0.5">
+                                    <input type="checkbox" name="clear_image" value="true" class="rounded bg-slate-800 border-slate-700 text-rose-600 focus:ring-0">
+                                    <span>Remove current image</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] text-slate-400 mb-1">📁 Upload Replacement File (Saved to media)</label>
+                                <input type="file" name="image" accept="image/*" class="w-full text-xs text-slate-400 file:mr-2.5 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600/20 file:text-blue-400 hover:file:bg-blue-600/30 border border-slate-800 rounded-lg p-1 bg-slate-900">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] text-slate-400 mb-1">🔗 Or Image URL (Google / Web)</label>
+                                <input type="url" name="image_url" id="edit_banner_image_url" placeholder="https://images.unsplash.com/..." class="w-full px-3 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-blue-500">
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-slate-400 font-sans">Upload a new image file from your PC or update the web URL. Uploaded files take precedence and are stored locally in media.</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Display Priority (Order)</label>
+                        <input type="number" name="display_order" id="edit_banner_display_order" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="flex items-center gap-3 pt-6">
+                        <label class="relative flex items-center cursor-pointer">
+                            <input type="checkbox" name="is_active" id="edit_banner_is_active" class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            <span class="ml-3 text-sm font-medium text-white">Active Status</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-800 bg-slate-900 shrink-0">
+                <button type="button" onclick="closeModal('editBannerModal')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors">Cancel</button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-all shadow-lg shadow-blue-600/25">Update Banner</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openEditBannerModal(data) {
+        document.getElementById('editBannerIdBadge').textContent = '#' + data.id;
+        document.getElementById('editBannerForm').action = '/cms/banners/edit/' + data.id + '/';
+        document.getElementById('edit_banner_title').value = data.title || '';
+        document.getElementById('edit_banner_subtitle').value = data.subtitle || '';
+        document.getElementById('edit_banner_badge_text').value = data.badge_text || '';
+        document.getElementById('edit_banner_price_tag').value = data.price_tag || '';
+        document.getElementById('edit_banner_button_text').value = data.button_text || 'Shop Now';
+        document.getElementById('edit_banner_button_url').value = data.button_url || '/products/';
+        document.getElementById('edit_banner_start_date').value = data.start_date || '';
+        document.getElementById('edit_banner_end_date').value = data.end_date || '';
+        if (data.bg_gradient) document.getElementById('edit_banner_bg_gradient').value = data.bg_gradient;
+        document.getElementById('edit_banner_image_url').value = data.image_url || '';
+        document.getElementById('edit_banner_display_order').value = data.display_order ?? 0;
+        document.getElementById('edit_banner_is_active').checked = !!data.is_active;
+
+        const previewWrapper = document.getElementById('editBannerImagePreviewWrapper');
+        const previewImg = document.getElementById('editBannerImagePreview');
+        const clearCheckbox = document.querySelector('#editBannerModal input[name="clear_image"]');
+        if (clearCheckbox) clearCheckbox.checked = false;
+        if (data.effective_image_url) {
+            previewImg.src = data.effective_image_url;
+            previewWrapper.classList.remove('hidden');
+            previewWrapper.classList.add('flex');
+        } else {
+            previewWrapper.classList.remove('flex');
+            previewWrapper.classList.add('hidden');
+        }
+
+        openModal('editBannerModal');
+    }
+    function openModal(id) {
+        document.getElementById(id).classList.remove('hidden');
+    }
+    function closeModal(id) {
+        document.getElementById(id).classList.add('hidden');
+    }
+
+    // Checkbox master logic
+    const selectAll = document.getElementById('selectAll');
+    const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+    const selectedCount = document.getElementById('selectedCount');
+
+    function updateCount() {
+        const checked = document.querySelectorAll('.row-checkbox:checked').length;
+        selectedCount.textContent = checked;
+    }
+
+    if (selectAll) {
+        selectAll.addEventListener('change', () => {
+            rowCheckboxes.forEach(cb => cb.checked = selectAll.checked);
+            updateCount();
+        });
+    }
+
+    rowCheckboxes.forEach(cb => {
+        cb.addEventListener('change', updateCount);
+    });
+
+    function confirmAction(e) {
+        const action = document.querySelector('select[name="action"]').value;
+        if (!action) {
+            alert('Please select an action from the dropdown.');
+            e.preventDefault();
+            return false;
+        }
+        const checked = document.querySelectorAll('.row-checkbox:checked').length;
+        if (checked === 0) {
+            alert('Please select at least one banner.');
+            e.preventDefault();
+            return false;
+        }
+        if (action === 'delete') {
+            return confirm(`Are you sure you want to delete ${checked} banner(s)? This cannot be undone.`);
+        }
+        return true;
+    }
+</script>
+{% endblock %}

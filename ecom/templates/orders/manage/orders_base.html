@@ -1,0 +1,169 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-[#0b0f19] text-slate-100 antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Order Management & Operations{% endblock %} | Cartivo Operations</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            letter-spacing: -0.015em;
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0b0f19; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+    </style>
+</head>
+<body class="h-full flex overflow-hidden bg-[#0b0f19]">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-64 bg-[#0e1424] border-r border-slate-800/80 flex flex-col justify-between shrink-0 z-30 transition-all duration-200">
+        <div>
+            <!-- Brand / Department Title -->
+            <div class="h-16 px-5 flex items-center justify-between border-b border-slate-800/80">
+                <a href="{% url 'orders:manage_dashboard' %}" class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-sm shadow-md shadow-blue-500/20">
+                        <i data-lucide="package" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <span class="font-extrabold text-sm tracking-tight text-white block">CARTIVO</span>
+                        <span class="text-[10px] font-bold text-blue-400 uppercase tracking-wider block -mt-0.5">Order Operations</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="p-3 space-y-1">
+                <a 
+                    href="{% url 'orders:manage_dashboard' %}" 
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors {% if active_tab == 'dashboard' %}bg-blue-600 text-white shadow-md shadow-blue-600/20{% else %}text-slate-400 hover:text-white hover:bg-slate-800/50{% endif %}"
+                >
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <a 
+                    href="{% url 'orders:manage_list' %}" 
+                    class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors {% if active_tab == 'all_orders' %}bg-blue-600 text-white shadow-md shadow-blue-600/20{% else %}text-slate-400 hover:text-white hover:bg-slate-800/50{% endif %}"
+                >
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="list-ordered" class="w-4 h-4"></i>
+                        <span>All Orders</span>
+                    </div>
+                    {% if sidebar_total_orders %}
+                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-slate-800 text-slate-300">{{ sidebar_total_orders }}</span>
+                    {% endif %}
+                </a>
+
+                <a 
+                    href="{% url 'orders:manage_list' %}?payment_status=PENDING" 
+                    class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors {% if active_tab == 'cod_pending' %}bg-blue-600 text-white{% else %}text-slate-400 hover:text-white hover:bg-slate-800/50{% endif %}"
+                >
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="clock" class="w-4 h-4 text-amber-400"></i>
+                        <span>Pending COD</span>
+                    </div>
+                    {% if sidebar_pending_cod_count %}
+                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300">{{ sidebar_pending_cod_count }}</span>
+                    {% endif %}
+                </a>
+
+                <a 
+                    href="{% url 'orders:manage_list' %}?status=CONFIRMED" 
+                    class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors {% if active_tab == 'confirmed' %}bg-blue-600 text-white{% else %}text-slate-400 hover:text-white hover:bg-slate-800/50{% endif %}"
+                >
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+                        <span>Confirmed Orders</span>
+                    </div>
+                    {% if sidebar_confirmed_count %}
+                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300">{{ sidebar_confirmed_count }}</span>
+                    {% endif %}
+                </a>
+
+                <div class="pt-4 mt-4 border-t border-slate-800/80">
+                    <span class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Cross Hub</span>
+                    
+                    <a href="{% url 'inventory:dashboard' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors">
+                        <i data-lucide="boxes" class="w-4 h-4 text-emerald-400"></i>
+                        <span>Inventory Hub</span>
+                    </a>
+
+                    <a href="{% url 'management:dashboard' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors">
+                        <i data-lucide="shield" class="w-4 h-4 text-purple-400"></i>
+                        <span>Superadmin Portal</span>
+                    </a>
+
+                    <a href="/" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors">
+                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                        <span>Customer Storefront</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Operator User Bar -->
+        <div class="p-3 border-t border-slate-800/80">
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/60 text-xs">
+                <div class="min-w-0 pr-2">
+                    <span class="font-bold text-white block truncate">{{ department_operator_name|default:request.user.username }}</span>
+                    <span class="text-[10px] text-slate-400 block truncate">{{ department_login_id|default:"ORD-STAFF" }}</span>
+                </div>
+                <a href="{% url 'management:dept_logout' %}" title="Log out" class="p-1.5 text-slate-400 hover:text-rose-400 rounded-lg hover:bg-slate-800 transition-colors">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col h-full overflow-hidden min-w-0">
+        
+        <!-- Top App Bar -->
+        <header class="h-16 px-6 bg-[#0e1424] border-b border-slate-800/80 flex items-center justify-between shrink-0">
+            <div class="flex items-center gap-3">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-xs shadow-emerald-500/50"></span>
+                <span class="text-xs font-bold text-slate-300">Live Order Fulfillment & Cash on Delivery (COD) Engine</span>
+            </div>
+
+            <div class="flex items-center gap-3 text-xs">
+                <span class="text-slate-400">Active COD Orders: <strong class="text-white">{{ sidebar_total_orders|default:0 }}</strong></span>
+            </div>
+        </header>
+
+        <!-- Flash messages -->
+        {% if messages %}
+        <div class="px-6 pt-4 shrink-0 space-y-2">
+            {% for message in messages %}
+            <div class="px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between {% if message.tags == 'error' %}bg-rose-500/20 text-rose-300 border border-rose-500/30{% elif message.tags == 'success' %}bg-emerald-500/20 text-emerald-300 border border-emerald-500/30{% else %}bg-blue-500/20 text-blue-300 border border-blue-500/30{% endif %}">
+                <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Body content scrollable -->
+        <main class="flex-1 overflow-y-auto p-6">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

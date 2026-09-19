@@ -17,11 +17,18 @@
     </a>
     <a href="/cart/" class="relative flex flex-col items-center gap-1 text-slate-600 hover:text-slate-950 text-[10px] font-medium">
         <i data-lucide="shopping-bag" class="w-5 h-5"></i>
-        <span class="absolute -top-1 right-0 w-3.5 h-3.5 rounded-full bg-blue-600 text-white text-[9px] font-bold flex items-center justify-center">2</span>
+        <span class="cart-badge-count absolute -top-1 right-0 w-3.5 h-3.5 rounded-full bg-blue-600 text-white text-[9px] font-bold flex items-center justify-center">2</span>
         <span>Bag</span>
     </a>
-    <a href="/accounts/login/" class="flex flex-col items-center gap-1 text-slate-600 hover:text-slate-950 text-[10px] font-medium">
-        <i data-lucide="user" class="w-5 h-5"></i>
-        <span>Account</span>
+    {% if request.user.is_authenticated %}
+    <a href="{% url 'accounts:profile' %}" class="flex flex-col items-center gap-1 text-slate-600 hover:text-slate-950 text-[10px] font-medium" title="My Profile">
+        <i data-lucide="user" class="w-5 h-5 text-blue-600"></i>
+        <span class="text-blue-600 font-semibold truncate max-w-[50px]">{{ request.user.first_name|default:'Account' }}</span>
     </a>
+    {% else %}
+    <a href="{% url 'accounts:login' %}" class="flex flex-col items-center gap-1 text-slate-600 hover:text-slate-950 text-[10px] font-medium" title="Sign In">
+        <i data-lucide="user" class="w-5 h-5"></i>
+        <span>Login</span>
+    </a>
+    {% endif %}
 </nav>

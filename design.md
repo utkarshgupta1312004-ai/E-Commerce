@@ -199,3 +199,41 @@ The visual design is engineered around a **Modern Luxury-Minimalist & High-Conve
 | **Tablet (iPads)** | `640px - 1023px` | 2x2 category grid, 3-column product grid, top navigation with hamburger menu, inline search input |
 | **Desktop / Wide** | `≥ 1024px` | 4-column product grid, full horizontal desktop menu, expanded search bar, ambient glow hero layout |
 
+---
+
+## 8. Executive Dark Theme Design Tokens (Superadmin Suite)
+
+The administrative console uses an executive dark theme optimized for continuous operational monitoring, high readability, and reduced eye strain:
+
+### 8.1. Color Tokens
+
+| Token Name | Hex Code | Purpose & Usage |
+| :--- | :--- | :--- |
+| `--bg-canvas` | `#0B0F19` | Deep obsidian background for maximum contrast |
+| `--bg-sidebar` | `#0F172A` | Slate-900 sidebar tone matching header |
+| `--bg-header` | `#0F172A` | Sticky top navigation bar |
+| `--bg-card` | `#131C2E` | Card surface with subtle border |
+| `--bg-card-hover` | `#172338` | Hover state for interactive cards |
+| `--border-subtle` | `#1E293B` | Slate-800 borders, dividers, table lines |
+| `--accent-indigo` | `#6366F1` | Primary action accents, active pagination pills, key metrics |
+| `--accent-cyan` | `#06B6D4` | Storefront view links, secondary charts, code badges |
+| `--accent-emerald` | `#10B981` | Positive trends, nominal operational SLAs, settled orders |
+| `--accent-amber` | `#F59E0B` | Superadmin privilege badges, warnings, security stream alerts |
+
+### 8.2. Table Typography & Formatting Guidelines
+- **Disciplined Column Widths:** Always enforce explicit widths (`w-12`, `min-w-[240px]`, `w-36`, `w-44`, etc.) to prevent layout wobble or unexpected text wrapping across viewports.
+- **Micro-Badges for Metadata:** Pair primary bold titles with small chip badges (e.g. `dept.badge`) to communicate domain roles compactly.
+- **Code Namespace Pills:** Monospaced identifiers (`apps/catalog`, `#ORD-98214`) formatted with high-contrast background and borders.
+- **Semantic Category Badges:** Color-code category tags (Core Commerce: Blue, Operations: Purple, Payments: Emerald, Marketing: Cyan).
+
+---
+
+## 9. Printing & Document Export Standards
+
+All administrative data tables adhere to unified `@media print` rules:
+- **Clean Background:** Background forced to `#FFFFFF` with `#0F172A` text color for high contrast and ink savings.
+- **Chrome Suppression:** Sidebar, header, navigation controls, search inputs, pagination buttons, and action buttons hidden via `.no-print` and `.pagination-controls`.
+- **Complete List Printing:** Table pagination is temporarily bypassed during print so the generated document contains the complete ledger.
+- **Multi-Page Support:** Repeating headers (`thead { display: table-header-group; }`) and row break prevention (`tr { page-break-inside: avoid; }`).
+- **Document Headers:** Formal print document titles with live generation timestamps rendered at the top of each printed sheet.
+

@@ -1,0 +1,420 @@
+{% extends 'cms/cms_base.html' %}
+
+{% block page_title %}Global Navigation Bar Hierarchy | CMS Executive{% endblock %}
+
+{% block cms_content %}
+<div class="space-y-6">
+    <!-- Top Action & Statistics Header -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-3">
+                <h1 class="text-2xl font-bold tracking-tight text-white font-display">Global Navigation Bar Hierarchy</h1>
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                    {{ total_count }} Items
+                </span>
+            </div>
+            <p class="text-sm text-slate-400 mt-1">Configure root headers, dropdown flyouts, promo badges, and target destinations across the storefront.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button type="button" onclick="openModal('addNavbarModal')" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm transition-all shadow-lg shadow-blue-600/20 active:scale-95">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                <span>Add Menu Item</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Django Admin-style Filter & Search Toolbar -->
+    <div class="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-4 shadow-sm backdrop-blur-md">
+        <form method="GET" action="{% url 'cms:navbar' %}" class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <!-- Search Filter -->
+            <div class="relative flex-1 max-w-md">
+                <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <input type="text" name="q" value="{{ search_query }}" placeholder="Search by title, URL, or badge..." class="w-full pl-10 pr-4 py-2 text-sm bg-slate-950/60 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors">
+            </div>
+
+            <!-- Multi-faceted Filter Selectors -->
+            <div class="flex flex-wrap items-center gap-3 text-xs">
+                <!-- Status Filter -->
+                <div class="flex items-center gap-1.5 bg-slate-950/60 p-1 rounded-xl border border-slate-800">
+                    <span class="px-2 text-slate-400 font-medium">Status:</span>
+                    <a href="?status=all&type={{ parent_filter }}&q={{ search_query }}" class="px-2.5 py-1 rounded-lg transition-colors {% if status_filter == 'all' %}bg-blue-600 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">All</a>
+                    <a href="?status=active&type={{ parent_filter }}&q={{ search_query }}" class="px-2.5 py-1 rounded-lg transition-colors {% if status_filter == 'active' %}bg-emerald-600 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">Active</a>
+                    <a href="?status=inactive&type={{ parent_filter }}&q={{ search_query }}" class="px-2.5 py-1 rounded-lg transition-colors {% if status_filter == 'inactive' %}bg-rose-600 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">Inactive</a>
+                </div>
+
+                <!-- Hierarchy Level Filter -->
+                <div class="flex items-center gap-1.5 bg-slate-950/60 p-1 rounded-xl border border-slate-800">
+                    <span class="px-2 text-slate-400 font-medium">Hierarchy:</span>
+                    <a href="?status={{ status_filter }}&type=all&q={{ search_query }}" class="px-2.5 py-1 rounded-lg transition-colors {% if parent_filter == 'all' %}bg-blue-600 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">All</a>
+                    <a href="?status={{ status_filter }}&type=root&q={{ search_query }}" class="px-2.5 py-1 rounded-lg transition-colors {% if parent_filter == 'root' %}bg-purple-600 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">Root Menus</a>
+                    <a href="?status={{ status_filter }}&type=dropdown&q={{ search_query }}" class="px-2.5 py-1 rounded-lg transition-colors {% if parent_filter == 'dropdown' %}bg-amber-600 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">Child Dropdowns</a>
+                </div>
+
+                {% if search_query or status_filter != 'all' or parent_filter != 'all' %}
+                <a href="{% url 'cms:navbar' %}" class="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-rose-400 transition-colors flex items-center gap-1 bg-slate-800/40 hover:bg-rose-500/10 border border-slate-700/50">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    <span>Reset</span>
+                </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <!-- Bulk Actions & Table Form -->
+    <form method="POST" action="{% url 'cms:navbar_bulk' %}" id="bulkNavbarForm" class="space-y-4">
+        {% csrf_token %}
+
+        <!-- Action Bar -->
+        <div class="flex items-center justify-between bg-slate-900/60 border border-slate-800/60 rounded-xl px-4 py-2.5 text-xs text-slate-300">
+            <div class="flex items-center gap-3">
+                <span class="font-semibold text-slate-400">Action:</span>
+                <select name="action" class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
+                    <option value="">--------- Choose Action ---------</option>
+                    <option value="activate">Mark selected as Active</option>
+                    <option value="deactivate">Mark selected as Inactive</option>
+                    <option value="delete">Delete selected Items</option>
+                </select>
+                <button type="submit" onclick="return confirmAction(event)" class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-medium transition-colors border border-slate-700">
+                    Go / Apply
+                </button>
+            </div>
+            <div class="text-slate-400">
+                <span id="selectedCount">0</span> of {{ total_count }} selected
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="bg-slate-900/80 border border-slate-800/80 rounded-2xl overflow-hidden shadow-sm">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="bg-slate-950/80 border-b border-slate-800/80 text-xs uppercase font-semibold text-slate-400 tracking-wider">
+                            <th class="py-3.5 px-4 w-10">
+                                <input type="checkbox" id="selectAll" class="w-4 h-4 rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0 focus:ring-offset-0">
+                            </th>
+                            <th class="py-3.5 px-4">Menu Item & Hierarchy</th>
+                            <th class="py-3.5 px-4">Target URL</th>
+                            <th class="py-3.5 px-4">Badges & Options</th>
+                            <th class="py-3.5 px-4">Order</th>
+                            <th class="py-3.5 px-4 text-center">Status</th>
+                            <th class="py-3.5 px-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60 font-mono text-xs">
+                        {% for item in navbar_items %}
+                        <tr class="hover:bg-slate-800/30 transition-colors group">
+                            <!-- Checkbox -->
+                            <td class="py-3.5 px-4">
+                                <input type="checkbox" name="selected_ids" value="{{ item.id }}" class="row-checkbox w-4 h-4 rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0 focus:ring-offset-0">
+                            </td>
+
+                            <!-- Title & Hierarchy -->
+                            <td class="py-3.5 px-4 font-sans">
+                                <div class="flex items-center gap-2">
+                                    {% if item.parent %}
+                                    <span class="text-slate-500 pl-3">&lfloor;&mdash;</span>
+                                    <span class="font-medium text-slate-200 text-sm">{{ item.title }}</span>
+                                    <span class="text-[10px] text-slate-400 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">Child of {{ item.parent.title }}</span>
+                                    {% else %}
+                                    <span class="font-bold text-white text-sm">{{ item.title }}</span>
+                                    <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">Root Menu</span>
+                                    {% if item.children.all %}
+                                    <span class="text-xs text-slate-400">({{ item.children.count }} children)</span>
+                                    {% endif %}
+                                    {% endif %}
+                                </div>
+                            </td>
+
+                            <!-- Target URL -->
+                            <td class="py-3.5 px-4 font-mono text-xs text-blue-400">
+                                {{ item.url }}
+                            </td>
+
+                            <!-- Badges & Options -->
+                            <td class="py-3.5 px-4 font-sans text-xs">
+                                <div class="flex items-center gap-2">
+                                    {% if item.badge_text %}
+                                    <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-{{ item.badge_color }}-500/10 text-{{ item.badge_color }}-400 border border-{{ item.badge_color }}-500/20">
+                                        {{ item.badge_text }}
+                                    </span>
+                                    {% endif %}
+                                    {% if item.open_in_new_tab %}
+                                    <span class="text-[11px] text-slate-400 flex items-center gap-1" title="Opens in new tab">
+                                        <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                        New Tab
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </td>
+
+                            <!-- Order -->
+                            <td class="py-3.5 px-4 text-slate-300">
+                                <span class="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-300 text-xs">
+                                    #{{ item.display_order }}
+                                </span>
+                            </td>
+
+                            <!-- Status Toggle Switch -->
+                            <td class="py-3.5 px-4 text-center">
+                                <a href="{% url 'cms:navbar_toggle' item.id %}" title="Click to toggle status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold transition-all hover:scale-105 active:scale-95 border {% if item.is_active %}bg-emerald-500/15 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/25{% else %}bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700{% endif %}">
+                                    {% if item.is_active %}
+                                    <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                    <span>Active</span>
+                                    {% else %}
+                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    <span>Inactive</span>
+                                    {% endif %}
+                                </a>
+                            </td>
+
+                            <!-- Actions -->
+                            <td class="py-3.5 px-4 text-right">
+                                <div class="flex items-center justify-end gap-2">
+                                    <button 
+                                        type="button" 
+                                        onclick="openEditNavbarModal({
+                                            id: {{ item.id }},
+                                            title: '{{ item.title|escapejs }}',
+                                            url: '{{ item.url|escapejs }}',
+                                            parent: '{% if item.parent %}{{ item.parent.id }}{% endif %}',
+                                            badge_text: '{{ item.badge_text|escapejs }}',
+                                            badge_color: '{{ item.badge_color|escapejs }}',
+                                            display_order: {{ item.display_order }},
+                                            open_in_new_tab: {% if item.open_in_new_tab %}true{% else %}false{% endif %},
+                                            is_active: {% if item.is_active %}true{% else %}false{% endif %}
+                                        })" 
+                                        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 transition-colors text-xs font-semibold cursor-pointer"
+                                        title="Edit navbar item properties"
+                                    >
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                        <span>Edit</span>
+                                    </button>
+                                    <a href="{% url 'cms:navbar_toggle' item.id %}" class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors text-xs font-medium" title="Toggle active status">
+                                        Toggle
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="py-12 text-center text-slate-400 font-sans">
+                                <p class="text-base font-semibold text-slate-300">No navigation items found</p>
+                                <p class="text-xs text-slate-400 mt-1">Add items to configure the storefront global navigation header.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Add Navbar Item Modal (Scrollable with Sticky Header & Footer) -->
+<div id="addNavbarModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm overflow-y-auto p-4 sm:p-6 flex items-center justify-center" onclick="if(event.target===this) closeModal('addNavbarModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-xl my-auto max-h-[90vh] flex flex-col shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 shrink-0">
+            <h3 class="text-lg font-bold text-white font-display">Add Navbar Menu Item</h3>
+            <button type="button" onclick="closeModal('addNavbarModal')" class="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-slate-800">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <form method="POST" action="{% url 'cms:navbar_add' %}" class="flex flex-col flex-1 overflow-hidden min-h-0">
+            {% csrf_token %}
+            <div class="p-6 space-y-4 overflow-y-auto flex-1">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Menu Title *</label>
+                    <input type="text" name="title" required placeholder="e.g. Products, Deals, Support" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Target Destination URL *</label>
+                    <input type="text" name="url" required value="#" placeholder="e.g. /products/, /about/, https://..." class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Parent Item (For Dropdowns)</label>
+                    <select name="parent" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                        <option value="">-- None (Top-Level / Root Menu) --</option>
+                        {% for root in root_items %}
+                        <option value="{{ root.id }}">{{ root.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Badge Text (Optional)</label>
+                        <input type="text" name="badge_text" placeholder="e.g. NEW, HOT" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Badge Color</label>
+                        <select name="badge_color" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                            <option value="amber">Amber</option>
+                            <option value="blue">Blue</option>
+                            <option value="rose">Rose</option>
+                            <option value="emerald">Emerald</option>
+                            <option value="purple">Purple</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Display Order</label>
+                    <input type="number" name="display_order" value="0" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="flex items-center gap-6 pt-2">
+                    <label class="relative flex items-center cursor-pointer">
+                        <input type="checkbox" name="open_in_new_tab" class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                        <span class="ml-3 text-sm font-medium text-white">Open in New Tab</span>
+                    </label>
+                    <label class="relative flex items-center cursor-pointer">
+                        <input type="checkbox" name="is_active" checked class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        <span class="ml-3 text-sm font-medium text-white">Active</span>
+                    </label>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-800 bg-slate-900 shrink-0">
+                <button type="button" onclick="closeModal('addNavbarModal')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors">Cancel</button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-all shadow-lg shadow-blue-600/25">Save Menu Item</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Navbar Item Modal (Scrollable with Sticky Header & Footer) -->
+<div id="editNavbarModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm overflow-y-auto p-4 sm:p-6 flex items-center justify-center" onclick="if(event.target===this) closeModal('editNavbarModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-xl my-auto max-h-[90vh] flex flex-col shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 shrink-0">
+            <div class="flex items-center gap-2">
+                <h3 class="text-lg font-bold text-white font-display">Edit Navbar Menu Item</h3>
+                <span id="editNavbarIdBadge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/15 text-blue-400 border border-blue-500/20"></span>
+            </div>
+            <button type="button" onclick="closeModal('editNavbarModal')" class="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-slate-800">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <form method="POST" id="editNavbarForm" action="" class="flex flex-col flex-1 overflow-hidden min-h-0">
+            {% csrf_token %}
+            <div class="p-6 space-y-4 overflow-y-auto flex-1">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Menu Title *</label>
+                    <input type="text" name="title" id="edit_navbar_title" required class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Target Destination URL *</label>
+                    <input type="text" name="url" id="edit_navbar_url" required class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Parent Item (For Dropdowns)</label>
+                    <select name="parent" id="edit_navbar_parent" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                        <option value="">-- None (Top-Level / Root Menu) --</option>
+                        {% for root in root_items %}
+                        <option value="{{ root.id }}">{{ root.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Badge Text (Optional)</label>
+                        <input type="text" name="badge_text" id="edit_navbar_badge_text" placeholder="e.g. NEW, HOT" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Badge Color</label>
+                        <select name="badge_color" id="edit_navbar_badge_color" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                            <option value="amber">Amber</option>
+                            <option value="blue">Blue</option>
+                            <option value="rose">Rose</option>
+                            <option value="emerald">Emerald</option>
+                            <option value="purple">Purple</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Display Order</label>
+                    <input type="number" name="display_order" id="edit_navbar_display_order" value="0" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="flex items-center gap-6 pt-2">
+                    <label class="relative flex items-center cursor-pointer">
+                        <input type="checkbox" name="open_in_new_tab" id="edit_navbar_open_in_new_tab" class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                        <span class="ml-3 text-sm font-medium text-white">Open in New Tab</span>
+                    </label>
+                    <label class="relative flex items-center cursor-pointer">
+                        <input type="checkbox" name="is_active" id="edit_navbar_is_active" class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        <span class="ml-3 text-sm font-medium text-white">Active</span>
+                    </label>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-800 bg-slate-900 shrink-0">
+                <button type="button" onclick="closeModal('editNavbarModal')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors">Cancel</button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-all shadow-lg shadow-blue-600/25">Update Menu Item</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openEditNavbarModal(data) {
+        document.getElementById('editNavbarIdBadge').textContent = '#' + data.id;
+        document.getElementById('editNavbarForm').action = '/cms/navbar/edit/' + data.id + '/';
+        document.getElementById('edit_navbar_title').value = data.title || '';
+        document.getElementById('edit_navbar_url').value = data.url || '#';
+        document.getElementById('edit_navbar_parent').value = data.parent || '';
+        document.getElementById('edit_navbar_badge_text').value = data.badge_text || '';
+        document.getElementById('edit_navbar_badge_color').value = data.badge_color || 'amber';
+        document.getElementById('edit_navbar_display_order').value = data.display_order ?? 0;
+        document.getElementById('edit_navbar_open_in_new_tab').checked = !!data.open_in_new_tab;
+        document.getElementById('edit_navbar_is_active').checked = !!data.is_active;
+        openModal('editNavbarModal');
+    }
+    function openModal(id) {
+        document.getElementById(id).classList.remove('hidden');
+    }
+    function closeModal(id) {
+        document.getElementById(id).classList.add('hidden');
+    }
+
+    const selectAll = document.getElementById('selectAll');
+    const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+    const selectedCount = document.getElementById('selectedCount');
+
+    function updateCount() {
+        const checked = document.querySelectorAll('.row-checkbox:checked').length;
+        selectedCount.textContent = checked;
+    }
+
+    if (selectAll) {
+        selectAll.addEventListener('change', () => {
+            rowCheckboxes.forEach(cb => cb.checked = selectAll.checked);
+            updateCount();
+        });
+    }
+
+    rowCheckboxes.forEach(cb => {
+        cb.addEventListener('change', updateCount);
+    });
+
+    function confirmAction(e) {
+        const action = document.querySelector('select[name="action"]').value;
+        if (!action) {
+            alert('Please select an action from the dropdown.');
+            e.preventDefault();
+            return false;
+        }
+        const checked = document.querySelectorAll('.row-checkbox:checked').length;
+        if (checked === 0) {
+            alert('Please select at least one menu item.');
+            e.preventDefault();
+            return false;
+        }
+        if (action === 'delete') {
+            return confirm(`Are you sure you want to delete ${checked} menu item(s)?`);
+        }
+        return true;
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,675 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {% if current_category %}{{ current_category.name }} &bull; Cartivo Catalog{% elif current_brand %}{{ current_brand.name }} &bull; Cartivo Catalog{% else %}Explore Products &bull; Cartivo Storefront{% endif %}
+{% endblock %}
+
+{% block content %}
+<!-- Sub-Menu Category Navigation Bar -->
+{% include 'components/category_nav.html' %}
+
+<div class="bg-slate-50/70 min-h-screen py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Breadcrumbs -->
+        <nav class="flex items-center gap-2 text-xs font-medium text-slate-500 mb-6 flex-wrap">
+            <a href="/" class="hover:text-slate-900 transition-colors">Home</a>
+            <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400"></i>
+            <a href="{% url 'catalog:product_list' %}" class="{% if not current_category and not current_brand %}text-blue-600 font-bold{% else %}hover:text-slate-900 transition-colors{% endif %}">Catalog</a>
+            {% if current_category %}
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400"></i>
+                <span class="text-slate-900 font-semibold">{{ current_category.name }}</span>
+            {% elif current_brand %}
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400"></i>
+                <span class="text-slate-900 font-semibold">{{ current_brand.name }}</span>
+            {% endif %}
+        </nav>
+
+        <!-- Page Header & Sort Bar -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200 mb-6">
+            <div>
+                <div class="flex items-center gap-3">
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-950 tracking-tight">
+                        {% if current_category %}
+                            {{ current_category.name }}
+                        {% elif current_brand %}
+                            {{ current_brand.name }}
+                        {% elif q %}
+                            Search: "{{ q }}"
+                        {% else %}
+                            Explore All Products
+                        {% endif %}
+                    </h1>
+                    {% if current_category %}
+                    <span class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-100">
+                        Category
+                    </span>
+                    {% endif %}
+                </div>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">
+                    Showing <span class="font-bold text-slate-900">{{ total_count }}</span> verified products
+                    {% if current_category and current_category.description %} &bull; {{ current_category.description }}{% endif %}
+                </p>
+            </div>
+
+            <!-- Sort and Mobile Filter Toggle Controls -->
+            <div class="flex items-center gap-3 self-stretch sm:self-auto">
+                <!-- Mobile Filter Trigger Button -->
+                <button 
+                    type="button" 
+                    onclick="document.getElementById('mobile-filter-drawer').classList.remove('translate-x-full')" 
+                    class="lg:hidden flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-white border border-slate-200 text-slate-800 text-xs font-bold shadow-xs hover:bg-slate-50 active:scale-95 transition-all cursor-pointer"
+                >
+                    <i data-lucide="sliders-horizontal" class="w-4 h-4 text-blue-600"></i>
+                    <span>Filters</span>
+                    {% if active_filters_count > 0 %}
+                    <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] font-bold flex items-center justify-center">
+                        {{ active_filters_count }}
+                    </span>
+                    {% endif %}
+                </button>
+
+                <!-- Sorting Dropdown Form -->
+                <form method="GET" action="{% url 'catalog:product_list' %}" class="flex items-center gap-2 flex-1 sm:flex-none">
+                    {% if selected_category_slug %}<input type="hidden" name="category" value="{{ selected_category_slug }}">{% endif %}
+                    {% if selected_brand_slug %}<input type="hidden" name="brand" value="{{ selected_brand_slug }}">{% endif %}
+                    {% if selected_tag_slug %}<input type="hidden" name="tag" value="{{ selected_tag_slug }}">{% endif %}
+                    {% if min_price %}<input type="hidden" name="min_price" value="{{ min_price }}">{% endif %}
+                    {% if max_price %}<input type="hidden" name="max_price" value="{{ max_price }}">{% endif %}
+                    {% if min_rating %}<input type="hidden" name="rating" value="{{ min_rating }}">{% endif %}
+                    {% if q %}<input type="hidden" name="q" value="{{ q }}">{% endif %}
+
+                    <div class="relative w-full sm:w-auto">
+                        <div class="flex items-center">
+                            <span class="hidden md:inline text-xs font-bold text-slate-500 mr-2 whitespace-nowrap">Sort by:</span>
+                            <div class="relative w-full sm:w-auto">
+                                <select 
+                                    name="sort" 
+                                    onchange="this.form.submit()" 
+                                    class="w-full sm:w-auto appearance-none bg-white border border-slate-200/90 rounded-2xl px-4 py-2.5 pr-10 text-xs sm:text-sm font-semibold text-slate-900 shadow-xs hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 cursor-pointer transition-all"
+                                >
+                                    {% for val, label in sort_choices %}
+                                    <option value="{{ val }}" {% if sort == val %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Active Filter Pills Bar (Quick Dismiss Chips) -->
+        {% if has_active_filters %}
+        <div class="flex items-center gap-2 flex-wrap mb-6 p-3 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
+            <span class="text-xs font-bold text-slate-500 flex items-center gap-1.5 pl-1">
+                <i data-lucide="filter" class="w-3.5 h-3.5 text-blue-600"></i>
+                <span>Active Filters:</span>
+            </span>
+
+            {% if current_category %}
+            <a 
+                href="{% url 'catalog:product_list' %}?{% if selected_brand_slug %}brand={{ selected_brand_slug }}&{% endif %}{% if min_price %}min_price={{ min_price }}&{% endif %}{% if max_price %}max_price={{ max_price }}&{% endif %}{% if min_rating %}rating={{ min_rating }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if q %}q={{ q }}{% endif %}" 
+                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors border border-blue-200"
+                title="Remove Category filter"
+            >
+                <span>Category: {{ current_category.name }}</span>
+                <i data-lucide="x" class="w-3 h-3 text-blue-600"></i>
+            </a>
+            {% endif %}
+
+            {% if current_brand %}
+            <a 
+                href="{% url 'catalog:product_list' %}?{% if selected_category_slug %}category={{ selected_category_slug }}&{% endif %}{% if min_price %}min_price={{ min_price }}&{% endif %}{% if max_price %}max_price={{ max_price }}&{% endif %}{% if min_rating %}rating={{ min_rating }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if q %}q={{ q }}{% endif %}" 
+                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors border border-blue-200"
+                title="Remove Brand filter"
+            >
+                <span>Brand: {{ current_brand.name }}</span>
+                <i data-lucide="x" class="w-3 h-3 text-blue-600"></i>
+            </a>
+            {% endif %}
+
+            {% if min_price or max_price %}
+            <a 
+                href="{% url 'catalog:product_list' %}?{% if selected_category_slug %}category={{ selected_category_slug }}&{% endif %}{% if selected_brand_slug %}brand={{ selected_brand_slug }}&{% endif %}{% if min_rating %}rating={{ min_rating }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if q %}q={{ q }}{% endif %}" 
+                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors border border-blue-200"
+                title="Remove Price filter"
+            >
+                <span>Price: ₹{% if min_price %}{{ min_price }}{% else %}0{% endif %} - ₹{% if max_price %}{{ max_price }}{% else %}&infin;{% endif %}</span>
+                <i data-lucide="x" class="w-3 h-3 text-blue-600"></i>
+            </a>
+            {% endif %}
+
+            {% if min_rating %}
+            <a 
+                href="{% url 'catalog:product_list' %}?{% if selected_category_slug %}category={{ selected_category_slug }}&{% endif %}{% if selected_brand_slug %}brand={{ selected_brand_slug }}&{% endif %}{% if min_price %}min_price={{ min_price }}&{% endif %}{% if max_price %}max_price={{ max_price }}&{% endif %}{% if sort %}sort={{ sort }}&{% endif %}{% if q %}q={{ q }}{% endif %}" 
+                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-amber-50 text-amber-800 hover:bg-amber-100 transition-colors border border-amber-200"
+                title="Remove Rating filter"
+            >
+                <i data-lucide="star" class="w-3 h-3 fill-amber-500 text-amber-500"></i>
+                <span>{{ min_rating }}★ & Above</span>
+                <i data-lucide="x" class="w-3 h-3 text-amber-700"></i>
+            </a>
+            {% endif %}
+
+            {% if q %}
+            <a 
+                href="{% url 'catalog:product_list' %}?{% if selected_category_slug %}category={{ selected_category_slug }}&{% endif %}{% if selected_brand_slug %}brand={{ selected_brand_slug }}&{% endif %}{% if min_price %}min_price={{ min_price }}&{% endif %}{% if max_price %}max_price={{ max_price }}&{% endif %}{% if min_rating %}rating={{ min_rating }}&{% endif %}{% if sort %}sort={{ sort }}{% endif %}" 
+                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors border border-slate-200"
+                title="Clear Search"
+            >
+                <span>Search: "{{ q }}"</span>
+                <i data-lucide="x" class="w-3 h-3 text-slate-500"></i>
+            </a>
+            {% endif %}
+
+            <a 
+                href="{% url 'catalog:product_list' %}" 
+                class="inline-flex items-center gap-1.5 ml-auto text-xs font-bold text-rose-600 hover:text-rose-700 hover:underline px-2 py-1"
+            >
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                <span>Clear All</span>
+            </a>
+        </div>
+        {% endif %}
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+            
+            <!-- ======================================================= -->
+            <!-- Desktop Filter Sidebar                                  -->
+            <!-- ======================================================= -->
+            <aside class="hidden lg:block space-y-6 sticky top-28">
+                
+                <!-- Category Filter Box -->
+                <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="layout-grid" class="w-4 h-4 text-blue-600"></i>
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900">Categories</h3>
+                        </div>
+                        {% if selected_category_slug %}
+                        <a href="{% url 'catalog:product_list' %}{% if q %}?q={{ q }}{% endif %}" class="text-[11px] font-bold text-blue-600 hover:underline">Reset</a>
+                        {% endif %}
+                    </div>
+
+                    <ul class="space-y-1.5 text-xs">
+                        <li>
+                            <a 
+                                href="{% url 'catalog:product_list' %}{% if q %}?q={{ q }}{% endif %}" 
+                                class="flex items-center justify-between px-3.5 py-2.5 rounded-2xl font-semibold transition-all {% if not selected_category_slug %}bg-blue-600 text-white shadow-xs{% else %}text-slate-700 hover:bg-slate-50 hover:text-slate-950{% endif %}"
+                            >
+                                <span class="flex items-center gap-2">
+                                    <i data-lucide="sparkles" class="w-3.5 h-3.5 {% if not selected_category_slug %}text-amber-300 fill-amber-300{% else %}text-slate-400{% endif %}"></i>
+                                    <span>All Products</span>
+                                </span>
+                                <span class="text-[11px] font-bold {% if not selected_category_slug %}text-blue-100{% else %}text-slate-400{% endif %}">{{ total_count }}</span>
+                            </a>
+                        </li>
+
+                        {% for cat in root_categories %}
+                        <li>
+                            <a 
+                                href="{% url 'catalog:product_list' %}?category={{ cat.slug }}{% if q %}&q={{ q }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}" 
+                                class="flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-semibold transition-all {% if selected_category_slug == cat.slug %}bg-blue-50 text-blue-700 border border-blue-200 shadow-xs{% else %}text-slate-700 hover:bg-slate-50 hover:text-slate-950{% endif %}"
+                            >
+                                <span class="flex items-center gap-2 truncate pr-2">
+                                    {% if cat.icon_name %}
+                                    <i data-lucide="{{ cat.icon_name }}" class="w-3.5 h-3.5 shrink-0 {% if selected_category_slug == cat.slug %}text-blue-600{% else %}text-slate-400{% endif %}"></i>
+                                    {% endif %}
+                                    <span class="truncate">{{ cat.name }}</span>
+                                </span>
+                                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md {% if selected_category_slug == cat.slug %}bg-blue-100 text-blue-800{% else %}bg-slate-100 text-slate-500{% endif %}">
+                                    {{ cat.total_product_count }}
+                                </span>
+                            </a>
+
+                            <!-- Subcategories if any -->
+                            {% if cat.children.all %}
+                            <ul class="pl-4 space-y-1 mt-1 border-l-2 border-slate-100 ml-4">
+                                {% for sub in cat.children.all %}
+                                <li>
+                                    <a 
+                                        href="{% url 'catalog:product_list' %}?category={{ sub.slug }}{% if q %}&q={{ q }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}" 
+                                        class="flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-colors {% if selected_category_slug == sub.slug %}bg-blue-50 text-blue-700 font-bold{% else %}text-slate-500 hover:text-slate-900 hover:bg-slate-50{% endif %}"
+                                    >
+                                        <span class="truncate">{{ sub.name }}</span>
+                                        <span class="text-[9px] text-slate-400 font-mono">{{ sub.total_product_count }}</span>
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Brand Filter Box -->
+                <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="tag" class="w-4 h-4 text-blue-600"></i>
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900">Brands</h3>
+                        </div>
+                        {% if selected_brand_slug %}
+                        <a href="{% url 'catalog:product_list' %}?{% if selected_category_slug %}category={{ selected_category_slug }}{% endif %}" class="text-[11px] font-bold text-blue-600 hover:underline">Clear</a>
+                        {% endif %}
+                    </div>
+                    <div class="space-y-1 max-h-56 overflow-y-auto pr-1">
+                        {% for br in available_brands %}
+                        <a 
+                            href="{% url 'catalog:product_list' %}?brand={{ br.slug }}{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}{% if q %}&q={{ q }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}" 
+                            class="flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-colors {% if selected_brand_slug == br.slug %}bg-blue-50 text-blue-700 font-bold border border-blue-200{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}"
+                        >
+                            <span class="truncate">{{ br.name }}</span>
+                            <span class="text-[10px] text-slate-400 font-mono bg-slate-100 px-1.5 py-0.5 rounded">{{ br.p_count }}</span>
+                        </a>
+                        {% empty %}
+                        <p class="text-xs text-slate-400 italic">No brand filters</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Price Range Filter Form -->
+                <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="dollar-sign" class="w-4 h-4 text-blue-600"></i>
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900">Price Range</h3>
+                    </div>
+
+                    <!-- Quick Preset Buttons -->
+                    <div class="grid grid-cols-2 gap-1.5 text-[11px]">
+                        <a 
+                            href="{% url 'catalog:product_list' %}?max_price=100{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}" 
+                            class="py-1.5 px-2 text-center rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold border border-slate-200/70 transition-colors"
+                        >
+                            Under ₹100
+                        </a>
+                        <a 
+                            href="{% url 'catalog:product_list' %}?min_price=100&max_price=500{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}" 
+                            class="py-1.5 px-2 text-center rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold border border-slate-200/70 transition-colors"
+                        >
+                            ₹100 - ₹500
+                        </a>
+                        <a 
+                            href="{% url 'catalog:product_list' %}?min_price=500&max_price=1000{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}" 
+                            class="py-1.5 px-2 text-center rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold border border-slate-200/70 transition-colors"
+                        >
+                            ₹500 - ₹1000
+                        </a>
+                        <a 
+                            href="{% url 'catalog:product_list' %}?min_price=1000{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}" 
+                            class="py-1.5 px-2 text-center rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold border border-slate-200/70 transition-colors"
+                        >
+                            ₹1000+
+                        </a>
+                    </div>
+
+                    <form method="GET" action="{% url 'catalog:product_list' %}" class="space-y-3 pt-2">
+                        {% if selected_category_slug %}<input type="hidden" name="category" value="{{ selected_category_slug }}">{% endif %}
+                        {% if selected_brand_slug %}<input type="hidden" name="brand" value="{{ selected_brand_slug }}">{% endif %}
+                        {% if min_rating %}<input type="hidden" name="rating" value="{{ min_rating }}">{% endif %}
+                        {% if q %}<input type="hidden" name="q" value="{{ q }}">{% endif %}
+                        {% if sort %}<input type="hidden" name="sort" value="{{ sort }}">{% endif %}
+
+                        <div class="flex items-center gap-2">
+                            <div class="relative flex-1">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 font-bold">₹</span>
+                                <input 
+                                    type="number" 
+                                    name="min_price" 
+                                    value="{{ min_price }}" 
+                                    placeholder="Min" 
+                                    class="w-full pl-6 pr-2 py-2 text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all"
+                                >
+                            </div>
+                            <span class="text-slate-400 text-xs font-bold">—</span>
+                            <div class="relative flex-1">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 font-bold">₹</span>
+                                <input 
+                                    type="number" 
+                                    name="max_price" 
+                                    value="{{ max_price }}" 
+                                    placeholder="Max" 
+                                    class="w-full pl-6 pr-2 py-2 text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:bg-white transition-all"
+                                >
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-blue-600 text-white text-xs font-bold shadow-xs hover:shadow-md transition-all cursor-pointer">
+                            Apply Price
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Rating Filter Box -->
+                <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-3">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="star" class="w-4 h-4 text-amber-500"></i>
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900">Customer Rating</h3>
+                    </div>
+                    <div class="space-y-1.5 text-xs">
+                        <a 
+                            href="{% url 'catalog:product_list' %}?rating=4{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}" 
+                            class="flex items-center justify-between px-3 py-2 rounded-xl transition-colors {% if min_rating == '4' %}bg-amber-50 text-amber-900 font-bold border border-amber-200{% else %}text-slate-700 hover:bg-slate-50{% endif %}"
+                        >
+                            <span class="flex items-center gap-1.5">
+                                <span class="flex items-center text-amber-500">
+                                    <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-500"></i>
+                                    <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-500"></i>
+                                    <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-500"></i>
+                                    <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-500"></i>
+                                    <i data-lucide="star" class="w-3.5 h-3.5 text-slate-300"></i>
+                                </span>
+                                <span>4★ & Above</span>
+                            </span>
+                        </a>
+                        <a 
+                            href="{% url 'catalog:product_list' %}?rating=3{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}" 
+                            class="flex items-center justify-between px-3 py-2 rounded-xl transition-colors {% if min_rating == '3' %}bg-amber-50 text-amber-900 font-bold border border-amber-200{% else %}text-slate-700 hover:bg-slate-50{% endif %}"
+                        >
+                            <span class="flex items-center gap-1.5">
+                                <span class="flex items-center text-amber-500">
+                                    <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-500"></i>
+                                    <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-500"></i>
+                                    <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-500"></i>
+                                    <i data-lucide="star" class="w-3.5 h-3.5 text-slate-300"></i>
+                                    <i data-lucide="star" class="w-3.5 h-3.5 text-slate-300"></i>
+                                </span>
+                                <span>3★ & Above</span>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Popular Tags -->
+                {% if popular_tags %}
+                <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-3">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="hash" class="w-4 h-4 text-blue-600"></i>
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900">Featured Tags</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5">
+                        {% for t in popular_tags %}
+                        <a 
+                            href="{% url 'catalog:product_list' %}?tag={{ t.slug }}{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}" 
+                            class="px-2.5 py-1 rounded-xl text-[11px] font-semibold border transition-all {% if selected_tag_slug == t.slug %}bg-blue-600 text-white border-blue-600 shadow-xs{% else %}bg-slate-50 text-slate-600 border-slate-200/80 hover:border-slate-300 hover:text-slate-900 hover:bg-white{% endif %}"
+                        >
+                            #{{ t.name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+            </aside>
+
+            <!-- ======================================================= -->
+            <!-- Product Grid Viewport                                   -->
+            <!-- ======================================================= -->
+            <main class="lg:col-span-3 space-y-8 min-w-0">
+                
+                {% if products %}
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                    {% for prod in products %}
+                    <div class="product-card group bg-white rounded-3xl border border-slate-200/80 overflow-hidden hover:border-slate-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col">
+                        
+                        <!-- Media Header Container -->
+                        <div class="relative aspect-square overflow-hidden bg-slate-100">
+                            <!-- Shimmer Effect Placeholder -->
+                            <div class="shimmer-placeholder absolute inset-0 bg-slate-200 shimmer-effect z-10 transition-opacity duration-700"></div>
+
+                            <!-- Product Primary Image -->
+                            {% if prod.primary_image_url %}
+                            <img 
+                                src="{{ prod.primary_image_url }}" 
+                                alt="{{ prod.title }}" 
+                                loading="lazy"
+                                onload="this.classList.remove('opacity-0'); this.parentElement.querySelector('.shimmer-placeholder')?.classList.add('opacity-0');"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-0"
+                            >
+                            {% else %}
+                            <div class="w-full h-full flex items-center justify-center text-slate-300 bg-slate-100">
+                                <i data-lucide="package" class="w-12 h-12 stroke-[1.2]"></i>
+                            </div>
+                            {% endif %}
+
+                            <!-- Left Badges: NEVER overlap with the wishlist heart button -->
+                            <div class="absolute top-3 left-3 z-20 flex flex-col gap-1.5 items-start pointer-events-none">
+                                {% if not prod.is_in_stock %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-slate-950 text-white shadow-xs">
+                                    Out of Stock
+                                </span>
+                                {% elif prod.is_low_stock %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-600 text-white shadow-xs">
+                                    Only {{ prod.total_available_stock }} Left
+                                </span>
+                                {% elif prod.badge_text %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-blue-600 text-white shadow-xs">
+                                    {{ prod.badge_text }}
+                                </span>
+                                {% elif prod.discount_percentage > 0 %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-rose-600 text-white shadow-xs">
+                                    {{ prod.discount_percentage }}% OFF
+                                </span>
+                                {% endif %}
+
+                                {% if prod.is_featured and prod.is_in_stock %}
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-500 text-white shadow-xs">
+                                    <i data-lucide="sparkles" class="w-2.5 h-2.5"></i> Featured
+                                </span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Right Wishlist Toggle Button: Cleanly anchored -->
+                            <div class="absolute top-3 right-3 z-20">
+                                <button 
+                                    type="button" 
+                                    class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/95 backdrop-blur-md text-slate-600 hover:text-rose-600 hover:bg-white flex items-center justify-center shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer active:scale-95 group/btn" 
+                                    title="Save to Wishlist"
+                                >
+                                    <i data-lucide="heart" class="w-4 h-4 stroke-[2] group-hover/btn:scale-110 transition-transform"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Card Body Content -->
+                        <div class="p-5 flex flex-col flex-1">
+                            
+                            <!-- Category and Brand Line -->
+                            <div class="flex items-center justify-between gap-2 mb-1.5">
+                                <a 
+                                    href="{% url 'catalog:product_list' %}?category={{ prod.category.slug }}" 
+                                    class="text-[11px] font-bold text-blue-600 hover:text-blue-800 uppercase tracking-wider truncate"
+                                >
+                                    {{ prod.category.name }}
+                                </a>
+                                {% if prod.brand %}
+                                <span class="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md truncate max-w-[120px]">
+                                    {{ prod.brand.name }}
+                                </span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Product Title -->
+                            <h3 class="text-sm sm:text-base font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug mb-2">
+                                <a href="{{ prod.get_absolute_url }}">{{ prod.title }}</a>
+                            </h3>
+
+                            <!-- Rating & Reviews -->
+                            <div class="flex items-center gap-1.5 text-xs text-slate-600 mb-4">
+                                <div class="flex items-center text-amber-500">
+                                    <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-500 text-amber-500"></i>
+                                </div>
+                                <span class="font-bold text-slate-900">{{ prod.rating|floatformat:1 }}</span>
+                                <span class="text-slate-400 text-[11px]">({{ prod.review_count }} review{{ prod.review_count|pluralize }})</span>
+                                {% if prod.sku %}
+                                <span class="text-slate-300 ml-auto text-[10px] font-mono">#{{ prod.sku|truncatechars:10 }}</span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Pricing & Action Row -->
+                            <div class="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
+                                <div>
+                                    <div class="flex items-baseline gap-1.5 flex-wrap">
+                                        <span class="text-lg sm:text-xl font-extrabold text-slate-950 tracking-tight">₹{{ prod.base_price }}</span>
+                                        {% if prod.compare_at_price %}
+                                        <span class="text-xs text-slate-400 line-through font-medium">₹{{ prod.compare_at_price }}</span>
+                                        {% endif %}
+                                    </div>
+                                    {% if prod.discount_percentage > 0 %}
+                                    <span class="inline-block text-[10px] font-bold text-emerald-600">
+                                        Save {{ prod.discount_percentage }}%
+                                    </span>
+                                    {% endif %}
+                                </div>
+                                
+                                {% if prod.is_in_stock %}
+                                <a 
+                                    href="{{ prod.get_absolute_url }}" 
+                                    class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-blue-600 text-white text-xs font-bold shadow-xs hover:shadow-md transition-all group-hover:bg-blue-600 shrink-0 cursor-pointer" 
+                                    title="View Product Details"
+                                >
+                                    <span>Details</span>
+                                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                                </a>
+                                {% else %}
+                                <a 
+                                    href="{{ prod.get_absolute_url }}" 
+                                    class="inline-flex items-center justify-center gap-1 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 text-xs font-bold shrink-0 cursor-pointer transition-colors" 
+                                    title="Out of Stock"
+                                >
+                                    <span>Sold Out</span>
+                                </a>
+                                {% endif %}
+                            </div>
+
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Enhanced Pagination -->
+                {% if page_obj.has_other_pages %}
+                <div class="flex items-center justify-center gap-2 pt-6">
+                    {% if page_obj.has_previous %}
+                    <a 
+                        href="?page={{ page_obj.previous_page_number }}{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}{% if selected_brand_slug %}&brand={{ selected_brand_slug }}{% endif %}{% if q %}&q={{ q }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if min_rating %}&rating={{ min_rating }}{% endif %}" 
+                        class="px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors shadow-xs"
+                    >
+                        Previous
+                    </a>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <span class="w-10 h-10 rounded-xl bg-blue-600 text-white text-xs font-bold flex items-center justify-center shadow-sm">
+                            {{ num }}
+                        </span>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <a 
+                            href="?page={{ num }}{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}{% if selected_brand_slug %}&brand={{ selected_brand_slug }}{% endif %}{% if q %}&q={{ q }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if min_rating %}&rating={{ min_rating }}{% endif %}" 
+                            class="w-10 h-10 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center justify-center transition-colors shadow-xs"
+                        >
+                            {{ num }}
+                        </a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <a 
+                        href="?page={{ page_obj.next_page_number }}{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}{% if selected_brand_slug %}&brand={{ selected_brand_slug }}{% endif %}{% if q %}&q={{ q }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if min_rating %}&rating={{ min_rating }}{% endif %}" 
+                        class="px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors shadow-xs"
+                    >
+                        Next
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                {% else %}
+                <!-- Empty State -->
+                <div class="py-16 text-center bg-white rounded-3xl border border-slate-200/80 p-8 space-y-4 shadow-xs">
+                    <div class="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto">
+                        <i data-lucide="search-x" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-950">No products match your selected criteria</h3>
+                    <p class="text-xs sm:text-sm text-slate-500 max-w-md mx-auto">
+                        We couldn't find any products with your current filter selections. Try relaxing your filters or exploring another category.
+                    </p>
+                    <div class="pt-2">
+                        <a href="{% url 'catalog:product_list' %}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md transition-colors">
+                            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                            <span>Reset All Filters</span>
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+
+            </main>
+        </div>
+    </div>
+</div>
+
+<!-- Mobile Filter Drawer Modal -->
+<div id="mobile-filter-drawer" class="fixed inset-0 z-50 transform translate-x-full transition-transform duration-300 lg:hidden" role="dialog" aria-modal="true">
+    <div class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs" onclick="document.getElementById('mobile-filter-drawer').classList.add('translate-x-full')"></div>
+    <div class="relative ml-auto w-full max-w-xs h-full bg-white shadow-2xl flex flex-col p-6 overflow-y-auto space-y-6">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+                <i data-lucide="sliders-horizontal" class="w-4 h-4 text-blue-600"></i>
+                <h2 class="text-sm font-bold text-slate-900">Refine Catalog</h2>
+            </div>
+            <button onclick="document.getElementById('mobile-filter-drawer').classList.add('translate-x-full')" class="p-2 text-slate-400 hover:text-slate-900 rounded-lg">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Categories -->
+        <div class="space-y-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-900">Categories</span>
+            <div class="space-y-1">
+                <a 
+                    href="{% url 'catalog:product_list' %}" 
+                    class="block px-3 py-2 rounded-xl text-xs font-semibold {% if not selected_category_slug %}bg-blue-600 text-white{% else %}text-slate-700 hover:bg-slate-50{% endif %}"
+                >
+                    All Products
+                </a>
+                {% for cat in root_categories %}
+                <a 
+                    href="{% url 'catalog:product_list' %}?category={{ cat.slug }}" 
+                    class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold {% if selected_category_slug == cat.slug %}bg-blue-50 text-blue-700 font-bold border border-blue-200{% else %}text-slate-700 hover:bg-slate-50{% endif %}"
+                >
+                    <span>{{ cat.name }}</span>
+                    <span class="text-[10px] text-slate-400">{{ cat.total_product_count }}</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Mobile Brands -->
+        <div class="space-y-2 pt-2 border-t border-slate-100">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-900">Brands</span>
+            <div class="space-y-1 max-h-40 overflow-y-auto">
+                {% for br in available_brands %}
+                <a 
+                    href="{% url 'catalog:product_list' %}?brand={{ br.slug }}{% if selected_category_slug %}&category={{ selected_category_slug }}{% endif %}" 
+                    class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold {% if selected_brand_slug == br.slug %}bg-blue-50 text-blue-700 font-bold{% else %}text-slate-700 hover:bg-slate-50{% endif %}"
+                >
+                    <span>{{ br.name }}</span>
+                    <span class="text-[10px] text-slate-400">{{ br.p_count }}</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Mobile Reset Button -->
+        <div class="pt-4 border-t border-slate-100 mt-auto">
+            <a href="{% url 'catalog:product_list' %}" class="block text-center py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-colors">
+                Clear All Filters
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

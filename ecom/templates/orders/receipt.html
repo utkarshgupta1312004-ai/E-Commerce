@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt #{{ order.order_number }} • Cartivo</title>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <style>
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+                padding: 0 !important;
+            }
+            .receipt-container {
+                box-shadow: none !important;
+                border: none !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 font-sans text-slate-800 p-4 sm:p-8 antialiased">
+
+    <!-- Top Action Bar (hidden on print) -->
+    <div class="no-print max-w-3xl mx-auto mb-6 flex items-center justify-between">
+        <a href="{% url 'orders:order_detail' order.order_number %}" class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-950 transition-colors">
+            &larr; Back to Order Details
+        </a>
+        <div class="flex items-center gap-3">
+            <button 
+                onclick="window.print()" 
+                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-xs font-bold shadow-md cursor-pointer transition-all active:scale-[0.99]"
+            >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                <span>Print Receipt</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Printable Receipt Container -->
+    <div class="receipt-container max-w-3xl mx-auto bg-white rounded-2xl border border-slate-200/80 shadow-md p-8 sm:p-12">
+        
+        <!-- Store Header -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-8 border-b border-slate-200">
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">CARTIVO</h1>
+                <p class="text-xs text-slate-500 font-medium">Shop Smarter. Live Better. • Luxury Storefront</p>
+            </div>
+            <div class="sm:text-right">
+                <span class="inline-block uppercase tracking-widest text-[11px] font-extrabold text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100 mb-1">
+                    Official Order Receipt
+                </span>
+                <p class="text-xs text-slate-400">Date: {{ order.created_at|date:"d-m-Y" }}</p>
+            </div>
+        </div>
+
+        <!-- Receipt Metadata -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 py-6 border-b border-slate-100 text-xs sm:text-sm">
+            <div>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Order Information</h3>
+                <div class="space-y-1 text-slate-700">
+                    <p><span class="text-slate-400 font-medium">Order Number:</span> <span class="font-mono font-bold text-slate-900">{{ order.order_number }}</span></p>
+                    <p><span class="text-slate-400 font-medium">Order Date:</span> <span class="font-semibold text-slate-900">{{ order.created_at|date:"d-m-Y H:i" }}</span></p>
+                    <p><span class="text-slate-400 font-medium">Order Status:</span> <span class="font-bold text-emerald-700">{{ order.get_status_display }}</span></p>
+                    <p><span class="text-slate-400 font-medium">Payment Method:</span> <span class="font-bold text-slate-900">{{ order.get_payment_method_display }}</span></p>
+                    <p><span class="text-slate-400 font-medium">Payment Status:</span> <span class="font-bold text-amber-700">{{ order.get_payment_status_display }}</span></p>
+                    <p><span class="text-slate-400 font-medium">Carrier Partner:</span> <span class="font-bold text-slate-900">{{ order.delivery_partner|default:"Cartivo Express Delivery" }}</span></p>
+                    <p><span class="text-slate-400 font-medium">Tracking AWB:</span> <span class="font-mono font-bold text-emerald-700">{{ order.tracking_code }}</span></p>
+                    <p><span class="text-slate-400 font-medium">Checkpoint Location:</span> <span class="font-semibold text-slate-800">{{ order.active_location_display }}</span></p>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Customer & Delivery</h3>
+                <div class="space-y-1 text-slate-700">
+                    <p><span class="text-slate-400 font-medium">Customer:</span> <span class="font-semibold text-slate-900">{{ order.shipping_name }}</span></p>
+                    <p><span class="text-slate-400 font-medium">Email:</span> <span class="text-slate-900">{{ order.user.email }}</span></p>
+                    {% if order.shipping_phone %}
+                    <p><span class="text-slate-400 font-medium">Phone:</span> <span class="text-slate-900">{{ order.shipping_phone }}</span></p>
+                    {% endif %}
+                    <p class="pt-1"><span class="text-slate-400 font-medium">Shipping Address:</span><br>
+                        <span class="text-slate-800 leading-tight">{{ order.formatted_shipping_address }}</span>
+                    </p>
+                    <p class="pt-1"><span class="text-slate-400 font-medium">Estimated Arrival:</span> <span class="font-bold text-slate-900">{{ order.estimated_delivery_date|default:"3-5 Business Days" }}</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Items Table -->
+        <div class="py-6">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Purchased Items</h3>
+            <table class="w-full text-left text-xs sm:text-sm border-collapse">
+                <thead>
+                    <tr class="border-b-2 border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                        <th class="pb-3">Product</th>
+                        <th class="pb-3">SKU</th>
+                        <th class="pb-3 text-center">Qty</th>
+                        <th class="pb-3 text-right">Unit Price</th>
+                        <th class="pb-3 text-right">Amount</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for item in items %}
+                    <tr>
+                        <td class="py-3.5 pr-2">
+                            <span class="font-bold text-slate-900">{{ item.product_title }}</span>
+                            {% if item.variant_name %}
+                            <span class="block text-xs text-slate-500 font-normal">Variant: {{ item.variant_name }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3.5 text-slate-500 font-mono text-xs">{{ item.sku }}</td>
+                        <td class="py-3.5 text-center font-bold text-slate-900">{{ item.quantity }}</td>
+                        <td class="py-3.5 text-right text-slate-700">₹{{ item.unit_price }}</td>
+                        <td class="py-3.5 text-right font-extrabold text-slate-900">₹{{ item.subtotal }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Financial Summary Ledger -->
+        <div class="pt-6 border-t border-slate-200 flex justify-end">
+            <div class="w-full sm:w-72 space-y-2 text-xs sm:text-sm text-slate-600">
+                <div class="flex items-center justify-between">
+                    <span>Subtotal:</span>
+                    <span class="font-bold text-slate-900">₹{{ order.subtotal }}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span>Discount:</span>
+                    <span class="font-bold text-slate-900">₹{{ order.discount_amount }}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span>Shipping:</span>
+                    <span class="font-bold text-slate-900">₹{{ order.shipping_amount }}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span>Tax:</span>
+                    <span class="font-bold text-slate-900">₹{{ order.tax_amount }}</span>
+                </div>
+                <div class="pt-2 border-t-2 border-slate-900 flex items-baseline justify-between text-base sm:text-lg">
+                    <span class="font-black text-slate-950">Grand Total:</span>
+                    <span class="font-black text-slate-950">₹{{ order.total_amount }}</span>
+                </div>
+                <div class="pt-2 text-[11px] text-right text-slate-500">
+                    Payment Method: <span class="font-bold text-slate-800">Cash on Delivery</span> (Status: <span class="font-bold text-amber-700">Pending</span>)
+                </div>
+            </div>
+        </div>
+
+        <!-- Receipt Footer Note -->
+        <div class="mt-12 pt-6 border-t border-slate-100 text-center text-xs text-slate-400">
+            <p class="font-semibold text-slate-600 mb-1">Thank you for shopping with Cartivo.</p>
+            <p>For inquiries, support, or order tracking, please contact support@cartivo.store</p>
+        </div>
+
+    </div>
+
+</body>
+</html>

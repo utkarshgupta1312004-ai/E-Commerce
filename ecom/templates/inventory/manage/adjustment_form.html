@@ -1,0 +1,113 @@
+{% extends 'inventory/manage/inventory_base.html' %}
+
+{% block title %}Stock Adjustments & Reconciliation{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-black text-white tracking-tight">Stock Reconciliations</h1>
+            <p class="text-xs text-slate-400 mt-1">Manual inventory adjustments for cycle counts, damaged items, expired goods, or found stock.</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Adjustment Form -->
+        <div class="lg:col-span-1 p-6 rounded-2xl bg-[#0e1424] border border-slate-800/80">
+            <h2 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
+                <i data-lucide="wrench" class="w-4 h-4 text-emerald-400"></i>
+                <span>Record New Adjustment</span>
+            </h2>
+
+            <form method="POST" class="space-y-4">
+                {% csrf_token %}
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Product</label>
+                    {{ form.product }}
+                    {% if form.product.errors %}<div class="text-[10px] text-rose-400 mt-1">{{ form.product.errors.0 }}</div>{% endif %}
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Warehouse</label>
+                    {{ form.warehouse }}
+                    {% if form.warehouse.errors %}<div class="text-[10px] text-rose-400 mt-1">{{ form.warehouse.errors.0 }}</div>{% endif %}
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Adjustment Type</label>
+                        {{ form.adjustment_type }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Quantity</label>
+                        {{ form.quantity }}
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Reason</label>
+                    {{ form.reason }}
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Audit Remarks (Optional)</label>
+                    {{ form.notes }}
+                </div>
+
+                <button type="submit" class="w-full py-2.5 px-4 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-md shadow-emerald-600/20 cursor-pointer">
+                    Apply Adjustment
+                </button>
+            </form>
+        </div>
+
+        <!-- Recent Adjustments Table -->
+        <div class="lg:col-span-2 p-6 rounded-2xl bg-[#0e1424] border border-slate-800/80">
+            <h2 class="text-sm font-bold text-white mb-4 flex items-center gap-2">
+                <i data-lucide="history" class="w-4 h-4 text-emerald-400"></i>
+                <span>Recent Reconciliations</span>
+            </h2>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="border-b border-slate-800 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+                            <th class="pb-3">Date</th>
+                            <th class="pb-3">Product</th>
+                            <th class="pb-3">Warehouse</th>
+                            <th class="pb-3 text-center">Type</th>
+                            <th class="pb-3 text-center">Qty Change</th>
+                            <th class="pb-3">Reason</th>
+                            <th class="pb-3">Adjusted By</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60 font-medium">
+                        {% for adj in recent_adjustments %}
+                        <tr class="hover:bg-slate-900/40 transition-colors">
+                            <td class="py-3 text-slate-400 font-mono text-[11px] whitespace-nowrap">{{ adj.created_at|date:"M d, H:i" }}</td>
+                            <td class="py-3 font-bold text-white max-w-xs truncate">{{ adj.stock.product.title }}</td>
+                            <td class="py-3 text-slate-300">{{ adj.stock.warehouse.code }}</td>
+                            <td class="py-3 text-center">
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/10 text-blue-300 border border-blue-500/20">
+                                    {{ adj.get_adjustment_type_display }}
+                                </span>
+                            </td>
+                            <td class="py-3 text-center font-mono font-bold text-white">
+                                {{ adj.previous_on_hand }} &rarr; <span class="text-emerald-400">{{ adj.new_on_hand }}</span>
+                            </td>
+                            <td class="py-3 text-slate-300">{{ adj.get_reason_display }}</td>
+                            <td class="py-3 text-slate-400">{{ adj.adjusted_by.username|default:"System" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="py-8 text-center text-slate-400">No manual adjustments recorded yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

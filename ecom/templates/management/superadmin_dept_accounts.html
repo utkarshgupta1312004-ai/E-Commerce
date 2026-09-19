@@ -1,0 +1,821 @@
+{% extends "management/superadmin_base.html" %}
+
+{% block title %}Department Accounts &amp; Credentials{% endblock %}
+
+{% block page_title %}Department Accounts Directory{% endblock %}
+
+{% block page_breadcrumb %}
+<i data-lucide="key-round" class="w-3.5 h-3.5 text-emerald-400"></i>
+<span>Department Credentials &amp; Access Governance</span>
+{% endblock %}
+
+{% block page_actions %}
+<div class="flex items-center gap-2">
+    <a href="{% url 'management:domains' %}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#131c2e] hover:bg-slate-800 text-slate-300 hover:text-white border border-[#1e293b] transition-all shadow-sm">
+        <i data-lucide="layers" class="w-3.5 h-3.5 text-amber-400"></i>
+        <span>Domain Matrix</span>
+    </a>
+    <a href="{% url 'management:portal' %}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#131c2e] hover:bg-slate-800 text-slate-300 hover:text-white border border-[#1e293b] transition-all shadow-sm">
+        <i data-lucide="globe" class="w-3.5 h-3.5 text-cyan-400"></i>
+        <span>Public Portal</span>
+    </a>
+</div>
+{% endblock %}
+
+{% block admin_content %}
+<!-- =============================================================== -->
+<!-- ROW 1: 6 Department Account Metric Cards                        -->
+<!-- =============================================================== -->
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+    
+    <!-- 1. Total Departments -->
+    <div class="p-4 rounded-3xl bg-[#131c2e] border border-[#1e293b] hover:border-indigo-500/40 shadow-xl flex flex-col justify-between transition-all group">
+        <div class="flex items-center justify-between">
+            <span class="text-[11px] font-semibold text-slate-400">Departments</span>
+            <div class="w-7 h-7 rounded-xl bg-indigo-500/15 text-indigo-400 flex items-center justify-center border border-indigo-500/25">
+                <i data-lucide="building-2" class="w-3.5 h-3.5"></i>
+            </div>
+        </div>
+        <div class="mt-2.5">
+            <div class="text-xl font-black text-white tracking-tight">{{ total_departments }}</div>
+            <div class="text-[10px] text-slate-400 font-medium mt-0.5">Existing Domains</div>
+        </div>
+    </div>
+
+    <!-- 2. Configured Accounts -->
+    <div class="p-4 rounded-3xl bg-[#131c2e] border border-[#1e293b] hover:border-blue-500/40 shadow-xl flex flex-col justify-between transition-all group">
+        <div class="flex items-center justify-between">
+            <span class="text-[11px] font-semibold text-slate-400">Configured</span>
+            <div class="w-7 h-7 rounded-xl bg-blue-500/15 text-blue-400 flex items-center justify-center border border-blue-500/25">
+                <i data-lucide="key" class="w-3.5 h-3.5"></i>
+            </div>
+        </div>
+        <div class="mt-2.5">
+            <div class="text-xl font-black text-blue-400 tracking-tight">{{ configured_count }} <span class="text-xs text-slate-500 font-normal">/ {{ total_departments }}</span></div>
+            <div class="text-[10px] text-blue-400 font-semibold mt-0.5">With Credentials</div>
+        </div>
+    </div>
+
+    <!-- 3. Active Accounts -->
+    <div class="p-4 rounded-3xl bg-[#131c2e] border border-[#1e293b] hover:border-emerald-500/40 shadow-xl flex flex-col justify-between transition-all group">
+        <div class="flex items-center justify-between">
+            <span class="text-[11px] font-semibold text-slate-400">Active</span>
+            <div class="w-7 h-7 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center border border-emerald-500/25">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+            </div>
+        </div>
+        <div class="mt-2.5">
+            <div class="text-xl font-black text-emerald-400 tracking-tight">{{ active_count }}</div>
+            <div class="text-[10px] text-emerald-400 font-semibold flex items-center gap-1 mt-0.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 live-dot"></span>
+                <span>Can Login</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Suspended Accounts -->
+    <div class="p-4 rounded-3xl bg-[#131c2e] border border-[#1e293b] hover:border-rose-500/40 shadow-xl flex flex-col justify-between transition-all group">
+        <div class="flex items-center justify-between">
+            <span class="text-[11px] font-semibold text-slate-400">Suspended</span>
+            <div class="w-7 h-7 rounded-xl bg-rose-500/15 text-rose-400 flex items-center justify-center border border-rose-500/25">
+                <i data-lucide="shield-ban" class="w-3.5 h-3.5"></i>
+            </div>
+        </div>
+        <div class="mt-2.5">
+            <div class="text-xl font-black text-rose-400 tracking-tight">{{ suspended_count }}</div>
+            <div class="text-[10px] text-rose-400 font-semibold mt-0.5">Locked Out</div>
+        </div>
+    </div>
+
+    <!-- 5. Inactive Accounts -->
+    <div class="p-4 rounded-3xl bg-[#131c2e] border border-[#1e293b] hover:border-slate-500/40 shadow-xl flex flex-col justify-between transition-all group">
+        <div class="flex items-center justify-between">
+            <span class="text-[11px] font-semibold text-slate-400">Inactive</span>
+            <div class="w-7 h-7 rounded-xl bg-slate-700/30 text-slate-300 flex items-center justify-center border border-slate-700/50">
+                <i data-lucide="pause-circle" class="w-3.5 h-3.5"></i>
+            </div>
+        </div>
+        <div class="mt-2.5">
+            <div class="text-xl font-black text-slate-300 tracking-tight">{{ inactive_count }}</div>
+            <div class="text-[10px] text-slate-400 font-medium mt-0.5">Deactivated</div>
+        </div>
+    </div>
+
+    <!-- 6. Pending Configuration -->
+    <div class="p-4 rounded-3xl bg-[#131c2e] border border-[#1e293b] hover:border-amber-500/40 shadow-xl flex flex-col justify-between transition-all group">
+        <div class="flex items-center justify-between">
+            <span class="text-[11px] font-semibold text-slate-400">Pending</span>
+            <div class="w-7 h-7 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center border border-amber-500/25">
+                <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i>
+            </div>
+        </div>
+        <div class="mt-2.5">
+            <div class="text-xl font-black text-amber-400 tracking-tight">{{ pending_count }}</div>
+            <div class="text-[10px] text-amber-400 font-semibold mt-0.5">Needs Setup</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- =============================================================== -->
+<!-- ROW 2: Department Accounts Registry & Credentials Matrix         -->
+<!-- =============================================================== -->
+<div class="rounded-3xl bg-[#131c2e] border border-[#1e293b] p-5 sm:p-6 shadow-xl space-y-4 print-table-card">
+    
+    <!-- Print-Only Document Header -->
+    <div class="print-title">Cartivo Superadmin — Department Accounts &amp; Credentials Registry</div>
+    <div class="print-subtitle">Verified department login status &amp; authentication credentials audit • Printed on {% now "F j, Y, H:i" %}</div>
+
+    <!-- Table Header with Search, Page Size & Print Action -->
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-[#1e293b] no-print">
+        <div>
+            <h2 class="font-black text-white text-base sm:text-lg tracking-tight flex items-center gap-2">
+                <i data-lucide="key-round" class="w-5 h-5 text-emerald-400"></i>
+                <span>Department Accounts &amp; Access Controls</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5">
+                Assign and manage Login IDs, passwords, and access states for all 20 existing departments.
+            </p>
+        </div>
+
+        <!-- Controls Toolbar -->
+        <div class="flex flex-wrap items-center gap-2.5">
+            <!-- Search -->
+            <div class="relative">
+                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                <input 
+                    type="text" 
+                    id="dept-search-input"
+                    placeholder="Search department, Login ID..." 
+                    class="pl-8 pr-3 py-2 rounded-xl bg-[#0f172a] border border-[#1e293b] text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-56 sm:w-64"
+                >
+            </div>
+
+            <!-- Page Size Dropdown -->
+            <div class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#0f172a] border border-[#1e293b] text-xs text-slate-400">
+                <span class="text-[11px]">Show:</span>
+                <select id="dept-page-size" class="bg-transparent text-white text-xs font-semibold focus:outline-none cursor-pointer">
+                    <option value="5" selected class="bg-[#0f172a] text-white">5</option>
+                    <option value="10" class="bg-[#0f172a] text-white">10</option>
+                    <option value="20" class="bg-[#0f172a] text-white">20 (All)</option>
+                    <option value="all" class="bg-[#0f172a] text-white">All</option>
+                </select>
+            </div>
+
+            <!-- Dedicated Print List Button -->
+            <button 
+                type="button" 
+                id="dept-print-btn"
+                class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#0f172a] hover:bg-slate-800 text-slate-200 hover:text-white border border-[#1e293b] hover:border-emerald-500/50 shadow-sm transition-all cursor-pointer"
+                title="Print full department accounts ledger"
+            >
+                <i data-lucide="printer" class="w-3.5 h-3.5 text-emerald-400"></i>
+                <span>Print Accounts</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Quick Status Filter Pills -->
+    <div class="flex flex-wrap items-center gap-2 pt-1 no-print" id="dept-filter-pills">
+        <button type="button" data-filter="all" class="dept-pill active px-3 py-1.5 rounded-xl text-xs font-semibold bg-indigo-600 text-white shadow-sm cursor-pointer transition-colors">
+            All Departments ({{ total_departments }})
+        </button>
+        <button type="button" data-filter="configured" class="dept-pill px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#0f172a] text-slate-400 hover:text-white border border-[#1e293b] cursor-pointer transition-colors">
+            Configured ({{ configured_count }})
+        </button>
+        <button type="button" data-filter="not-configured" class="dept-pill px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#0f172a] text-slate-400 hover:text-white border border-[#1e293b] cursor-pointer transition-colors">
+            Not Configured ({{ total_departments|add:"-"|add:configured_count }})
+        </button>
+        <button type="button" data-filter="active" class="dept-pill px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#0f172a] text-slate-400 hover:text-white border border-[#1e293b] cursor-pointer transition-colors">
+            Active ({{ active_count }})
+        </button>
+        <button type="button" data-filter="suspended" class="dept-pill px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#0f172a] text-slate-400 hover:text-white border border-[#1e293b] cursor-pointer transition-colors">
+            Suspended ({{ suspended_count }})
+        </button>
+    </div>
+
+    <!-- Department Accounts Table -->
+    <div class="overflow-x-auto no-scrollbar rounded-2xl border border-[#1e293b] bg-[#0f172a]">
+        <table class="w-full text-left border-collapse text-xs">
+            <thead>
+                <tr class="border-b border-[#1e293b] text-slate-400 uppercase text-[10px] font-bold tracking-wider bg-[#0f172a]/95">
+                    <th class="py-3.5 px-4 w-12 text-center">#</th>
+                    <th class="py-3.5 px-4 min-w-[220px]">Department</th>
+                    <th class="py-3.5 px-4 w-36">Login ID</th>
+                    <th class="py-3.5 px-4 w-32 text-center">Account Status</th>
+                    <th class="py-3.5 px-4 hidden sm:table-cell w-36 text-center">Configuration</th>
+                    <th class="py-3.5 px-4 hidden md:table-cell w-40">Last Login</th>
+                    <th class="py-3.5 px-4 text-right min-w-[200px] no-print">Management Actions</th>
+                </tr>
+            </thead>
+            <tbody id="dept-tbody" class="divide-y divide-[#1e293b]">
+                {% for dept in departments %}
+                <tr 
+                    class="dept-row hover:bg-slate-800/40 transition-colors group" 
+                    data-name="{{ dept.name|lower }}" 
+                    data-slug="{{ dept.slug|lower }}"
+                    data-login-id="{{ dept.login_id|lower }}"
+                    data-status="{{ dept.account_status|lower }}"
+                    data-has-account="{% if dept.has_account %}yes{% else %}no{% endif %}"
+                >
+                    <!-- Counter -->
+                    <td class="py-3.5 px-4 font-mono text-slate-400 text-[11px] text-center">
+                        #{{ forloop.counter|stringformat:"02d" }}
+                    </td>
+
+                    <!-- Department Identity -->
+                    <td class="py-3.5 px-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border {% if dept.accent_color == 'emerald' %}bg-emerald-500/15 text-emerald-400 border-emerald-500/30{% elif dept.accent_color == 'amber' %}bg-amber-500/15 text-amber-400 border-amber-500/30{% elif dept.accent_color == 'rose' %}bg-rose-500/15 text-rose-400 border-rose-500/30{% elif dept.accent_color == 'purple' %}bg-purple-500/15 text-purple-400 border-purple-500/30{% else %}bg-indigo-500/15 text-indigo-400 border-indigo-500/30{% endif %} shadow-sm">
+                                <i data-lucide="{{ dept.icon }}" class="w-4 h-4"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-bold text-white group-hover:text-indigo-400 transition-colors text-xs sm:text-sm">{{ dept.name }}</span>
+                                    {% if dept.badge %}
+                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-slate-800 text-indigo-300 border border-slate-700 shrink-0">
+                                        {{ dept.badge }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                                <div class="text-[11px] text-slate-400 font-mono mt-0.5">
+                                    code: <span class="text-slate-300">{{ dept.code }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+
+                    <!-- Login ID -->
+                    <td class="py-3.5 px-4">
+                        {% if dept.has_account %}
+                        <code class="px-2.5 py-1 rounded-lg bg-[#0b0f19] border border-slate-800 text-cyan-300 font-mono text-[11px] font-bold inline-block shadow-inner">
+                            {{ dept.login_id }}
+                        </code>
+                        {% else %}
+                        <span class="text-slate-500 font-mono text-[11px] italic">Not Assigned</span>
+                        {% endif %}
+                    </td>
+
+                    <!-- Account Status Badge -->
+                    <td class="py-3.5 px-4 text-center">
+                        {% if dept.account_status == 'ACTIVE' %}
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 live-dot"></span>
+                            <span>ACTIVE</span>
+                        </span>
+                        {% elif dept.account_status == 'SUSPENDED' %}
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30">
+                            <i data-lucide="shield-alert" class="w-3 h-3"></i>
+                            <span>SUSPENDED</span>
+                        </span>
+                        {% elif dept.account_status == 'INACTIVE' %}
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-400 border border-slate-700">
+                            <span>INACTIVE</span>
+                        </span>
+                        {% else %}
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                            <span>PENDING</span>
+                        </span>
+                        {% endif %}
+                    </td>
+
+                    <!-- Configuration State -->
+                    <td class="py-3.5 px-4 hidden sm:table-cell text-center">
+                        {% if dept.has_account %}
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-blue-500/10 text-blue-300 border border-blue-500/20">
+                            <i data-lucide="check" class="w-3 h-3 text-blue-400"></i>
+                            <span>Configured</span>
+                        </span>
+                        {% else %}
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                            <i data-lucide="alert-circle" class="w-3 h-3"></i>
+                            <span>Not Configured</span>
+                        </span>
+                        {% endif %}
+                    </td>
+
+                    <!-- Last Login -->
+                    <td class="py-3.5 px-4 hidden md:table-cell text-slate-300 font-mono text-[11px]">
+                        {{ dept.last_login_display }}
+                    </td>
+
+                    <!-- Actions -->
+                    <td class="py-3.5 px-4 text-right no-print">
+                        <div class="flex items-center justify-end gap-1.5 flex-wrap">
+                            {% if not dept.has_account %}
+                            <!-- Configure Button -->
+                            <button 
+                                type="button"
+                                onclick="openConfigureModal('{{ dept.id }}', '{{ dept.name|escapejs }}', '{{ dept.suggested_login_id|escapejs }}')"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-md shadow-emerald-600/20 transition-all cursor-pointer"
+                            >
+                                <i data-lucide="key" class="w-3.5 h-3.5"></i>
+                                <span>Configure Account</span>
+                            </button>
+                            {% else %}
+                            <!-- Edit Login ID -->
+                            <button 
+                                type="button"
+                                onclick="openEditLoginIdModal('{{ dept.id }}', '{{ dept.name|escapejs }}', '{{ dept.login_id|escapejs }}')"
+                                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-[#131c2e] hover:bg-slate-800 text-slate-300 hover:text-white border border-[#1e293b] transition-colors cursor-pointer"
+                                title="Edit Login ID"
+                            >
+                                <i data-lucide="pencil" class="w-3 h-3 text-cyan-400"></i>
+                                <span>Edit ID</span>
+                            </button>
+
+                            <!-- Reset Password -->
+                            <button 
+                                type="button"
+                                onclick="openResetPasswordModal('{{ dept.id }}', '{{ dept.name|escapejs }}', '{{ dept.login_id|escapejs }}')"
+                                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-[#131c2e] hover:bg-slate-800 text-slate-300 hover:text-white border border-[#1e293b] transition-colors cursor-pointer"
+                                title="Reset Password"
+                            >
+                                <i data-lucide="lock" class="w-3 h-3 text-amber-400"></i>
+                                <span>Reset Pwd</span>
+                            </button>
+
+                            <!-- Status Toggle: Suspend / Activate / Deactivate -->
+                            {% if dept.account_status == 'ACTIVE' %}
+                            <a 
+                                href="{% url 'management:change_dept_status' dept.id 'SUSPENDED' %}"
+                                onclick="return confirm('Suspend account for {{ dept.name }}? The department will be blocked from logging in.');"
+                                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 transition-colors"
+                                title="Suspend Account"
+                            >
+                                <i data-lucide="pause" class="w-3 h-3"></i>
+                                <span>Suspend</span>
+                            </a>
+                            <a 
+                                href="{% url 'management:change_dept_status' dept.id 'INACTIVE' %}"
+                                onclick="return confirm('Deactivate account for {{ dept.name }}?');"
+                                class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-semibold bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 transition-colors"
+                                title="Deactivate Account"
+                            >
+                                <span>Deactivate</span>
+                            </a>
+                            {% else %}
+                            <a 
+                                href="{% url 'management:change_dept_status' dept.id 'ACTIVE' %}"
+                                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/30 transition-colors"
+                                title="Activate Account"
+                            >
+                                <i data-lucide="play" class="w-3 h-3"></i>
+                                <span>Activate</span>
+                            </a>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Zero Results Fallback -->
+        <div id="no-dept-results" class="hidden py-10 text-center text-slate-400 text-xs">
+            <i data-lucide="search-x" class="w-7 h-7 mx-auto text-slate-500 mb-2"></i>
+            <div class="font-semibold text-slate-300">No matching departments found</div>
+            <div class="text-[11px] text-slate-500 mt-0.5">Try searching by department name, code, or Login ID.</div>
+        </div>
+    </div>
+
+    <!-- Paginator Footer Controls -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-[#1e293b] pagination-controls no-print">
+        <div id="dept-pagination-info" class="text-xs text-slate-400">
+            Showing <span class="font-bold text-white">1</span> to <span class="font-bold text-white">5</span> of <span class="font-bold text-white">{{ total_departments }}</span> departments
+        </div>
+        <div id="dept-pagination-controls" class="flex items-center gap-1.5">
+            <!-- Dynamically populated by TablePaginator -->
+        </div>
+    </div>
+
+</div>
+
+<!-- =============================================================== -->
+<!-- MODAL 1: CONFIGURE ACCOUNT                                      -->
+<!-- =============================================================== -->
+<div 
+    id="configure-account-modal" 
+    class="hidden fixed inset-0 z-50 bg-[#030712]/80 backdrop-blur-md flex items-center justify-center p-4"
+    onclick="if(event.target === this) closeConfigureModal()"
+>
+    <div class="w-full max-w-lg bg-[#0f172a] border border-[#1e293b] rounded-3xl shadow-2xl p-6 sm:p-7 relative space-y-5">
+        <div class="flex items-center justify-between pb-3 border-b border-[#1e293b]">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center border border-emerald-500/25">
+                    <i data-lucide="key" class="w-4 h-4"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white text-base tracking-tight">Configure Department Credentials</h3>
+                    <p class="text-xs text-slate-400" id="cfg-modal-dept-name">Department Name</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeConfigureModal()" class="text-slate-400 hover:text-white p-1 rounded-lg transition-colors cursor-pointer">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <form id="configure-form" method="POST" action="" class="space-y-4 text-xs">
+            {% csrf_token %}
+
+            <!-- Login ID with Generate Button -->
+            <div>
+                <div class="flex items-center justify-between mb-1.5">
+                    <label for="cfg-login-id" class="font-semibold text-slate-300">Department Login ID</label>
+                    <button 
+                        type="button" 
+                        id="cfg-generate-id-btn" 
+                        class="text-[11px] text-cyan-400 hover:text-cyan-300 font-semibold flex items-center gap-1 cursor-pointer transition-colors"
+                    >
+                        <i data-lucide="sparkles" class="w-3 h-3"></i>
+                        <span>Generate Login ID</span>
+                    </button>
+                </div>
+                <input 
+                    type="text" 
+                    id="cfg-login-id" 
+                    name="login_id" 
+                    required 
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-[#131c2e] border border-[#1e293b] text-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    placeholder="e.g. CMS001"
+                >
+                <p class="text-[10px] text-slate-500 mt-1">Must be unique across the entire platform.</p>
+            </div>
+
+            <!-- Password with Generate Button -->
+            <div>
+                <div class="flex items-center justify-between mb-1.5">
+                    <label for="cfg-password" class="font-semibold text-slate-300">Password</label>
+                    <button 
+                        type="button" 
+                        id="cfg-generate-pwd-btn" 
+                        class="text-[11px] text-amber-400 hover:text-amber-300 font-semibold flex items-center gap-1 cursor-pointer transition-colors"
+                    >
+                        <i data-lucide="refresh-cw" class="w-3 h-3"></i>
+                        <span>Generate Secure Password</span>
+                    </button>
+                </div>
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="cfg-password" 
+                        name="password" 
+                        required 
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-[#131c2e] border border-[#1e293b] text-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        placeholder="Enter or generate strong password..."
+                    >
+                </div>
+            </div>
+
+            <!-- Confirm Password -->
+            <div>
+                <label for="cfg-confirm-password" class="block font-semibold text-slate-300 mb-1.5">Confirm Password</label>
+                <input 
+                    type="text" 
+                    id="cfg-confirm-password" 
+                    name="confirm_password" 
+                    required 
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-[#131c2e] border border-[#1e293b] text-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    placeholder="Re-type password to verify..."
+                >
+            </div>
+
+            <!-- Account Status Selector -->
+            <div>
+                <label for="cfg-status" class="block font-semibold text-slate-300 mb-1.5">Initial Account Status</label>
+                <select 
+                    id="cfg-status" 
+                    name="status" 
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-[#131c2e] border border-[#1e293b] text-white text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
+                >
+                    <option value="ACTIVE" selected>ACTIVE — Department can log in immediately</option>
+                    <option value="SUSPENDED">SUSPENDED — Locked out until reviewed</option>
+                    <option value="INACTIVE">INACTIVE — Dormant account</option>
+                    <option value="PENDING">PENDING — Unactivated state</option>
+                </select>
+            </div>
+
+            <!-- Security Notice -->
+            <div class="p-3 rounded-2xl bg-[#0b0f19] border border-[#1e293b] flex items-start gap-2.5 text-[11px] text-slate-400">
+                <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></i>
+                <div>
+                    Passwords are encrypted with standard PBKDF2 hashing. Plaintext passwords are never stored in the database.
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-2.5 pt-2">
+                <button 
+                    type="button" 
+                    onclick="closeConfigureModal()" 
+                    class="px-4 py-2.5 rounded-xl text-xs font-semibold bg-[#131c2e] hover:bg-slate-800 text-slate-300 hover:text-white border border-[#1e293b] transition-colors cursor-pointer"
+                >
+                    Cancel
+                </button>
+                <button 
+                    type="submit" 
+                    class="px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-600/30 transition-all cursor-pointer"
+                >
+                    Save Credentials
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- =============================================================== -->
+<!-- MODAL 2: EDIT LOGIN ID                                          -->
+<!-- =============================================================== -->
+<div 
+    id="edit-login-id-modal" 
+    class="hidden fixed inset-0 z-50 bg-[#030712]/80 backdrop-blur-md flex items-center justify-center p-4"
+    onclick="if(event.target === this) closeEditLoginIdModal()"
+>
+    <div class="w-full max-w-md bg-[#0f172a] border border-[#1e293b] rounded-3xl shadow-2xl p-6 relative space-y-5">
+        <div class="flex items-center justify-between pb-3 border-b border-[#1e293b]">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center border border-cyan-500/25">
+                    <i data-lucide="pencil" class="w-4 h-4"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white text-base tracking-tight">Edit Department Login ID</h3>
+                    <p class="text-xs text-slate-400" id="edit-id-dept-name">Department</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeEditLoginIdModal()" class="text-slate-400 hover:text-white p-1 rounded-lg transition-colors cursor-pointer">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <form id="edit-id-form" method="POST" action="" class="space-y-4 text-xs">
+            {% csrf_token %}
+
+            <div>
+                <label for="edit-login-id-input" class="block font-semibold text-slate-300 mb-1.5">New Login ID</label>
+                <input 
+                    type="text" 
+                    id="edit-login-id-input" 
+                    name="login_id" 
+                    required 
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-[#131c2e] border border-[#1e293b] text-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                >
+                <p class="text-[10px] text-slate-500 mt-1">Must be unique across all departments.</p>
+            </div>
+
+            <div class="flex items-center justify-end gap-2.5 pt-2">
+                <button 
+                    type="button" 
+                    onclick="closeEditLoginIdModal()" 
+                    class="px-4 py-2.5 rounded-xl text-xs font-semibold bg-[#131c2e] hover:bg-slate-800 text-slate-300 hover:text-white border border-[#1e293b] transition-colors cursor-pointer"
+                >
+                    Cancel
+                </button>
+                <button 
+                    type="submit" 
+                    class="px-5 py-2.5 rounded-xl text-xs font-bold bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-600/30 transition-all cursor-pointer"
+                >
+                    Update Login ID
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- =============================================================== -->
+<!-- MODAL 3: RESET PASSWORD                                         -->
+<!-- =============================================================== -->
+<div 
+    id="reset-password-modal" 
+    class="hidden fixed inset-0 z-50 bg-[#030712]/80 backdrop-blur-md flex items-center justify-center p-4"
+    onclick="if(event.target === this) closeResetPasswordModal()"
+>
+    <div class="w-full max-w-md bg-[#0f172a] border border-[#1e293b] rounded-3xl shadow-2xl p-6 relative space-y-5">
+        <div class="flex items-center justify-between pb-3 border-b border-[#1e293b]">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center border border-amber-500/25">
+                    <i data-lucide="lock" class="w-4 h-4"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white text-base tracking-tight">Reset Department Password</h3>
+                    <p class="text-xs text-slate-400" id="reset-pwd-dept-name">Department</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeResetPasswordModal()" class="text-slate-400 hover:text-white p-1 rounded-lg transition-colors cursor-pointer">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <form id="reset-pwd-form" method="POST" action="" class="space-y-4 text-xs">
+            {% csrf_token %}
+
+            <div>
+                <div class="flex items-center justify-between mb-1.5">
+                    <label for="reset-password-input" class="font-semibold text-slate-300">New Password</label>
+                    <button 
+                        type="button" 
+                        id="reset-generate-pwd-btn" 
+                        class="text-[11px] text-amber-400 hover:text-amber-300 font-semibold flex items-center gap-1 cursor-pointer transition-colors"
+                    >
+                        <i data-lucide="refresh-cw" class="w-3 h-3"></i>
+                        <span>Generate</span>
+                    </button>
+                </div>
+                <input 
+                    type="text" 
+                    id="reset-password-input" 
+                    name="new_password" 
+                    required 
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-[#131c2e] border border-[#1e293b] text-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    placeholder="Enter or generate new password..."
+                >
+            </div>
+
+            <div>
+                <label for="reset-confirm-password-input" class="block font-semibold text-slate-300 mb-1.5">Confirm New Password</label>
+                <input 
+                    type="text" 
+                    id="reset-confirm-password-input" 
+                    name="confirm_password" 
+                    required 
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-[#131c2e] border border-[#1e293b] text-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    placeholder="Re-type new password..."
+                >
+            </div>
+
+            <div class="flex items-center justify-end gap-2.5 pt-2">
+                <button 
+                    type="button" 
+                    onclick="closeResetPasswordModal()" 
+                    class="px-4 py-2.5 rounded-xl text-xs font-semibold bg-[#131c2e] hover:bg-slate-800 text-slate-300 hover:text-white border border-[#1e293b] transition-colors cursor-pointer"
+                >
+                    Cancel
+                </button>
+                <button 
+                    type="submit" 
+                    class="px-5 py-2.5 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-600/30 transition-all cursor-pointer"
+                >
+                    Set New Password
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock admin_content %}
+
+{% block extra_scripts %}
+<script>
+    // Client-side password generator
+    function generateRandomPassword(length = 14) {
+        const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const lowercase = "abcdefghijklmnopqrstuvwxyz";
+        const digits = "0123456789";
+        const special = "!@#$%^&*";
+        const allChars = uppercase + lowercase + digits + special;
+
+        let pwd = [
+            uppercase[Math.floor(Math.random() * uppercase.length)],
+            lowercase[Math.floor(Math.random() * lowercase.length)],
+            digits[Math.floor(Math.random() * digits.length)],
+            special[Math.floor(Math.random() * special.length)]
+        ];
+
+        for (let i = 4; i < length; i++) {
+            pwd.push(allChars[Math.floor(Math.random() * allChars.length)]);
+        }
+
+        // Shuffle
+        for (let i = pwd.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [pwd[i], pwd[j]] = [pwd[j], pwd[i]];
+        }
+
+        return pwd.join("");
+    }
+
+    // Modal controllers
+    function openConfigureModal(deptId, deptName, suggestedId) {
+        const modal = document.getElementById('configure-account-modal');
+        const form = document.getElementById('configure-form');
+        const deptNameEl = document.getElementById('cfg-modal-dept-name');
+        const loginIdInput = document.getElementById('cfg-login-id');
+        const pwdInput = document.getElementById('cfg-password');
+        const confirmPwdInput = document.getElementById('cfg-confirm-password');
+
+        deptNameEl.textContent = `Department: ${deptName}`;
+        form.action = `/management/departments/${deptId}/configure/`;
+        loginIdInput.value = suggestedId || '';
+        const generated = generateRandomPassword();
+        pwdInput.value = generated;
+        confirmPwdInput.value = generated;
+
+        // Wire generate buttons
+        const genIdBtn = document.getElementById('cfg-generate-id-btn');
+        genIdBtn.onclick = function() {
+            fetch(`/management/departments/${deptId}/generate-credentials/`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.login_id) loginIdInput.value = data.login_id;
+                })
+                .catch(() => {});
+        };
+
+        const genPwdBtn = document.getElementById('cfg-generate-pwd-btn');
+        genPwdBtn.onclick = function() {
+            const pwd = generateRandomPassword();
+            pwdInput.value = pwd;
+            confirmPwdInput.value = pwd;
+        };
+
+        modal.classList.remove('hidden');
+    }
+
+    function closeConfigureModal() {
+        document.getElementById('configure-account-modal').classList.add('hidden');
+    }
+
+    function openEditLoginIdModal(deptId, deptName, currentId) {
+        const modal = document.getElementById('edit-login-id-modal');
+        const form = document.getElementById('edit-id-form');
+        const deptNameEl = document.getElementById('edit-id-dept-name');
+        const input = document.getElementById('edit-login-id-input');
+
+        deptNameEl.textContent = `Department: ${deptName}`;
+        form.action = `/management/departments/${deptId}/edit-login-id/`;
+        input.value = currentId || '';
+
+        modal.classList.remove('hidden');
+    }
+
+    function closeEditLoginIdModal() {
+        document.getElementById('edit-login-id-modal').classList.add('hidden');
+    }
+
+    function openResetPasswordModal(deptId, deptName, loginId) {
+        const modal = document.getElementById('reset-password-modal');
+        const form = document.getElementById('reset-pwd-form');
+        const deptNameEl = document.getElementById('reset-pwd-dept-name');
+        const pwdInput = document.getElementById('reset-password-input');
+        const confirmPwdInput = document.getElementById('reset-confirm-password-input');
+
+        deptNameEl.textContent = `${deptName} (${loginId})`;
+        form.action = `/management/departments/${deptId}/reset-password/`;
+        const generated = generateRandomPassword();
+        pwdInput.value = generated;
+        confirmPwdInput.value = generated;
+
+        const genPwdBtn = document.getElementById('reset-generate-pwd-btn');
+        genPwdBtn.onclick = function() {
+            const pwd = generateRandomPassword();
+            pwdInput.value = pwd;
+            confirmPwdInput.value = pwd;
+        };
+
+        modal.classList.remove('hidden');
+    }
+
+    function closeResetPasswordModal() {
+        document.getElementById('reset-password-modal').classList.add('hidden');
+    }
+
+    // Initialize Table Paginator & Filter Pills
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterPills = document.querySelectorAll('.dept-pill');
+        let activeFilter = 'all';
+
+        const paginator = new TablePaginator({
+            tableBodyId: 'dept-tbody',
+            rowSelector: '.dept-row',
+            infoId: 'dept-pagination-info',
+            paginationId: 'dept-pagination-controls',
+            pageSizeSelectId: 'dept-page-size',
+            searchInputId: 'dept-search-input',
+            emptyStateId: 'no-dept-results',
+            printBtnId: 'dept-print-btn',
+            defaultPageSize: 5,
+            itemName: 'departments',
+            customFilter: function(row) {
+                if (activeFilter === 'all') return true;
+                if (activeFilter === 'configured') return row.getAttribute('data-has-account') === 'yes';
+                if (activeFilter === 'not-configured') return row.getAttribute('data-has-account') === 'no';
+                if (activeFilter === 'active') return row.getAttribute('data-status') === 'active';
+                if (activeFilter === 'suspended') return row.getAttribute('data-status') === 'suspended';
+                return true;
+            }
+        });
+
+        filterPills.forEach(pill => {
+            pill.addEventListener('click', function() {
+                filterPills.forEach(p => {
+                    p.classList.remove('bg-indigo-600', 'text-white');
+                    p.classList.add('bg-[#0f172a]', 'text-slate-400');
+                });
+                this.classList.remove('bg-[#0f172a]', 'text-slate-400');
+                this.classList.add('bg-indigo-600', 'text-white');
+                activeFilter = this.getAttribute('data-filter') || 'all';
+                paginator.applyFilter();
+            });
+        });
+    });
+</script>
+{% endblock extra_scripts %}

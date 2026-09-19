@@ -1,0 +1,328 @@
+{% extends 'checkout/manage/checkout_base.html' %}
+
+{% block title %}Deliveries & Logistics Directory{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-black text-white tracking-tight flex items-center gap-2.5">
+                <span>Deliveries & Logistics Directory</span>
+            </h1>
+            <p class="text-xs text-slate-400 mt-1">Live tracking, checkpoint locations, and delivery status updates for all customer orders.</p>
+        </div>
+
+        <a href="{% url 'checkout:dashboard' %}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 transition-all shadow-xs">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+            <span>Back to Dashboard</span>
+        </a>
+    </div>
+
+    <!-- Filters & Faceted Search -->
+    <div class="p-4 rounded-2xl bg-[#0e1424] border border-slate-800/80 shadow-xs">
+        <form method="GET" action="" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            <!-- Search Text -->
+            <div class="lg:col-span-2 relative">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+                <input type="text" name="q" value="{{ q }}" placeholder="Search by Order #, Tracking Code, Customer, City..." class="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:border-emerald-500 focus:outline-hidden">
+            </div>
+
+            <!-- Delivery Status Filter -->
+            <div>
+                <select name="status" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:border-emerald-500 focus:outline-hidden">
+                    <option value="">All Delivery Statuses</option>
+                    <option value="CONFIRMED" {% if selected_status == 'CONFIRMED' %}selected{% endif %}>Confirmed</option>
+                    <option value="PROCESSING" {% if selected_status == 'PROCESSING' %}selected{% endif %}>Processing / Packed</option>
+                    <option value="SHIPPED" {% if selected_status == 'SHIPPED' %}selected{% endif %}>Dispatched / In Transit</option>
+                    <option value="OUT_FOR_DELIVERY" {% if selected_status == 'OUT_FOR_DELIVERY' %}selected{% endif %}>Out for Delivery</option>
+                    <option value="DELIVERED" {% if selected_status == 'DELIVERED' %}selected{% endif %}>Delivered</option>
+                    <option value="CANCELLED" {% if selected_status == 'CANCELLED' %}selected{% endif %}>Cancelled</option>
+                </select>
+            </div>
+
+            <!-- Carrier Filter -->
+            <div>
+                <select name="carrier" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:border-emerald-500 focus:outline-hidden">
+                    <option value="">All Carriers</option>
+                    {% for carrier in carriers %}
+                    <option value="{{ carrier }}" {% if selected_carrier == carrier %}selected{% endif %}>{{ carrier }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-2">
+                <button type="submit" class="flex-1 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-all shadow-md shadow-emerald-600/20">
+                    Filter
+                </button>
+                {% if q or selected_status or selected_carrier or selected_payment %}
+                <a href="{% url 'checkout:deliveries' %}" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold">
+                    Reset
+                </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <!-- Deliveries Table -->
+    <div class="rounded-2xl bg-[#0e1424] border border-slate-800/80 shadow-xs overflow-hidden">
+        <div class="p-4 border-b border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+            <span>Showing <strong class="text-white">{{ page_obj.start_index }}-{{ page_obj.end_index }}</strong> of <strong class="text-white">{{ total_count }}</strong> deliveries</span>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-300">
+                <thead class="bg-slate-900/90 text-slate-400 uppercase text-[10px] font-bold border-b border-slate-800/80 tracking-wider">
+                    <tr>
+                        <th class="px-5 py-3.5">Order / Date</th>
+                        <th class="px-5 py-3.5">Customer / City</th>
+                        <th class="px-5 py-3.5">Carrier / Tracking</th>
+                        <th class="px-5 py-3.5">Current Checkpoint Location</th>
+                        <th class="px-5 py-3.5">Status & SLA</th>
+                        <th class="px-5 py-3.5">COD Amount</th>
+                        <th class="px-5 py-3.5 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60">
+                    {% for order in page_obj %}
+                    <tr class="hover:bg-slate-800/30 transition-colors">
+                        <!-- Order & Date -->
+                        <td class="px-5 py-4">
+                            <a href="{% url 'checkout:delivery_detail' order.order_number %}" class="font-mono font-bold text-emerald-400 hover:underline text-xs flex items-center gap-1.5">
+                                <i data-lucide="package" class="w-3.5 h-3.5 text-slate-400"></i>
+                                <span>{{ order.order_number }}</span>
+                            </a>
+                            <span class="text-[11px] text-slate-400 block mt-0.5">{{ order.created_at|date:"M d, Y H:i" }}</span>
+                        </td>
+
+                        <!-- Customer & Destination -->
+                        <td class="px-5 py-4">
+                            <span class="font-bold text-slate-200 block">{{ order.shipping_name }}</span>
+                            <span class="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
+                                <i data-lucide="map-pin" class="w-3 h-3 text-slate-400"></i>
+                                {{ order.shipping_city }}, {{ order.shipping_state }}
+                            </span>
+                        </td>
+
+                        <!-- Carrier & Tracking -->
+                        <td class="px-5 py-4">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-200 border border-slate-700 block max-w-fit">
+                                {{ order.delivery_partner|default:"Cartivo Express" }}
+                            </span>
+                            <span class="font-mono text-[11px] text-slate-400 block mt-1">
+                                {{ order.tracking_code }}
+                            </span>
+                        </td>
+
+                        <!-- Current Checkpoint Location -->
+                        <td class="px-5 py-4 max-w-xs">
+                            <div class="flex items-start gap-1.5">
+                                <i data-lucide="navigation" class="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5"></i>
+                                <span class="text-xs text-slate-200 font-medium">
+                                    {{ order.active_location_display }}
+                                </span>
+                            </div>
+                        </td>
+
+                        <!-- Status & ETA -->
+                        <td class="px-5 py-4">
+                            {% if order.status == 'OUT_FOR_DELIVERY' %}
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 live-radar"></span>
+                                Out for Delivery
+                            </span>
+                            {% elif order.status == 'SHIPPED' %}
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                                <i data-lucide="truck" class="w-3 h-3"></i>
+                                In Transit
+                            </span>
+                            {% elif order.status == 'PROCESSING' %}
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                                Packed / Processing
+                            </span>
+                            {% elif order.status == 'DELIVERED' %}
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                Delivered
+                            </span>
+                            {% elif order.status == 'CANCELLED' %}
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                                Cancelled
+                            </span>
+                            {% else %}
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-800 text-slate-300 border border-slate-700">
+                                {{ order.get_status_display }}
+                            </span>
+                            {% endif %}
+                            <span class="text-[10px] text-slate-400 block mt-1">ETA: {{ order.estimated_delivery_date|default:"3-5 Business Days" }}</span>
+                        </td>
+
+                        <!-- COD Financials -->
+                        <td class="px-5 py-4">
+                            <span class="font-bold text-white block">₹{{ order.total_amount }}</span>
+                            <span class="px-1.5 py-0.5 rounded text-[10px] font-bold {% if order.payment_status == 'PAID' %}bg-emerald-500/20 text-emerald-400{% else %}bg-amber-500/20 text-amber-400{% endif %}">
+                                COD: {{ order.payment_status }}
+                            </span>
+                        </td>
+
+                        <!-- Actions -->
+                        <td class="px-5 py-4 text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                <button type="button" 
+                                    onclick="openUpdateModal('{{ order.order_number }}', '{{ order.status }}', '{{ order.delivery_partner }}', '{{ order.tracking_code }}', '{{ order.current_location|default:order.active_location_display|escapejs }}', '{{ order.estimated_delivery_date }}', '{{ order.payment_status }}')" 
+                                    class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition-all text-xs" 
+                                    title="Quick Update Status & Location">
+                                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                                </button>
+                                <a href="{% url 'checkout:delivery_detail' order.order_number %}" class="p-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 transition-all text-xs" title="View Full Dossier">
+                                    <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                                </a>
+                                <a href="{% url 'orders:order_receipt' order.order_number %}" target="_blank" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 border border-slate-700 transition-all text-xs" title="Print Receipt">
+                                    <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="px-5 py-12 text-center text-slate-400">
+                            No shipments found matching the selected filters.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <div class="p-4 border-t border-slate-800/80 flex items-center justify-between text-xs">
+            <div class="flex items-center gap-1">
+                {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}&q={{ q }}&status={{ selected_status }}&carrier={{ selected_carrier }}" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700">Previous</a>
+                {% endif %}
+            </div>
+            <span class="text-slate-400">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            <div class="flex items-center gap-1">
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&q={{ q }}&status={{ selected_status }}&carrier={{ selected_carrier }}" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700">Next</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal: Quick Update Delivery Status & Location -->
+<div id="updateModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-[#0e1424] border border-slate-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+        <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i data-lucide="truck" class="w-5 h-5 text-emerald-400"></i>
+                <h3 class="text-sm font-bold text-white">Update Delivery & Location Checkpoint</h3>
+            </div>
+            <button type="button" onclick="closeUpdateModal()" class="text-slate-400 hover:text-white">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+
+        <form id="updateDeliveryForm" method="POST" action="" class="p-5 space-y-4">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+
+            <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Order Number</label>
+                <input type="text" id="modalOrderNumber" readonly class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 font-mono text-xs text-slate-300 font-bold focus:outline-hidden">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Delivery Status</label>
+                    <select name="status" id="modalStatus" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:border-emerald-500 focus:outline-hidden">
+                        <option value="CONFIRMED">Confirmed</option>
+                        <option value="PROCESSING">Processing & Packed</option>
+                        <option value="SHIPPED">Dispatched / In Transit</option>
+                        <option value="OUT_FOR_DELIVERY">Out for Delivery</option>
+                        <option value="DELIVERED">Delivered</option>
+                        <option value="CANCELLED">Cancelled</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">COD Payment Status</label>
+                    <select name="payment_status" id="modalPaymentStatus" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:border-emerald-500 focus:outline-hidden">
+                        <option value="PENDING">Pending Collection</option>
+                        <option value="PAID">Collected & Paid</option>
+                        <option value="FAILED">Payment Failed</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Logistics Carrier</label>
+                    <input type="text" name="delivery_partner" id="modalCarrier" placeholder="e.g. Cartivo Express Delivery" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:border-emerald-500 focus:outline-hidden">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Tracking / AWB Number</label>
+                    <input type="text" name="tracking_number" id="modalTracking" placeholder="e.g. CRTV-TRK-918001" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs font-mono text-white focus:border-emerald-500 focus:outline-hidden">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Current Physical Checkpoint Location</label>
+                <div class="relative">
+                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-400 absolute left-3 top-3"></i>
+                    <input type="text" name="current_location" id="modalLocation" placeholder="e.g. Distribution Hub, Okhla Phase III, New Delhi" class="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:border-emerald-500 focus:outline-hidden">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Estimated Delivery Date / SLA</label>
+                    <input type="text" name="estimated_delivery_date" id="modalEta" placeholder="e.g. Sept 22, 2026 (by 7 PM)" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:border-emerald-500 focus:outline-hidden">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Checkpoint Event Note</label>
+                    <input type="text" name="checkpoint_notes" id="modalNotes" placeholder="e.g. Dispatched on delivery van #DL04" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:border-emerald-500 focus:outline-hidden">
+                </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-800 flex items-center justify-end gap-2.5">
+                <button type="button" onclick="closeUpdateModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white bg-slate-900 hover:bg-slate-800 transition-all">
+                    Cancel
+                </button>
+                <button type="submit" class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 transition-all shadow-md shadow-emerald-600/20 flex items-center gap-1.5">
+                    <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                    <span>Save & Log Checkpoint</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openUpdateModal(orderNumber, status, carrier, tracking, location, eta, payment) {
+        document.getElementById('modalOrderNumber').value = orderNumber;
+        document.getElementById('modalStatus').value = status;
+        document.getElementById('modalCarrier').value = carrier;
+        document.getElementById('modalTracking').value = tracking;
+        document.getElementById('modalLocation').value = location;
+        document.getElementById('modalEta').value = eta;
+        document.getElementById('modalPaymentStatus').value = payment;
+        document.getElementById('updateDeliveryForm').action = "/checkout/delivery/" + orderNumber + "/update/";
+        
+        const modal = document.getElementById('updateModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeUpdateModal() {
+        const modal = document.getElementById('updateModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+</script>
+{% endblock %}

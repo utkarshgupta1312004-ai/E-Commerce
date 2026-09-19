@@ -1,0 +1,123 @@
+{% extends "accounts/manage/accounts_base.html" %}
+
+{% block title %}Roles &amp; Permissions Governance{% endblock %}
+{% block page_title %}Access Governance{% endblock %}
+{% block page_breadcrumb %}Roles &amp; Permissions{% endblock %}
+
+{% block page_actions %}
+<a href="{% url 'accounts:dashboard' %}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#131c2e] hover:bg-slate-800 text-slate-300 hover:text-white border border-[#1e293b] transition-all">
+    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+    <span>Back to Directory</span>
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <!-- Top Alert / Info -->
+    <div class="p-4 rounded-2xl bg-[#0d1424] border border-[#1e293b] flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 shrink-0">
+                <i data-lucide="shield" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h3 class="text-sm font-bold text-white">Role-Based Access Control (RBAC)</h3>
+                <p class="text-xs text-slate-400">Define operational roles and assign permissions to platform users and staff</p>
+            </div>
+        </div>
+
+        <button 
+            type="button" 
+            onclick="document.getElementById('create-role-box').classList.toggle('hidden')" 
+            class="px-4 py-2 rounded-xl text-xs font-bold bg-cyan-600/15 hover:bg-cyan-600 text-cyan-300 hover:text-white border border-cyan-500/30 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+        >
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Create New Role</span>
+        </button>
+    </div>
+
+    <!-- Create Role Box -->
+    <div id="create-role-box" class="hidden p-6 rounded-2xl bg-[#0d1424] border border-[#1e293b] space-y-4">
+        <div class="flex items-center gap-2 pb-3 border-b border-[#1e293b]">
+            <i data-lucide="plus-circle" class="w-4 h-4 text-cyan-400"></i>
+            <h4 class="text-xs font-bold uppercase tracking-wider text-white">Define New System Role</h4>
+        </div>
+
+        <form method="POST" action="{% url 'accounts:roles' %}" class="space-y-4">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Role Code <span class="text-rose-400">*</span></label>
+                    <input 
+                        type="text" 
+                        name="code" 
+                        required 
+                        placeholder="e.g., AUDITOR, MANAGER" 
+                        class="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-xs text-white focus:outline-none focus:border-cyan-500 font-mono uppercase transition-all"
+                    >
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Role Name <span class="text-rose-400">*</span></label>
+                    <input 
+                        type="text" 
+                        name="name" 
+                        required 
+                        placeholder="e.g., Quality Auditor" 
+                        class="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-xs text-white focus:outline-none focus:border-cyan-500 transition-all"
+                    >
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Description</label>
+                    <textarea 
+                        name="description" 
+                        rows="2" 
+                        placeholder="Detailed operational responsibilities of this role..." 
+                        class="w-full px-3 py-2 bg-[#131c2e] border border-[#1e293b] rounded-xl text-xs text-white focus:outline-none focus:border-cyan-500 transition-all"
+                    ></textarea>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2">
+                <button type="button" onclick="document.getElementById('create-role-box').classList.add('hidden')" class="px-4 py-2 text-xs text-slate-400 hover:text-white">Cancel</button>
+                <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold bg-cyan-600 hover:bg-cyan-500 text-white transition-all">Save Role</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Roles Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for r in roles %}
+        <div class="p-5 rounded-2xl bg-[#0d1424] border border-[#1e293b] space-y-4 hover:border-cyan-500/40 transition-all shadow-sm flex flex-col justify-between">
+            <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
+                        {{ r.code }}
+                    </span>
+                    <span class="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 font-mono font-semibold">
+                        {{ r.user_count }} users
+                    </span>
+                </div>
+                <h4 class="text-sm font-bold text-white">{{ r.name }}</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">{{ r.description|default:"Standard operational role for assigned platform members." }}</p>
+            </div>
+
+            <div class="pt-3 border-t border-[#1e293b] flex items-center justify-between">
+                <span class="text-[11px] text-slate-500 font-mono">ID #{{ r.id }}</span>
+                <a href="{% url 'accounts:dashboard' %}?role={{ r.code|lower }}" class="text-xs font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1 transition-colors">
+                    <span>View Users</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full py-12 text-center text-slate-400">
+            <div class="w-12 h-12 rounded-2xl bg-[#131c2e] border border-[#1e293b] flex items-center justify-center mx-auto mb-3 text-slate-500">
+                <i data-lucide="key" class="w-6 h-6"></i>
+            </div>
+            <h4 class="text-sm font-bold text-white">No custom roles defined</h4>
+            <p class="text-xs text-slate-500 mt-1">Click "Create New Role" above to set up roles.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,796 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.title }} &bull; Cartivo Luxury Storefront{% endblock %}
+
+{% block meta %}
+<meta name="description" content="{{ product.short_description|default:product.description|truncatewords:25 }}">
+<meta property="og:title" content="{{ product.title }} | Cartivo">
+<meta property="og:description" content="{{ product.short_description|default:product.description|truncatewords:25 }}">
+<meta property="og:type" content="product">
+<meta property="og:image" content="{{ product.primary_image_url }}">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": "{{ product.title|escapejs }}",
+  "image": ["{{ product.primary_image_url }}"],
+  "description": "{{ product.short_description|default:product.description|truncatewords:30|escapejs }}",
+  "sku": "{{ product.sku|default:'' }}",
+  {% if product.brand %}"brand": { "@type": "Brand", "name": "{{ product.brand.name|escapejs }}" },{% endif %}
+  "offers": {
+    "@type": "Offer",
+    "priceCurrency": "USD",
+    "price": "{{ product.effective_price }}",
+    "availability": "https://schema.org/InStock",
+    "itemCondition": "https://schema.org/NewCondition"
+  }
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="bg-slate-50/60 min-h-screen py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        {% if is_staff_view %}
+        <!-- Staff Quick Action Banner -->
+        <div class="mb-6 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-900 flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center justify-center p-1 rounded-lg bg-amber-500 text-white">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                </span>
+                <span class="font-semibold">Catalog Staff Mode:</span>
+                <span>Product status is <strong>{{ product.status }}</strong> &bull; Visibility: <strong>{{ product.visibility }}</strong></span>
+            </div>
+            <a href="{% url 'catalog:product_edit' product.id %}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-medium transition-colors">
+                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                <span>Edit in Catalog Console</span>
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- Breadcrumbs -->
+        <nav class="flex items-center gap-2 text-xs font-medium text-slate-500 mb-8 overflow-x-auto whitespace-nowrap">
+            <a href="/" class="hover:text-slate-900 transition-colors">Home</a>
+            <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
+            <a href="{% url 'catalog:product_list' %}" class="hover:text-slate-900 transition-colors">Products</a>
+            {% if product.category %}
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
+                <a href="{% url 'catalog:product_list' %}?category={{ product.category.slug }}" class="hover:text-slate-900 transition-colors">{{ product.category.name }}</a>
+            {% endif %}
+            <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
+            <span class="text-slate-900 font-semibold truncate max-w-[200px] sm:max-w-none">{{ product.title }}</span>
+        </nav>
+
+        <!-- Product Hero Card -->
+        <div class="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-6 lg:p-10 mb-12">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14">
+
+                <!-- Left Column: Media Gallery -->
+                <div class="lg:col-span-6 flex flex-col gap-4">
+                    <!-- Main Image Display Container -->
+                    <div class="relative w-full aspect-square rounded-2xl bg-slate-100 overflow-hidden border border-slate-200 group">
+                        <img 
+                            id="main-product-image"
+                            src="{{ product.primary_image_url }}" 
+                            alt="{{ product.title }}"
+                            class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                        >
+                        
+                        <!-- Badges -->
+                        <div class="absolute top-4 left-4 flex flex-col gap-1.5 z-10">
+                            {% if product.badge_text %}
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase bg-blue-600 text-white shadow-xs">
+                                {{ product.badge_text }}
+                            </span>
+                            {% endif %}
+                            
+                            <span id="discount-badge" class="{% if not product.discount_percentage %}hidden{% endif %} inline-flex items-center px-3 py-1 rounded-full text-xs font-extrabold tracking-wide uppercase bg-emerald-600 text-white shadow-xs">
+                                -<span id="discount-badge-value">{{ product.discount_percentage }}</span>% OFF
+                            </span>
+                        </div>
+
+                        {% if product.is_trending %}
+                        <div class="absolute top-4 right-4 z-10">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white/90 backdrop-blur-md text-amber-700 shadow-xs border border-amber-200">
+                                <i data-lucide="flame" class="w-3.5 h-3.5 text-amber-500 fill-amber-500"></i>
+                                Trending
+                            </span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Thumbnails list -->
+                    {% if images|length > 1 %}
+                    <div class="flex items-center gap-3 overflow-x-auto py-2 no-scrollbar">
+                        {% for img in images %}
+                        <button 
+                            type="button" 
+                            onclick="switchGalleryImage('{{ img.image_url }}', this)"
+                            class="thumb-btn relative w-16 sm:w-20 aspect-square rounded-xl overflow-hidden border-2 {% if forloop.first %}border-blue-600 ring-2 ring-blue-600/20{% else %}border-slate-200 hover:border-slate-400{% endif %} transition-all cursor-pointer shrink-0 bg-slate-50"
+                        >
+                            <img src="{{ img.image_url }}" alt="{{ img.alt_text|default:product.title }}" class="w-full h-full object-cover">
+                        </button>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Right Column: Product Configurator & Purchasing -->
+                <div class="lg:col-span-6 flex flex-col">
+                    <!-- Brand & Category -->
+                    <div class="flex items-center justify-between gap-3 text-xs mb-3">
+                        <div class="flex items-center gap-2">
+                            {% if product.brand %}
+                            <a href="{% url 'catalog:product_list' %}?brand={{ product.brand.slug }}" class="font-bold tracking-wider uppercase text-blue-600 hover:text-blue-700">
+                                {{ product.brand.name }}
+                            </a>
+                            <span class="text-slate-300">&bull;</span>
+                            {% endif %}
+                            {% if product.category %}
+                            <a href="{% url 'catalog:product_list' %}?category={{ product.category.slug }}" class="text-slate-500 hover:text-slate-800">
+                                {{ product.category.name }}
+                            </a>
+                            {% endif %}
+                        </div>
+
+                        <!-- SKU Indicator -->
+                        <div class="text-slate-400 font-mono text-[11px]">
+                            SKU: <span id="display-sku" class="text-slate-600 font-semibold">{{ product.sku|default:"GLOBAL" }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Product Title -->
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-3">
+                        {{ product.title }}
+                    </h1>
+
+                    <!-- Rating & Reviews -->
+                    <div class="flex items-center gap-3 mb-5 pb-5 border-b border-slate-100">
+                        <div class="flex items-center gap-1 text-amber-500">
+                            <i data-lucide="star" class="w-4 h-4 fill-amber-400 text-amber-400"></i>
+                            <span class="text-sm font-bold text-slate-900 ml-1">{{ product.rating|floatformat:1 }}</span>
+                        </div>
+                        <span class="text-slate-300">&bull;</span>
+                        <span class="text-xs text-slate-500">{{ product.review_count|default:12 }} customer reviews</span>
+                        <span class="text-slate-300">&bull;</span>
+                        <div id="stock-indicator-wrapper">
+                        {% if product.is_in_stock %}
+                            {% if product.is_low_stock %}
+                            <span id="stock-badge" class="inline-flex items-center gap-1.5 text-xs font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+                                <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-amber-600"></i>
+                                <span id="stock-badge-text">Only {{ product.total_available_stock }} left in stock!</span>
+                            </span>
+                            {% else %}
+                            <span id="stock-badge" class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                                <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-600"></i>
+                                <span id="stock-badge-text">In Stock ({{ product.total_available_stock }} available)</span>
+                            </span>
+                            {% endif %}
+                        {% else %}
+                            <span id="stock-badge" class="inline-flex items-center gap-1.5 text-xs font-bold text-rose-700 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-200">
+                                <i data-lucide="slash" class="w-3.5 h-3.5 text-rose-600"></i>
+                                <span id="stock-badge-text">Out of Stock</span>
+                            </span>
+                        {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Pricing section -->
+                    <div class="flex flex-col mb-6">
+                        <div class="flex items-baseline gap-3">
+                            <div class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                                ₹<span id="display-price">{{ product.effective_price }}</span>
+                            </div>
+                            <div id="display-compare-wrapper" class="{% if not product.compare_at_price %}hidden{% endif %} text-lg font-medium text-slate-400 line-through">
+                                ₹<span id="display-compare-price">{{ product.compare_at_price }}</span>
+                            </div>
+                        </div>
+                        <div id="unit-price-indicator" class="hidden text-xs text-slate-500 font-medium mt-1">
+                            ₹<span id="display-unit-price">{{ product.effective_price }}</span> each &bull; <span id="display-qty-multiplier">1</span> item(s)
+                        </div>
+                    </div>
+
+                    <!-- Short Description -->
+                    {% if product.short_description %}
+                    <p class="text-sm text-slate-600 leading-relaxed mb-6">
+                        {{ product.short_description }}
+                    </p>
+                    {% endif %}
+
+                    <!-- Form for Purchase & Variant Selection -->
+                    <form id="product-purchase-form" method="POST" action="{% url 'catalog:product_buy' product.slug %}" class="space-y-6">
+                        {% csrf_token %}
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                        <input type="hidden" name="variant_id" id="selected-variant-id" value="{% if variants %}{{ variants.0.id }}{% endif %}">
+
+                        <!-- Variant Attributes Matrix (if variable product) -->
+                        {% if attributes_map %}
+                        <div class="space-y-4 pt-4 border-t border-slate-100" id="variant-selectors-container">
+                            {% for attr_name, attr_values in attributes_map.items %}
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-bold uppercase tracking-wider text-slate-700">{{ attr_name }}</span>
+                                    <span class="text-xs text-slate-500 font-medium" id="selected-val-label-{{ forloop.counter0 }}" data-attr-label="{{ attr_name }}">
+                                        {{ attr_values.0 }}
+                                    </span>
+                                </div>
+                                <div class="flex flex-wrap gap-2.5">
+                                    {% for val in attr_values %}
+                                    <button 
+                                        type="button"
+                                        data-attr="{{ attr_name }}"
+                                        data-val="{{ val }}"
+                                        onclick="selectAttributeValue('{{ attr_name }}', '{{ val }}', this)"
+                                        class="attr-chip px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer {% if forloop.first %}bg-slate-900 text-white border-slate-900 shadow-xs{% else %}bg-white text-slate-700 border-slate-200 hover:border-slate-300{% endif %}"
+                                    >
+                                        {{ val }}
+                                    </button>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Quantity Selector & Actions -->
+                        <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                            <!-- Quantity selector -->
+                            <div class="inline-flex items-center justify-between border border-slate-200 rounded-2xl p-1 bg-white shrink-0 sm:w-36">
+                                <button 
+                                    type="button" 
+                                    onclick="adjustQuantity(-1)"
+                                    class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors cursor-pointer"
+                                >
+                                    <i data-lucide="minus" class="w-4 h-4"></i>
+                                </button>
+                                <input 
+                                    type="number" 
+                                    name="quantity" 
+                                    id="item-quantity" 
+                                    value="1" 
+                                    min="1" 
+                                    max="99" 
+                                    class="w-12 text-center font-bold text-slate-900 text-sm focus:outline-hidden border-0 p-0"
+                                >
+                                <button 
+                                    type="button" 
+                                    onclick="adjustQuantity(1)"
+                                    class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors cursor-pointer"
+                                >
+                                    <i data-lucide="plus" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+
+                            <!-- Purchase Action Buttons -->
+                            {% if product.is_in_stock %}
+                            <button 
+                                id="btn-add-to-cart"
+                                type="button" 
+                                onclick="handleAddToCart(false)"
+                                class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl bg-slate-950 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold tracking-wide transition-all shadow-md active:scale-[0.99] cursor-pointer"
+                            >
+                                <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                                <span id="add-to-cart-text">Add to Bag</span>
+                            </button>
+
+                            <button 
+                                id="btn-buy-now"
+                                type="button" 
+                                onclick="handleAddToCart(true)"
+                                class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold tracking-wide transition-all shadow-md hover:shadow-lg shadow-blue-500/20 active:scale-[0.99] cursor-pointer"
+                            >
+                                <i data-lucide="zap" class="w-4 h-4"></i>
+                                <span>Buy Now</span>
+                            </button>
+                            {% else %}
+                            <button 
+                                id="btn-buy-now"
+                                type="button" 
+                                disabled
+                                class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-slate-100 text-slate-400 text-sm font-bold tracking-wide border border-slate-200 cursor-not-allowed select-none"
+                            >
+                                <i data-lucide="slash" class="w-4 h-4"></i>
+                                <span>Out of Stock</span>
+                            </button>
+                            {% endif %}
+
+                            <!-- Wishlist Action -->
+                            <button 
+                                type="button" 
+                                title="Add to Wishlist"
+                                class="w-12 h-12 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-500 hover:text-rose-600 transition-colors shrink-0 cursor-pointer"
+                            >
+                                <i data-lucide="heart" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Trust Pillars -->
+                    <div class="mt-8 grid grid-cols-3 gap-3 pt-6 border-t border-slate-100 text-center">
+                        <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                            <i data-lucide="truck" class="w-5 h-5 text-blue-600 mx-auto mb-1.5"></i>
+                            <div class="text-[11px] font-bold text-slate-900">Complimentary</div>
+                            <div class="text-[10px] text-slate-500">Express Shipping</div>
+                        </div>
+                        <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                            <i data-lucide="shield-check" class="w-5 h-5 text-emerald-600 mx-auto mb-1.5"></i>
+                            <div class="text-[11px] font-bold text-slate-900">Guaranteed</div>
+                            <div class="text-[10px] text-slate-500">100% Authentic</div>
+                        </div>
+                        <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                            <i data-lucide="rotate-ccw" class="w-5 h-5 text-indigo-600 mx-auto mb-1.5"></i>
+                            <div class="text-[11px] font-bold text-slate-900">30-Day Returns</div>
+                            <div class="text-[10px] text-slate-500">Hassle-Free Policy</div>
+                        </div>
+                    </div>
+
+                    <!-- Tags display -->
+                    {% if product.tags.all %}
+                    <div class="mt-6 flex flex-wrap items-center gap-1.5">
+                        <span class="text-xs font-semibold text-slate-400 mr-1">Tags:</span>
+                        {% for tag in product.tags.all %}
+                        <a href="{% url 'catalog:product_list' %}?tag={{ tag.slug }}" class="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-medium transition-colors">
+                            #{{ tag.name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Specifications & Full Description Tabs -->
+        <div class="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-6 lg:p-10 mb-12">
+            <!-- Tabs Nav -->
+            <div class="flex items-center gap-6 border-b border-slate-200 pb-4 mb-6">
+                <button 
+                    type="button" 
+                    onclick="switchDetailTab('description', this)"
+                    class="tab-link text-sm font-bold text-blue-600 border-b-2 border-blue-600 pb-4 -mb-4.5 transition-colors cursor-pointer"
+                >
+                    Overview & Description
+                </button>
+                <button 
+                    type="button" 
+                    onclick="switchDetailTab('specs', this)"
+                    class="tab-link text-sm font-semibold text-slate-500 hover:text-slate-800 pb-4 -mb-4.5 transition-colors cursor-pointer"
+                >
+                    Specifications & Attributes
+                </button>
+                <button 
+                    type="button" 
+                    onclick="switchDetailTab('shipping', this)"
+                    class="tab-link text-sm font-semibold text-slate-500 hover:text-slate-800 pb-4 -mb-4.5 transition-colors cursor-pointer"
+                >
+                    Shipping & Care
+                </button>
+            </div>
+
+            <!-- Tab Content: Description -->
+            <div id="tab-content-description" class="prose max-w-none text-slate-700 leading-relaxed text-sm">
+                {% if product.description %}
+                    <div class="whitespace-pre-line">{{ product.description }}</div>
+                {% else %}
+                    <p class="text-slate-400 italic">No detailed description recorded for this product.</p>
+                {% endif %}
+            </div>
+
+            <!-- Tab Content: Specifications -->
+            <div id="tab-content-specs" class="hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left">
+                        <tbody class="divide-y divide-slate-100">
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="py-3 px-4 font-bold text-slate-900 w-1/3">Master SKU</td>
+                                <td class="py-3 px-4 text-slate-600 font-mono">{{ product.sku|default:"N/A" }}</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="py-3 px-4 font-bold text-slate-900">Brand</td>
+                                <td class="py-3 px-4 text-slate-600">{{ product.brand.name|default:"Independent Design" }}</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="py-3 px-4 font-bold text-slate-900">Category</td>
+                                <td class="py-3 px-4 text-slate-600">{{ product.category.name|default:"Unassigned" }}</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="py-3 px-4 font-bold text-slate-900">Product Type</td>
+                                <td class="py-3 px-4 text-slate-600 capitalize">{{ product.product_type }}</td>
+                            </tr>
+                            {% if variants %}
+                            <tr class="hover:bg-slate-50/50">
+                                <td class="py-3 px-4 font-bold text-slate-900">Configurable Options</td>
+                                <td class="py-3 px-4 text-slate-600">
+                                    {{ variants|length }} unique variation{{ variants|length|pluralize }} available
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab Content: Shipping -->
+            <div id="tab-content-shipping" class="hidden text-sm text-slate-600 space-y-4">
+                <p>
+                    All Cartivo orders are processed through our premium fulfillment centers with discreet, tamper-evident luxury packaging.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                        <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider mb-1">Standard Delivery</h4>
+                        <p class="text-xs text-slate-500">Delivered within 3-5 business days across all metropolitan areas. Tracking link sent instantly upon dispatch.</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                        <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider mb-1">Return Protection</h4>
+                        <p class="text-xs text-slate-500">Full refund guaranteed if returned within 30 days of receipt in original condition and packaging.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Products Section -->
+        {% if related_products %}
+        <div class="mb-14">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 tracking-tight">You Might Also Like</h2>
+                    <p class="text-xs text-slate-500">Curated recommendations from the {{ product.category.name }} collection</p>
+                </div>
+                <a href="{% url 'catalog:product_list' %}?category={{ product.category.slug }}" class="text-xs font-bold text-blue-600 hover:text-blue-700 inline-flex items-center gap-1">
+                    <span>View More</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </a>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                {% for item in related_products %}
+                <a href="{% url 'catalog:product_detail' item.slug %}" class="group bg-white rounded-2xl border border-slate-200/80 overflow-hidden hover:shadow-lg transition-all flex flex-col">
+                    <div class="relative aspect-square bg-slate-100 overflow-hidden">
+                        <img src="{{ item.primary_image_url }}" alt="{{ item.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        {% if item.discount_percentage %}
+                        <span class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-600 text-white">
+                            -{{ item.discount_percentage }}%
+                        </span>
+                        {% endif %}
+                    </div>
+                    <div class="p-4 flex flex-col flex-1">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">{{ item.brand.name|default:"Cartivo" }}</span>
+                        <h3 class="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1 mb-2">
+                            {{ item.title }}
+                        </h3>
+                        <div class="mt-auto flex items-baseline gap-2">
+                            <span class="text-sm sm:text-base font-extrabold text-slate-900">₹{{ item.effective_price }}</span>
+                            {% if item.compare_at_price %}
+                            <span class="text-xs text-slate-400 line-through">₹{{ item.compare_at_price }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<!-- Client-side Interactive Variant & Dynamic Pricing Script -->
+<script>
+    // Injected Variant Matrix from Database
+    const VARIANTS_DATA = {{ variants_json|safe }};
+    const CURRENT_PRODUCT_SKU = "{{ product.sku|default:'' }}";
+    const CURRENT_PRODUCT_PRICE = "{{ product.effective_price }}";
+    const CURRENT_PRODUCT_COMPARE = "{{ product.compare_at_price|default:'' }}";
+    const CURRENT_PRODUCT_DISCOUNT = "{{ product.discount_percentage }}";
+    const CURRENT_PRODUCT_IN_STOCK = {{ product.is_in_stock|yesno:"true,false" }};
+    const CURRENT_PRODUCT_STOCK = {{ product.total_available_stock|default:0 }};
+
+    // Track active attribute selections and active matched variant
+    const currentSelections = {};
+    let activeVariant = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize active selections
+        if (VARIANTS_DATA && VARIANTS_DATA.length > 0) {
+            const defaultVariant = VARIANTS_DATA[0];
+            Object.assign(currentSelections, defaultVariant.attributes);
+            syncChipsAndLabels();
+            applyVariant(defaultVariant);
+        } else {
+            updatePriceDisplay();
+        }
+
+        // Attach listeners for manual quantity typing
+        const qtyInput = document.getElementById('item-quantity');
+        if (qtyInput) {
+            qtyInput.addEventListener('input', () => {
+                updatePriceDisplay();
+            });
+            qtyInput.addEventListener('change', () => {
+                let val = parseInt(qtyInput.value);
+                let max = parseInt(qtyInput.max) || 99;
+                if (isNaN(val) || val < 1) val = 1;
+                if (val > max) val = max;
+                qtyInput.value = val;
+                updatePriceDisplay();
+            });
+        }
+    });
+
+    function selectAttributeValue(attrName, attrValue, element) {
+        // 1. Speculatively apply new attribute value
+        const targetSelections = Object.assign({}, currentSelections, { [attrName]: attrValue });
+
+        // 2. Check for exact variant match in database matrix
+        let matched = VARIANTS_DATA.find(v => {
+            return Object.entries(targetSelections).every(([k, val]) => v.attributes[k] === val);
+        });
+
+        // 3. If no exact match (e.g. Emerald Green is only 512GB, while 256GB was previously chosen),
+        // find compatible variants with this chosen attribute and pick best match
+        if (!matched) {
+            const candidates = VARIANTS_DATA.filter(v => v.attributes[attrName] === attrValue);
+            if (candidates.length > 0) {
+                // Sort by how many attributes match other current selections
+                candidates.sort((a, b) => {
+                    const scoreA = Object.entries(currentSelections).filter(([k, val]) => k !== attrName && a.attributes[k] === val).length;
+                    const scoreB = Object.entries(currentSelections).filter(([k, val]) => k !== attrName && b.attributes[k] === val).length;
+                    return scoreB - scoreA;
+                });
+                matched = candidates[0];
+            }
+        }
+
+        if (matched) {
+            Object.assign(currentSelections, matched.attributes);
+            syncChipsAndLabels();
+            applyVariant(matched);
+        }
+    }
+
+    function syncChipsAndLabels() {
+        // Update chip active/inactive styles across all attribute groups
+        document.querySelectorAll('#variant-selectors-container .attr-chip').forEach(btn => {
+            const attr = btn.dataset.attr;
+            const val = btn.dataset.val;
+            if (currentSelections[attr] === val) {
+                btn.classList.remove('bg-white', 'text-slate-700', 'border-slate-200');
+                btn.classList.add('bg-slate-900', 'text-white', 'border-slate-900', 'shadow-xs');
+            } else {
+                btn.classList.remove('bg-slate-900', 'text-white', 'border-slate-900', 'shadow-xs');
+                btn.classList.add('bg-white', 'text-slate-700', 'border-slate-200');
+            }
+        });
+
+        // Update selected value labels
+        document.querySelectorAll('[data-attr-label]').forEach(label => {
+            const attr = label.dataset.attrLabel;
+            if (currentSelections[attr]) {
+                label.textContent = currentSelections[attr];
+            }
+        });
+    }
+
+    function applyVariant(variant) {
+        activeVariant = variant;
+
+        const skuElem = document.getElementById('display-sku');
+        const hiddenVariantInput = document.getElementById('selected-variant-id');
+        const discountBadge = document.getElementById('discount-badge');
+        const discountValue = document.getElementById('discount-badge-value');
+        const btnBuyNow = document.getElementById('btn-buy-now');
+        const btnOutOfStock = document.getElementById('btn-out-of-stock');
+        const stockBadge = document.getElementById('stock-badge');
+        const stockBadgeText = document.getElementById('stock-badge-text');
+        const qtyInput = document.getElementById('item-quantity');
+
+        if (variant) {
+            if (skuElem) skuElem.textContent = variant.sku || CURRENT_PRODUCT_SKU;
+            if (hiddenVariantInput) hiddenVariantInput.value = variant.id;
+
+            // Discount Badge
+            const discount = variant.discount !== undefined ? parseInt(variant.discount) : 0;
+            if (discountBadge && discountValue) {
+                if (discount > 0) {
+                    discountBadge.classList.remove('hidden');
+                    discountValue.textContent = discount;
+                } else {
+                    discountBadge.classList.add('hidden');
+                }
+            }
+
+            // Stock & Availability
+            const isStock = variant.is_in_stock;
+            const stockQty = variant.available_stock || 0;
+
+            if (btnBuyNow) {
+                const btnText = btnBuyNow.querySelector('span');
+                const btnIcon = btnBuyNow.querySelector('i');
+                if (isStock) {
+                    btnBuyNow.disabled = false;
+                    btnBuyNow.type = "submit";
+                    btnBuyNow.className = "flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold tracking-wide transition-all shadow-md hover:shadow-lg shadow-blue-500/20 active:scale-[0.99] cursor-pointer";
+                    if (btnText) btnText.textContent = "Buy Now";
+                    if (btnIcon) btnIcon.setAttribute('data-lucide', 'shopping-cart');
+                } else {
+                    btnBuyNow.disabled = true;
+                    btnBuyNow.type = "button";
+                    btnBuyNow.className = "flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-slate-100 text-slate-400 text-sm font-bold tracking-wide border border-slate-200 cursor-not-allowed select-none";
+                    if (btnText) btnText.textContent = "Out of Stock";
+                    if (btnIcon) btnIcon.setAttribute('data-lucide', 'slash');
+                }
+                if (window.lucide && window.lucide.createIcons) {
+                    window.lucide.createIcons({ root: btnBuyNow });
+                }
+            }
+
+            if (stockBadge && stockBadgeText) {
+                if (!isStock) {
+                    stockBadge.className = "inline-flex items-center gap-1.5 text-xs font-bold text-rose-700 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-200";
+                    stockBadgeText.textContent = "Out of Stock";
+                } else if (stockQty <= 5) {
+                    stockBadge.className = "inline-flex items-center gap-1.5 text-xs font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200";
+                    stockBadgeText.textContent = `Only ${stockQty} left in stock!`;
+                } else {
+                    stockBadge.className = "inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200";
+                    stockBadgeText.textContent = `In Stock (${stockQty} available)`;
+                }
+            }
+
+            // Quantity limits based on variant stock
+            if (qtyInput) {
+                const maxStock = stockQty > 0 ? Math.min(99, stockQty) : 1;
+                qtyInput.max = maxStock;
+                let currentVal = parseInt(qtyInput.value) || 1;
+                if (currentVal > maxStock) {
+                    qtyInput.value = maxStock;
+                }
+            }
+        }
+
+        updatePriceDisplay();
+    }
+
+    function updatePriceDisplay() {
+        const qtyInput = document.getElementById('item-quantity');
+        let qty = parseInt(qtyInput ? qtyInput.value : 1) || 1;
+        let max = parseInt(qtyInput ? qtyInput.max : 99) || 99;
+        if (qty < 1) qty = 1;
+        if (qty > max) qty = max;
+
+        // Base unit price & compare price from active variant or product fallback
+        const unitPrice = activeVariant && activeVariant.price ? parseFloat(activeVariant.price) : parseFloat(CURRENT_PRODUCT_PRICE || '0');
+        const unitCompare = activeVariant && activeVariant.compare_at_price ? parseFloat(activeVariant.compare_at_price) : parseFloat(CURRENT_PRODUCT_COMPARE || '0');
+
+        const totalPrice = (unitPrice * qty).toFixed(2);
+        const totalCompare = (unitCompare * qty).toFixed(2);
+
+        const priceElem = document.getElementById('display-price');
+        const compWrapper = document.getElementById('display-compare-wrapper');
+        const compPriceElem = document.getElementById('display-compare-price');
+        const unitPriceIndicator = document.getElementById('unit-price-indicator');
+        const unitPriceElem = document.getElementById('display-unit-price');
+        const qtyMultiplierElem = document.getElementById('display-qty-multiplier');
+
+        if (priceElem) priceElem.textContent = totalPrice;
+
+        if (compWrapper && compPriceElem) {
+            if (unitCompare > unitPrice) {
+                compWrapper.classList.remove('hidden');
+                compPriceElem.textContent = totalCompare;
+            } else {
+                compWrapper.classList.add('hidden');
+            }
+        }
+
+        if (unitPriceIndicator) {
+            if (qty > 1) {
+                unitPriceIndicator.classList.remove('hidden');
+                if (unitPriceElem) unitPriceElem.textContent = unitPrice.toFixed(2);
+                if (qtyMultiplierElem) qtyMultiplierElem.textContent = qty;
+            } else {
+                unitPriceIndicator.classList.add('hidden');
+            }
+        }
+    }
+
+    function adjustQuantity(delta) {
+        const input = document.getElementById('item-quantity');
+        if (!input) return;
+        let current = parseInt(input.value) || 1;
+        let max = parseInt(input.max) || 99;
+        current += delta;
+        if (current < 1) current = 1;
+        if (current > max) current = max;
+        input.value = current;
+        updatePriceDisplay();
+    }
+
+    function switchGalleryImage(url, buttonElem) {
+        const mainImg = document.getElementById('main-product-image');
+        if (mainImg) {
+            mainImg.src = url;
+        }
+        document.querySelectorAll('.thumb-btn').forEach(btn => {
+            btn.classList.remove('border-blue-600', 'ring-2', 'ring-blue-600/20');
+            btn.classList.add('border-slate-200');
+        });
+        if (buttonElem) {
+            buttonElem.classList.remove('border-slate-200');
+            buttonElem.classList.add('border-blue-600', 'ring-2', 'ring-blue-600/20');
+        }
+    }
+
+    function switchDetailTab(tabKey, buttonElem) {
+        ['description', 'specs', 'shipping'].forEach(key => {
+            const content = document.getElementById('tab-content-' + key);
+            if (content) content.classList.add('hidden');
+        });
+
+        document.querySelectorAll('.tab-link').forEach(btn => {
+            btn.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600', 'font-bold');
+            btn.classList.add('text-slate-500', 'font-semibold');
+        });
+
+        const activeContent = document.getElementById('tab-content-' + tabKey);
+        if (activeContent) activeContent.classList.remove('hidden');
+
+        buttonElem.classList.remove('text-slate-500', 'font-semibold');
+        buttonElem.classList.add('text-blue-600', 'border-b-2', 'border-blue-600', 'font-bold');
+    }
+
+    function handleAddToCart(proceedToCheckout) {
+        const productId = "{{ product.id }}";
+        const variantInput = document.getElementById('selected-variant-id');
+        const variantId = variantInput ? variantInput.value : '';
+        const qtyInput = document.getElementById('item-quantity');
+        const quantity = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
+        const addBtn = document.getElementById('btn-add-to-cart');
+        const addBtnText = document.getElementById('add-to-cart-text');
+
+        if (addBtnText) addBtnText.textContent = 'Adding...';
+
+        fetch("{% url 'cart:add_to_cart' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                variant_id: variantId || null,
+                quantity: quantity
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // Update badge and header price
+                const badge = document.getElementById('cart-badge');
+                const headerPrice = document.getElementById('cart-header-price');
+                if (badge) badge.textContent = data.cart_item_count;
+                if (headerPrice) headerPrice.textContent = `₹${data.cart_total}`;
+
+                if (proceedToCheckout) {
+                    window.location.href = "{% url 'checkout:checkout' %}";
+                } else {
+                    if (addBtnText) addBtnText.textContent = 'Added ✓';
+                    setTimeout(() => {
+                        if (addBtnText) addBtnText.textContent = 'Add to Bag';
+                    }, 2000);
+                }
+            } else {
+                alert(data.message || 'Unable to add item to bag.');
+                if (addBtnText) addBtnText.textContent = 'Add to Bag';
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            // Fallback to standard form submit
+            document.getElementById('product-purchase-form').submit();
+        });
+    }
+</script>
+{% endblock %}

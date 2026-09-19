@@ -1,6 +1,8 @@
+{% load static %}
 <!-- ============================================================================== -->
 <!-- Cartivo AI Concierge / Agent Floating Chat Widget                              -->
 <!-- ============================================================================== -->
+<link rel="stylesheet" href="{% static 'assistant/css/chat-widget.css' %}">
 <div id="ai-agent-widget-container" class="fixed bottom-20 md:bottom-7 right-4 md:right-7 z-50 flex flex-col items-end pointer-events-none select-none">
     
     <!-- Floating Chat Window (Hidden by default) -->
@@ -65,7 +67,10 @@
                         🎧 Show top noise-canceling headphones
                     </button>
                     <button type="button" class="ai-prompt-chip text-left px-2.5 py-1.5 rounded-xl bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 shadow-2xs text-[11px] text-slate-700 transition-all">
-                        ⌚ Titanium chronographs under ₹2,999
+                        ⚖️ Compare items on my screen
+                    </button>
+                    <button type="button" class="ai-prompt-chip text-left px-2.5 py-1.5 rounded-xl bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 shadow-2xs text-[11px] text-slate-700 transition-all">
+                        🔍 What are the features of headphones?
                     </button>
                     <button type="button" class="ai-prompt-chip text-left px-2.5 py-1.5 rounded-xl bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 shadow-2xs text-[11px] text-slate-700 transition-all">
                         🔥 What are today's active coupon codes?
@@ -268,69 +273,240 @@
             return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
 
+        const storageKey = 'cartivo_assistant_session_id';
+        let sessionId = localStorage.getItem(storageKey) || null;
+        let isSending = false;
+
+        function formatMessageMarkdown(text) {
+            if (!text) return '';
+            const escaped = escapeHtml(text);
+            return escaped
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/`([^`]+)`/g, '<code class="bg-slate-200 px-1 py-0.5 rounded text-xs">$1</code>')
+                .replace(/\n/g, '<br>');
+        }
+
+        function extractBrowserContext() {
+            const visibleProducts = [];
+            const cards = document.querySelectorAll('.product-card');
+            cards.forEach(card => {
+                const id = card.getAttribute('data-product-id');
+                const title = card.getAttribute('data-product-title') || card.querySelector('h3, .font-semibold')?.textContent?.trim();
+                const price = card.getAttribute('data-product-price') || card.querySelector('.font-bold, .text-slate-900')?.textContent?.trim();
+                if (title) {
+                    visibleProducts.push({
+                        id: id ? parseInt(id, 10) : null,
+                        title: title,
+                        price: price || '0.00'
+                    });
+                }
+            });
+
+            const badge = document.querySelector('#cart-badge, .cart-badge-count');
+            const cartCount = badge ? parseInt(badge.textContent.trim(), 10) || 0 : 0;
+
+            return {
+                url: window.location.pathname,
+                page_title: document.title,
+                cart_count: cartCount,
+                visible_products: visibleProducts.slice(0, 10)
+            };
+        }
+
         // Handle user submission
-        function handleSend(text) {
+        async function handleSend(text) {
+            if (isSending) return;
             const query = (text || input.value || '').trim();
             if (!query) return;
 
             appendUserMessage(query);
             if (input) input.value = '';
 
-            const typingId = showTypingIndicator();
+            const sendBtn = document.getElementById('ai-agent-send-btn');
+            if (sendBtn) sendBtn.disabled = true;
+            isSending = true;
 
-            // Simulate AI Agent response (ready to plug into backend API e.g. /api/agent/chat/)
-            setTimeout(() => {
+            const typingId = showTypingIndicator();
+            const browserContext = extractBrowserContext();
+
+            try {
+                const response = await fetch('/api/assistant/message/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        message: query,
+                        session_id: sessionId,
+                        browser_context: browserContext
+                    })
+                });
+
+                const data = await response.json();
                 removeTypingIndicator(typingId);
-                generateAgentResponse(query);
-            }, 800);
+
+                if (!response.ok) {
+                    const errMsg = data.error || `Error ${response.status}: Failed to reach assistant.`;
+                    appendBotMessage(`⚠️ <em>${escapeHtml(errMsg)}</em>`);
+                    return;
+                }
+
+                if (data.session_id) {
+                    sessionId = data.session_id;
+                    localStorage.setItem(storageKey, sessionId);
+                }
+
+                if (data.reply) {
+                    appendBotMessage(formatMessageMarkdown(data.reply));
+                }
+
+                if (Array.isArray(data.actions) && data.actions.length > 0) {
+                    dispatchActions(data.actions);
+                }
+            } catch (err) {
+                console.error('[AI Concierge Error]:', err);
+                removeTypingIndicator(typingId);
+                appendBotMessage('Sorry, I encountered a temporary network issue. Please try again.');
+            } finally {
+                isSending = false;
+                if (sendBtn) sendBtn.disabled = false;
+            }
         }
 
-        function generateAgentResponse(query) {
-            const lower = query.toLowerCase();
-            let responseHtml = "";
+        function dispatchActions(actions) {
+            actions.forEach(action => {
+                if (!action || !action.type) return;
+                console.log(`[AI Concierge Action] ${action.type}`, action.payload);
 
-            if (lower.includes('headphone') || lower.includes('anc') || lower.includes('audio')) {
-                responseHtml = `
-                    Great choice! We have the <strong>Studio ANC Pro Wireless Headphones</strong> on spotlight:
-                    <div class="mt-2 p-2 bg-slate-50 rounded-xl border border-slate-200">
-                        <div class="font-semibold text-slate-900">Studio ANC Pro (Midnight Obsidian)</div>
-                        <div class="text-[11px] text-blue-600 font-bold mt-0.5">$299.00 <span class="text-slate-400 line-through text-[10px]">$349.00</span></div>
-                        <div class="text-[10px] text-slate-500 mt-1">&bull; Active Noise Cancellation &bull; 40-hour Battery &bull; High-Res Spatial Audio</div>
-                        <a href="#trending" class="mt-2 inline-flex items-center gap-1 text-[10px] font-semibold text-blue-600 hover:text-blue-700">View Product Details &rarr;</a>
-                    </div>
-                `;
-            } else if (lower.includes('watch') || lower.includes('chronograph')) {
-                responseHtml = `
-                    Here's our top-rated timepiece:
-                    <div class="mt-2 p-2 bg-slate-50 rounded-xl border border-slate-200">
-                        <div class="font-semibold text-slate-900">Titanium Smart Chronograph</div>
-                        <div class="text-[11px] text-blue-600 font-bold mt-0.5">₹2,999 <span class="text-slate-400 line-through text-[10px]">₹5,499</span></div>
-                        <div class="text-[10px] text-slate-500 mt-1">&bull; Aerospace Grade Titanium &bull; Sapphire Glass &bull; 14-day Battery</div>
-                        <a href="#trending" class="mt-2 inline-flex items-center gap-1 text-[10px] font-semibold text-blue-600 hover:text-blue-700">View Specifications &rarr;</a>
-                    </div>
-                `;
-            } else if (lower.includes('coupon') || lower.includes('code') || lower.includes('offer') || lower.includes('discount')) {
-                responseHtml = `
-                    Here are today's active coupon codes:
-                    <ul class="mt-1.5 space-y-1 list-disc list-inside">
-                        <li><strong>CARTIVO20</strong> &bull; 20% off storewide on orders $100+</li>
-                        <li><strong>CHRONO100</strong> &bull; Flat $100 off premium timepieces</li>
-                        <li><strong>FREESHIP</strong> &bull; Free expedited delivery worldwide</li>
-                    </ul>
-                `;
-            } else if (lower.includes('track') || lower.includes('order')) {
-                responseHtml = `
-                    To track an existing shipment, visit your <a href="/orders/" class="text-blue-600 underline font-medium">Orders Dashboard</a> or provide your <strong>Cartivo Order ID</strong> (e.g. #CR-8921) and I will look up the carrier tracking status.
-                `;
-            } else {
-                responseHtml = `
-                    I've noted: <em>"${escapeHtml(query)}"</em>.
-                    <br><br>
-                    You can browse our curated catalog or tell me specific specs, price range, or category (Fashion, Electronics, Home, Watches) to narrow down the best match!
-                `;
+                switch (action.type) {
+                    case 'compare_products':
+                        actionCompareProducts(action.payload);
+                        break;
+                    case 'filter_products':
+                        actionFilterProducts(action.payload);
+                        break;
+                    case 'update_cart_badge':
+                        actionUpdateCartBadge(action.payload);
+                        break;
+                    case 'open_modal':
+                        actionOpenModal(action.payload);
+                        break;
+                    case 'navigate_to':
+                        actionNavigateTo(action.payload);
+                        break;
+                    case 'highlight_element':
+                        actionHighlightElement(action.payload);
+                        break;
+                }
+            });
+        }
+
+        function actionCompareProducts(payload) {
+            const productIds = payload.product_ids || [];
+            if (productIds.length > 0) {
+                const cards = document.querySelectorAll('.product-card');
+                cards.forEach(card => {
+                    const cardId = parseInt(card.getAttribute('data-product-id'), 10);
+                    if (productIds.includes(cardId)) {
+                        card.style.opacity = '1';
+                        card.classList.add('assistant-highlight-glow');
+                        setTimeout(() => card.classList.remove('assistant-highlight-glow'), 6000);
+                    } else {
+                        card.style.opacity = '0.35';
+                        setTimeout(() => card.style.opacity = '1', 6000);
+                    }
+                });
+
+                const gridSection = document.querySelector('.product-card')?.closest('section') ||
+                                    document.querySelector('.grid.grid-cols-2');
+                if (gridSection) {
+                    gridSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
             }
+        }
 
-            appendBotMessage(responseHtml);
+        function actionFilterProducts(payload) {
+            const productIds = payload.product_ids || [];
+            const cards = document.querySelectorAll('.product-card');
+
+            if (cards.length > 0) {
+                cards.forEach(card => {
+                    const cardId = parseInt(card.getAttribute('data-product-id'), 10);
+                    const cardTitle = (card.getAttribute('data-product-title') || '').toLowerCase();
+                    const query = (payload.query || '').toLowerCase();
+
+                    const isMatch = (productIds.length > 0 && productIds.includes(cardId)) ||
+                                    (query && cardTitle.includes(query));
+
+                    if (isMatch) {
+                        card.style.opacity = '1';
+                        card.classList.add('assistant-highlight-glow');
+                        setTimeout(() => card.classList.remove('assistant-highlight-glow'), 4000);
+                    } else if (productIds.length > 0) {
+                        card.style.opacity = '0.35';
+                        setTimeout(() => card.style.opacity = '1', 6000);
+                    }
+                });
+
+                const gridSection = document.querySelector('.product-card')?.closest('section') ||
+                                    document.querySelector('.grid.grid-cols-2');
+                if (gridSection) {
+                    gridSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        }
+
+        function actionUpdateCartBadge(payload) {
+            const count = payload.count !== undefined ? payload.count : null;
+            if (count === null) return;
+
+            const badgeElements = document.querySelectorAll('#cart-badge, .cart-badge-count');
+            badgeElements.forEach(badge => {
+                badge.textContent = String(count);
+                badge.classList.remove('cart-badge-bounce');
+                void badge.offsetWidth;
+                badge.classList.add('cart-badge-bounce');
+                setTimeout(() => badge.classList.remove('cart-badge-bounce'), 800);
+            });
+        }
+
+        function actionOpenModal(payload) {
+            if (payload.modal_id) {
+                if (typeof window.openModal === 'function') {
+                    window.openModal(payload.modal_id);
+                } else {
+                    const m = document.getElementById(payload.modal_id);
+                    if (m) {
+                        m.classList.remove('hidden');
+                        m.classList.add('active');
+                    }
+                }
+            }
+        }
+
+        function actionNavigateTo(payload) {
+            if (payload.url) {
+                if (payload.new_tab) {
+                    window.open(payload.url, '_blank');
+                } else {
+                    window.location.href = payload.url;
+                }
+            }
+        }
+
+        function actionHighlightElement(payload) {
+            if (payload.selector) {
+                try {
+                    const el = document.querySelector(payload.selector);
+                    if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        el.classList.add('assistant-highlight-glow');
+                        setTimeout(() => el.classList.remove('assistant-highlight-glow'), 3500);
+                    }
+                } catch (e) {}
+            }
         }
 
         if (form) {

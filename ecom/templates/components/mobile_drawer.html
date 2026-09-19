@@ -24,57 +24,89 @@
                 <i data-lucide="home" class="w-4 h-4 text-slate-500"></i>
                 <span>Home Storefront</span>
             </a>
-            <a href="/products/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-100 transition-colors">
-                <i data-lucide="sparkles" class="w-4 h-4 text-blue-600"></i>
-                <span>New Arrivals</span>
-            </a>
-            <a href="/products/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-100 transition-colors">
-                <i data-lucide="layers" class="w-4 h-4 text-slate-500"></i>
-                <span>All Collections</span>
-            </a>
-            <a href="/products/" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold text-amber-600 hover:bg-amber-50 transition-colors">
-                <div class="flex items-center gap-3">
-                    <i data-lucide="tag" class="w-4 h-4 text-amber-500"></i>
-                    <span>Flash Sale</span>
+            {% for item in cms_navbar_items %}
+            <div>
+                <a 
+                    href="{{ item.url }}" 
+                    {% if item.open_in_new_tab %}target="_blank" rel="noopener noreferrer"{% endif %} 
+                    class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
+                >
+                    <span class="flex items-center gap-3">
+                        <i data-lucide="compass" class="w-4 h-4 text-blue-600"></i>
+                        <span>{{ item.title }}</span>
+                    </span>
+                    {% if item.badge_text %}
+                    <span class="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">{{ item.badge_text }}</span>
+                    {% endif %}
+                </a>
+                {% if item.prefetched_active_children %}
+                <div class="pl-7 pr-2 py-1 space-y-1">
+                    {% for child in item.prefetched_active_children %}
+                    <a 
+                        href="{{ child.url }}" 
+                        {% if child.open_in_new_tab %}target="_blank" rel="noopener noreferrer"{% endif %} 
+                        class="block px-3 py-1.5 text-xs text-slate-600 hover:text-blue-600 rounded-lg hover:bg-slate-50 transition-colors"
+                    >
+                        {{ child.title }}
+                    </a>
+                    {% endfor %}
                 </div>
-                <span class="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">20% Off</span>
-            </a>
+                {% endif %}
+            </div>
+            {% endfor %}
         </div>
 
         <div class="space-y-1 border-t border-slate-100 pt-4">
             <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3">Categories</span>
-            <a href="/category/audio/" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-blue-600">
-                <i data-lucide="headphones" class="w-4 h-4 text-slate-400"></i>
-                <span>Acoustic Audio</span>
+            {% for cat_nav in cms_category_nav_items %}
+            <a href="{{ cat_nav.effective_url }}" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-blue-600">
+                <i data-lucide="{{ cat_nav.icon_name|default:'tag' }}" class="w-4 h-4 text-slate-400"></i>
+                <span>{{ cat_nav.title }}</span>
             </a>
-            <a href="/category/timepieces/" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-blue-600">
-                <i data-lucide="watch" class="w-4 h-4 text-slate-400"></i>
-                <span>Luxury Timepieces</span>
-            </a>
-            <a href="/category/apparel/" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-blue-600">
-                <i data-lucide="shirt" class="w-4 h-4 text-slate-400"></i>
-                <span>Minimal Apparel</span>
-            </a>
-            <a href="/category/accessories/" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-blue-600">
-                <i data-lucide="briefcase" class="w-4 h-4 text-slate-400"></i>
-                <span>Leather Goods</span>
-            </a>
+            {% endfor %}
         </div>
 
         <div class="space-y-1 border-t border-slate-100 pt-4">
             <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3">Account & Orders</span>
-            <a href="/accounts/login/" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-slate-950">
+            {% if not request.user.is_authenticated %}
+            <a href="{% url 'accounts:login' %}" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-slate-950">
                 <i data-lucide="user" class="w-4 h-4 text-slate-400"></i>
-                <span>Sign In / My Account</span>
+                <span>Sign In / Login</span>
             </a>
-            <a href="/account/orders/" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-slate-950">
+            <a href="{% url 'accounts:register' %}" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-slate-950">
+                <i data-lucide="user-plus" class="w-4 h-4 text-slate-400"></i>
+                <span>Create Account</span>
+            </a>
+            {% else %}
+            <a href="{% url 'accounts:profile' %}" class="flex items-center gap-3 px-3 py-2 text-sm font-semibold text-slate-900 hover:text-blue-600">
+                <i data-lucide="user" class="w-4 h-4 text-blue-600"></i>
+                <span>My Profile ({{ request.user.first_name|default:request.user.username }})</span>
+            </a>
+            <a href="/orders/" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-slate-950">
                 <i data-lucide="package" class="w-4 h-4 text-slate-400"></i>
-                <span>Track Orders</span>
+                <span>My Orders</span>
             </a>
             <a href="/wishlist/" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-slate-950">
                 <i data-lucide="heart" class="w-4 h-4 text-rose-500"></i>
-                <span>Saved Wishlist (3)</span>
+                <span>Wishlist</span>
             </a>
+            <a href="/notifications/" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-slate-950">
+                <i data-lucide="bell" class="w-4 h-4 text-amber-500"></i>
+                <span>Notifications</span>
+            </a>
+            <a href="{% url 'accounts:change_password' %}" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-slate-950">
+                <i data-lucide="key" class="w-4 h-4 text-slate-400"></i>
+                <span>Change Password</span>
+            </a>
+            <a href="{% url 'accounts:settings' %}" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-slate-950">
+                <i data-lucide="settings" class="w-4 h-4 text-slate-400"></i>
+                <span>Account Settings</span>
+            </a>
+            <a href="{% url 'accounts:logout' %}" class="flex items-center gap-3 px-3 py-2 text-sm font-semibold text-rose-600 hover:bg-rose-50">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>Sign Out</span>
+            </a>
+            {% endif %}
         </div>
     </div>
 
@@ -82,7 +114,7 @@
     <div class="p-5 border-t border-slate-200 bg-slate-50 space-y-3">
         <div class="flex items-center justify-between text-xs text-slate-500">
             <span>Currency</span>
-            <button class="font-semibold text-slate-800">USD ($)</button>
+            <button class="font-semibold text-slate-800">INR (₹)</button>
         </div>
         <p class="text-[11px] text-slate-400">Cartivo &bull; Shop Smarter. Live Better.</p>
     </div>

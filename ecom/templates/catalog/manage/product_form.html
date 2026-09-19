@@ -1,0 +1,437 @@
+{% extends 'catalog/manage/catalog_base.html' %}
+{% load static %}
+
+{% block title %}{% if is_edit %}Edit {{ product.title }}{% else %}Create New Product{% endif %} &bull; Catalog Console{% endblock %}
+{% block header_title %}{% if is_edit %}Edit Product Master{% else %}New Product Master{% endif %}{% endblock %}
+{% block header_subtitle %}{% if is_edit %}{{ product.title }} (ID: {{ product.id }}){% else %}Create an authoritative product record{% endif %}{% endblock %}
+
+{% block catalog_content %}
+<div class="space-y-8 max-w-5xl mx-auto pb-16">
+
+    <!-- Top Action Nav -->
+    <div class="flex items-center justify-between">
+        <a href="{% url 'catalog:product_admin_list' %}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>Back to Products</span>
+        </a>
+        {% if is_edit %}
+        <div class="flex items-center gap-3">
+            <a href="{% url 'catalog:product_detail' product.slug %}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition-colors">
+                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                <span>View Live</span>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Main Product Form -->
+    <form method="POST" action="{{ action_url }}" enctype="multipart/form-data" class="space-y-8">
+        {% csrf_token %}
+        <input type="hidden" name="action_type" value="update_product">
+
+        <!-- 1. Core Identity Card -->
+        <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 space-y-5">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-blue-400 flex items-center gap-2">
+                <i data-lucide="info" class="w-4 h-4"></i>
+                <span>Core Identity & Information</span>
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Title -->
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">Product Title *</label>
+                    <input 
+                        type="text" 
+                        name="title" 
+                        required 
+                        value="{{ product.title|default:'' }}" 
+                        placeholder="e.g. Master & Dynamic MW08 Sport Earphones"
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-blue-500"
+                    >
+                </div>
+
+                <!-- Slug -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">URL Slug (Auto-generated if blank)</label>
+                    <input 
+                        type="text" 
+                        name="slug" 
+                        value="{{ product.slug|default:'' }}" 
+                        placeholder="master-dynamic-mw08-sport"
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-300 font-mono placeholder-slate-500 focus:outline-hidden focus:border-blue-500"
+                    >
+                </div>
+
+                <!-- Master SKU -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">Master SKU (Authoritative)</label>
+                    <input 
+                        type="text" 
+                        name="sku" 
+                        value="{{ product.sku|default:'' }}" 
+                        placeholder="MD-MW08-SPORT"
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-200 uppercase font-mono placeholder-slate-500 focus:outline-hidden focus:border-blue-500"
+                    >
+                </div>
+
+                <!-- Short Description -->
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">Short Summary (Storefront subtitle)</label>
+                    <input 
+                        type="text" 
+                        name="short_description" 
+                        value="{{ product.short_description|default:'' }}" 
+                        placeholder="Precision-crafted wireless earphones featuring beryllium acoustic drivers..."
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-300 placeholder-slate-500 focus:outline-hidden focus:border-blue-500"
+                    >
+                </div>
+
+                <!-- Full Description -->
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">Full Detailed Description</label>
+                    <textarea 
+                        name="description" 
+                        rows="5" 
+                        placeholder="Detailed technical specifications, materials, and design philosophy..."
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-300 placeholder-slate-500 focus:outline-hidden focus:border-blue-500"
+                    >{{ product.description|default:'' }}</textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Taxonomy & Merchandising -->
+        <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 space-y-5">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-purple-400 flex items-center gap-2">
+                <i data-lucide="tag" class="w-4 h-4"></i>
+                <span>Taxonomy, Categorization & Tags</span>
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Category Selection -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">Category *</label>
+                    <select name="category" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-200 focus:outline-hidden focus:border-blue-500">
+                        <option value="">Select Category...</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if product.category_id == cat.id %}selected{% endif %}>
+                            {{ cat.name }}{% if cat.parent %} (under {{ cat.parent.name }}){% endif %}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Brand Selection -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">Partner Brand</label>
+                    <select name="brand" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-200 focus:outline-hidden focus:border-blue-500">
+                        <option value="">No Brand / Independent</option>
+                        {% for b in brands %}
+                        <option value="{{ b.id }}" {% if product.brand_id == b.id %}selected{% endif %}>{{ b.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Product Tags -->
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">Tags (Comma-separated)</label>
+                    <input 
+                        type="text" 
+                        name="tags" 
+                        value="{{ tags_csv|default:'' }}" 
+                        placeholder="wireless, premium audio, noise cancelling, bluetooth 5.2"
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-300 placeholder-slate-500 focus:outline-hidden focus:border-blue-500"
+                    >
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Pricing Matrix & Commercial Controls -->
+        <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 space-y-5">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+                <i data-lucide="dollar-sign" class="w-4 h-4"></i>
+                <span>Pricing Matrix & Commercial Master</span>
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <!-- Base Price -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">Base Selling Price (₹) *</label>
+                    <input 
+                        type="number" 
+                        step="0.01" 
+                        name="base_price" 
+                        required 
+                        value="{{ product.base_price|default:'0.00' }}" 
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-white font-bold focus:outline-hidden focus:border-blue-500"
+                    >
+                </div>
+
+                <!-- Compare-at Price -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">MSRP / Compare-At (₹)</label>
+                    <input 
+                        type="number" 
+                        step="0.01" 
+                        name="compare_at_price" 
+                        value="{{ product.compare_at_price|default:'' }}" 
+                        placeholder="Optional strike-through"
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-300 focus:outline-hidden focus:border-blue-500"
+                    >
+                </div>
+
+                <!-- Cost Price (Staff only) -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">Internal Cost Price (₹)</label>
+                    <input 
+                        type="number" 
+                        step="0.01" 
+                        name="cost_price" 
+                        value="{{ product.cost_price|default:'' }}" 
+                        placeholder="Internal staff only"
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-400 focus:outline-hidden focus:border-blue-500"
+                    >
+                </div>
+            </div>
+
+            <!-- Status & Visibility Controls -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-slate-800/80">
+                <!-- Status -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">Master Status</label>
+                    <select name="status" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-200 focus:outline-hidden focus:border-blue-500">
+                        <option value="ACTIVE" {% if product.status == 'ACTIVE' %}selected{% endif %}>ACTIVE</option>
+                        <option value="DRAFT" {% if product.status == 'DRAFT' %}selected{% endif %}>DRAFT</option>
+                        <option value="ARCHIVED" {% if product.status == 'ARCHIVED' %}selected{% endif %}>ARCHIVED</option>
+                    </select>
+                </div>
+
+                <!-- Visibility -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">Visibility</label>
+                    <select name="visibility" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-200 focus:outline-hidden focus:border-blue-500">
+                        <option value="PUBLIC" {% if product.visibility == 'PUBLIC' %}selected{% endif %}>PUBLIC (Storefront)</option>
+                        <option value="HIDDEN" {% if product.visibility == 'HIDDEN' %}selected{% endif %}>HIDDEN (Direct link only)</option>
+                    </select>
+                </div>
+
+                <!-- Badge Text -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">Promotional Badge</label>
+                    <input 
+                        type="text" 
+                        name="badge_text" 
+                        value="{{ product.badge_text|default:'' }}" 
+                        placeholder="e.g. LIMITED"
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-300 focus:outline-hidden focus:border-blue-500"
+                    >
+                </div>
+
+                <!-- Flags -->
+                <div class="flex items-center gap-4 pt-6">
+                    <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-300">
+                        <input type="checkbox" name="is_featured" value="1" {% if product.is_featured %}checked{% endif %} class="w-4 h-4 rounded-sm bg-slate-950 border-slate-700 text-blue-600 focus:ring-0">
+                        <span>Featured</span>
+                    </label>
+                    <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-300">
+                        <input type="checkbox" name="is_trending" value="1" {% if product.is_trending %}checked{% endif %} class="w-4 h-4 rounded-sm bg-slate-950 border-slate-700 text-amber-500 focus:ring-0">
+                        <span>Trending</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Media & Imagery -->
+        <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 space-y-5">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-2">
+                <i data-lucide="image" class="w-4 h-4"></i>
+                <span>Product Media & Gallery</span>
+            </h3>
+
+            <!-- Existing Images Preview (if editing) -->
+            {% if images %}
+            <div class="space-y-2">
+                <label class="block text-xs font-bold text-slate-400">Current Gallery Images ({{ images|length }})</label>
+                <div class="flex flex-wrap gap-3">
+                    {% for img in images %}
+                    <div class="relative w-20 h-20 rounded-xl overflow-hidden border border-slate-700/80 bg-slate-950 group">
+                        <img src="{{ img.image_url }}" alt="" class="w-full h-full object-cover">
+                        {% if img.is_primary %}
+                        <span class="absolute top-1 left-1 px-1.5 py-0.5 rounded-sm bg-blue-600 text-white font-bold text-[9px]">Primary</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">Upload Image Files (Multiple allowed)</label>
+                    <input 
+                        type="file" 
+                        name="images" 
+                        multiple 
+                        accept="image/*"
+                        class="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-slate-200 hover:file:bg-slate-700 cursor-pointer"
+                    >
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">Or Direct Image CDN URL</label>
+                    <input 
+                        type="url" 
+                        name="image_url" 
+                        placeholder="https://images.unsplash.com/photo-..."
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-300 placeholder-slate-500 focus:outline-hidden focus:border-blue-500"
+                    >
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="flex items-center justify-end gap-3 pt-4">
+            <a href="{% url 'catalog:product_admin_list' %}" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-colors">
+                Cancel
+            </a>
+            <button type="submit" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-md shadow-blue-500/20 cursor-pointer">
+                {% if is_edit %}Save Changes{% else %}Create Product Master{% endif %}
+            </button>
+        </div>
+    </form>
+
+    <!-- 5. Variant Manager (only displayed in Edit mode) -->
+    {% if is_edit %}
+    <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 space-y-6 mt-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-indigo-400 flex items-center gap-2">
+                    <i data-lucide="layers" class="w-4 h-4"></i>
+                    <span>Product Variants & SKU Variations ({{ variants|length }})</span>
+                </h3>
+                <p class="text-xs text-slate-400 mt-1">Each variant possesses an authoritative SKU and optional price override.</p>
+            </div>
+            <button 
+                type="button" 
+                onclick="document.getElementById('add-variant-modal').classList.remove('hidden')"
+                class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-colors cursor-pointer"
+            >
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                <span>Add Variant</span>
+            </button>
+        </div>
+
+        <!-- Active Variants Table -->
+        <div class="rounded-xl border border-slate-800 overflow-hidden">
+            <table class="w-full text-xs text-left">
+                <thead class="bg-slate-950 text-slate-400 uppercase text-[10px] font-bold">
+                    <tr>
+                        <th class="py-3 px-4">Variant SKU</th>
+                        <th class="py-3 px-4">Name / Title</th>
+                        <th class="py-3 px-4">Attributes</th>
+                        <th class="py-3 px-4">Effective Price</th>
+                        <th class="py-3 px-4">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/40">
+                    {% for v in variants %}
+                    <tr class="hover:bg-slate-800/20">
+                        <td class="py-3 px-4 font-mono font-bold text-indigo-400">{{ v.sku }}</td>
+                        <td class="py-3 px-4 font-medium text-slate-200">{{ v.name|default:"Standard" }}</td>
+                        <td class="py-3 px-4 text-slate-400">
+                            {% for vav in v.attribute_values.all %}
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 text-[10px] font-medium mr-1">
+                                {{ vav.attribute.name }}: <strong>{{ vav.attribute_value.value }}</strong>
+                            </span>
+                            {% empty %}
+                            <span class="text-slate-500 italic">No attributes</span>
+                            {% endfor %}
+                        </td>
+                        <td class="py-3 px-4 font-bold text-white">₹{{ v.effective_price }}</td>
+                        <td class="py-3 px-4">
+                            {% if v.is_active %}
+                            <span class="text-emerald-400 font-bold text-[10px]">Active</span>
+                            {% else %}
+                            <span class="text-slate-500 font-bold text-[10px]">Inactive</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="py-6 text-center text-slate-500">
+                            No distinct variations configured. The product sells under master SKU <span class="font-mono text-slate-400">{{ product.sku|default:"GLOBAL" }}</span>.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal for Adding Variant -->
+    <div id="add-variant-modal" class="fixed inset-0 bg-black/70 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="w-4 h-4 text-indigo-400"></i>
+                    <span>Add New SKU Variant</span>
+                </h4>
+                <button type="button" onclick="document.getElementById('add-variant-modal').classList.add('hidden')" class="p-1 text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <form method="POST" action="{% url 'catalog:product_edit' product.id %}" class="space-y-4 text-xs">
+                {% csrf_token %}
+                <input type="hidden" name="action_type" value="add_variant">
+
+                <div>
+                    <label class="block font-bold text-slate-300 mb-1">Variant SKU * (Must be globally unique)</label>
+                    <input type="text" name="variant_sku" required placeholder="e.g. {{ product.sku|default:'PROD' }}-BLK-256" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 uppercase font-mono text-white focus:outline-hidden focus:border-indigo-500">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-300 mb-1">Variant Name</label>
+                    <input type="text" name="variant_name" placeholder="e.g. Matte Black / 256GB" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 focus:outline-hidden focus:border-indigo-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Variant Price (₹)</label>
+                        <input type="number" step="0.01" name="variant_price" placeholder="Default: ₹{{ product.base_price }}" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-hidden focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Compare-At Price (₹)</label>
+                        <input type="number" step="0.01" name="variant_compare_price" placeholder="Optional MSRP" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white focus:outline-hidden focus:border-indigo-500">
+                    </div>
+                </div>
+
+                <!-- Attributes linking -->
+                {% if attributes %}
+                <div class="pt-2 border-t border-slate-800 space-y-2">
+                    <label class="block font-bold text-indigo-400">Assign Attributes:</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        {% for attr in attributes %}
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-400 mb-1">{{ attr.name }}</label>
+                            <select name="attr_{{ attr.id }}" class="w-full px-2.5 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-slate-200">
+                                <option value="">None / Not Applicable</option>
+                                {% for val in attr.values.all %}
+                                <option value="{{ val.id }}">{{ val.value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+                    <button type="button" onclick="document.getElementById('add-variant-modal').classList.add('hidden')" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-bold">Cancel</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition-colors">Save Variant</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

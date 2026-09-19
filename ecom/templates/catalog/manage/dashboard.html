@@ -1,0 +1,284 @@
+{% extends 'catalog/manage/catalog_base.html' %}
+{% load static %}
+
+{% block title %}Executive Dashboard &bull; Catalog{% endblock %}
+{% block header_title %}Catalog Dashboard{% endblock %}
+{% block header_subtitle %}Overview & Product Master Health{% endblock %}
+
+{% block catalog_content %}
+<div class="space-y-8 max-w-7xl mx-auto">
+
+    <!-- KPI Metrics Grid (8 Metric Cards) -->
+    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Total Products -->
+        <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 relative overflow-hidden group">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold text-slate-400">Total Products</span>
+                <div class="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center">
+                    <i data-lucide="package" class="w-4 h-4"></i>
+                </div>
+            </div>
+            <div class="text-2xl font-black text-white tracking-tight">{{ total_products }}</div>
+            <div class="text-[11px] text-slate-500 mt-1 flex items-center gap-1.5">
+                <span class="text-emerald-400 font-semibold">{{ active_products }} live</span>
+                <span>&bull;</span>
+                <span>{{ draft_products }} draft</span>
+            </div>
+        </div>
+
+        <!-- Active Storefront Products -->
+        <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 relative overflow-hidden group">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold text-slate-400">Active on Store</span>
+                <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                    <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                </div>
+            </div>
+            <div class="text-2xl font-black text-emerald-400 tracking-tight">{{ active_products }}</div>
+            <div class="text-[11px] text-slate-500 mt-1">Publicly visible items</div>
+        </div>
+
+        <!-- Drafts Pending Review -->
+        <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 relative overflow-hidden group">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold text-slate-400">Drafts & Staging</span>
+                <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                    <i data-lucide="file-edit" class="w-4 h-4"></i>
+                </div>
+            </div>
+            <div class="text-2xl font-black text-amber-400 tracking-tight">{{ draft_products }}</div>
+            <div class="text-[11px] text-slate-500 mt-1">Incomplete / unreleased</div>
+        </div>
+
+        <!-- Archived Products -->
+        <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 relative overflow-hidden group">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold text-slate-400">Archived Items</span>
+                <div class="w-8 h-8 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center">
+                    <i data-lucide="archive" class="w-4 h-4"></i>
+                </div>
+            </div>
+            <div class="text-2xl font-black text-slate-400 tracking-tight">{{ archived_products }}</div>
+            <div class="text-[11px] text-slate-500 mt-1">Historical product master</div>
+        </div>
+
+        <!-- Categories -->
+        <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 relative overflow-hidden group">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold text-slate-400">Categories</span>
+                <div class="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center">
+                    <i data-lucide="folder-tree" class="w-4 h-4"></i>
+                </div>
+            </div>
+            <div class="text-2xl font-black text-white tracking-tight">{{ total_categories }}</div>
+            <div class="text-[11px] text-slate-500 mt-1">Taxonomy nodes</div>
+        </div>
+
+        <!-- Brands -->
+        <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 relative overflow-hidden group">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold text-slate-400">Partner Brands</span>
+                <div class="w-8 h-8 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center">
+                    <i data-lucide="award" class="w-4 h-4"></i>
+                </div>
+            </div>
+            <div class="text-2xl font-black text-white tracking-tight">{{ total_brands }}</div>
+            <div class="text-[11px] text-slate-500 mt-1">Active manufacturers</div>
+        </div>
+
+        <!-- Configured Variants -->
+        <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 relative overflow-hidden group">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold text-slate-400">Product Variants</span>
+                <div class="w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center">
+                    <i data-lucide="layers" class="w-4 h-4"></i>
+                </div>
+            </div>
+            <div class="text-2xl font-black text-white tracking-tight">{{ total_variants }}</div>
+            <div class="text-[11px] text-slate-500 mt-1">Distinct SKU variations</div>
+        </div>
+
+        <!-- Featured Products -->
+        <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 relative overflow-hidden group">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold text-slate-400">Featured Curations</span>
+                <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                </div>
+            </div>
+            <div class="text-2xl font-black text-amber-300 tracking-tight">{{ featured_products }}</div>
+            <div class="text-[11px] text-slate-500 mt-1">Promoted on homepage</div>
+        </div>
+    </div>
+
+    <!-- Health Alerts / Needs Attention (if any missing SKUs or images) -->
+    {% if missing_skus or missing_images %}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {% if missing_skus %}
+        <div class="p-5 rounded-2xl bg-amber-950/20 border border-amber-800/40">
+            <div class="flex items-center gap-2.5 text-amber-400 text-xs font-bold uppercase tracking-wider mb-2">
+                <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                <span>Action Needed: Products Missing Master SKU ({{ missing_skus|length }})</span>
+            </div>
+            <p class="text-xs text-slate-400 mb-3">Every product must possess a unique SKU or SKU variations for inventory alignment.</p>
+            <div class="space-y-2">
+                {% for p in missing_skus %}
+                <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900/60 border border-slate-800/60 text-xs">
+                    <span class="font-medium text-slate-200 truncate">{{ p.title }}</span>
+                    <a href="{% url 'catalog:product_edit' p.id %}" class="text-amber-400 hover:text-amber-300 font-semibold text-[11px] shrink-0">Assign SKU &rarr;</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if missing_images %}
+        <div class="p-5 rounded-2xl bg-rose-950/20 border border-rose-800/40">
+            <div class="flex items-center gap-2.5 text-rose-400 text-xs font-bold uppercase tracking-wider mb-2">
+                <i data-lucide="image-off" class="w-4 h-4"></i>
+                <span>Visual Audit: Products Without Media ({{ missing_images|length }})</span>
+            </div>
+            <p class="text-xs text-slate-400 mb-3">Customers require at least one high-resolution product image for conversion.</p>
+            <div class="space-y-2">
+                {% for p in missing_images %}
+                <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900/60 border border-slate-800/60 text-xs">
+                    <span class="font-medium text-slate-200 truncate">{{ p.title }}</span>
+                    <a href="{% url 'catalog:product_edit' p.id %}" class="text-rose-400 hover:text-rose-300 font-semibold text-[11px] shrink-0">Upload Image &rarr;</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Main Dashboard Row: Recent Products & Taxonomy Breakdowns -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left: Recent Products Table (2 cols) -->
+        <div class="lg:col-span-2 space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="text-sm font-bold text-white tracking-tight">Recent Products Master</h3>
+                <a href="{% url 'catalog:product_admin_list' %}" class="text-xs font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-1">
+                    <span>View all products</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </a>
+            </div>
+
+            <div class="rounded-2xl bg-slate-900/60 border border-slate-800/80 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left">
+                        <thead class="bg-slate-950/60 text-slate-400 uppercase text-[10px] font-bold tracking-wider border-b border-slate-800/80">
+                            <tr>
+                                <th class="py-3 px-4">Product</th>
+                                <th class="py-3 px-4">Category</th>
+                                <th class="py-3 px-4">Base Price</th>
+                                <th class="py-3 px-4">Status</th>
+                                <th class="py-3 px-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/40">
+                            {% for p in recent_products %}
+                            <tr class="hover:bg-slate-800/30 transition-colors">
+                                <td class="py-3 px-4">
+                                    <div class="flex items-center gap-3">
+                                        <img src="{{ p.primary_image_url }}" alt="" class="w-9 h-9 rounded-lg object-cover bg-slate-800 shrink-0 border border-slate-700/60">
+                                        <div class="min-w-0">
+                                            <div class="font-bold text-slate-200 truncate max-w-[180px]">{{ p.title }}</div>
+                                            <div class="text-[10px] text-slate-500 font-mono">{{ p.sku|default:"No SKU" }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-3 px-4 text-slate-400">{{ p.category.name|default:"Unassigned" }}</td>
+                                <td class="py-3 px-4 font-bold text-slate-200">₹{{ p.base_price }}</td>
+                                <td class="py-3 px-4">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider {% if p.status == 'ACTIVE' %}bg-emerald-500/10 text-emerald-400 border border-emerald-500/20{% elif p.status == 'DRAFT' %}bg-amber-500/10 text-amber-400 border border-amber-500/20{% else %}bg-slate-700 text-slate-400{% endif %}">
+                                        {{ p.status }}
+                                    </span>
+                                </td>
+                                <td class="py-3 px-4 text-right">
+                                    <div class="inline-flex items-center gap-2">
+                                        <a href="{% url 'catalog:product_edit' p.id %}" class="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors" title="Edit">
+                                            <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                                        </a>
+                                        <a href="{% url 'catalog:product_detail' p.slug %}" target="_blank" class="p-1 rounded-lg text-slate-400 hover:text-blue-400 hover:bg-slate-800 transition-colors" title="Preview">
+                                            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="py-8 text-center text-slate-500">No products created yet.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Taxonomy & Quick Actions (1 col) -->
+        <div class="space-y-6">
+            <!-- Quick Action Palette -->
+            <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Quick Actions</h4>
+                <div class="grid grid-cols-2 gap-2">
+                    <a href="{% url 'catalog:product_add' %}" class="p-3 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 flex flex-col items-center justify-center text-center transition-all group">
+                        <i data-lucide="box" class="w-5 h-5 text-blue-400 mb-1.5 group-hover:scale-110 transition-transform"></i>
+                        <span class="text-xs font-bold text-slate-200">New Product</span>
+                    </a>
+                    <a href="{% url 'catalog:category_add' %}" class="p-3 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 flex flex-col items-center justify-center text-center transition-all group">
+                        <i data-lucide="folder-plus" class="w-5 h-5 text-purple-400 mb-1.5 group-hover:scale-110 transition-transform"></i>
+                        <span class="text-xs font-bold text-slate-200">New Category</span>
+                    </a>
+                    <a href="{% url 'catalog:brand_add' %}" class="p-3 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 flex flex-col items-center justify-center text-center transition-all group">
+                        <i data-lucide="award" class="w-5 h-5 text-cyan-400 mb-1.5 group-hover:scale-110 transition-transform"></i>
+                        <span class="text-xs font-bold text-slate-200">New Brand</span>
+                    </a>
+                    <a href="{% url 'catalog:attribute_add' %}" class="p-3 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 flex flex-col items-center justify-center text-center transition-all group">
+                        <i data-lucide="sliders" class="w-5 h-5 text-emerald-400 mb-1.5 group-hover:scale-110 transition-transform"></i>
+                        <span class="text-xs font-bold text-slate-200">New Attribute</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Top Categories Overview -->
+            <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80">
+                <div class="flex items-center justify-between mb-3">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Categories By Volume</h4>
+                    <a href="{% url 'catalog:category_list' %}" class="text-[11px] text-blue-400 hover:underline">Manage</a>
+                </div>
+                <div class="space-y-2.5">
+                    {% for cat in category_overview %}
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-300 font-medium truncate">{{ cat.name }}</span>
+                        <span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-mono text-[10px] font-bold">{{ cat.p_count }} items</span>
+                    </div>
+                    {% empty %}
+                    <div class="text-xs text-slate-500">No categories recorded.</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Top Brands Overview -->
+            <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80">
+                <div class="flex items-center justify-between mb-3">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Brands By Volume</h4>
+                    <a href="{% url 'catalog:brand_list' %}" class="text-[11px] text-blue-400 hover:underline">Manage</a>
+                </div>
+                <div class="space-y-2.5">
+                    {% for b in brand_overview %}
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-300 font-medium truncate">{{ b.name }}</span>
+                        <span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-mono text-[10px] font-bold">{{ b.p_count }} items</span>
+                    </div>
+                    {% empty %}
+                    <div class="text-xs text-slate-500">No brands recorded.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order #{{ order.order_number }} • Cartivo Luxury Storefront{% endblock %}
+
+{% block content %}
+<div class="bg-slate-50/60 min-h-screen py-8 sm:py-12">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Breadcrumbs -->
+        <nav class="flex items-center gap-2 text-xs font-medium text-slate-400 mb-6">
+            <a href="/" class="hover:text-slate-800 transition-colors">Home</a>
+            <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+            <a href="{% url 'orders:order_list' %}" class="hover:text-slate-800 transition-colors">My Orders</a>
+            <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+            <span class="text-slate-800 font-semibold">{{ order.order_number }}</span>
+        </nav>
+
+        <!-- Top Header Card -->
+        <div class="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
+                <div>
+                    <span class="text-xs font-mono font-bold text-blue-600 uppercase tracking-wider">Purchase Record</span>
+                    <h1 class="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight font-mono mt-0.5">
+                        {{ order.order_number }}
+                    </h1>
+                    <p class="text-xs text-slate-500 mt-1">
+                        Placed on {{ order.created_at|date:"F j, Y • h:i A" }}
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <a 
+                        href="{% url 'orders:order_receipt' order.order_number %}" 
+                        target="_blank"
+                        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all shadow-xs cursor-pointer"
+                    >
+                        <i data-lucide="printer" class="w-4 h-4"></i>
+                        <span>View / Print Receipt</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Status Badges Bar -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 text-xs sm:text-sm">
+                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                    <span class="text-slate-400 block text-[11px] font-medium mb-1">Order & Delivery Status</span>
+                    <div class="flex items-center gap-1.5 font-bold {% if order.status == 'DELIVERED' %}text-emerald-700{% elif order.status == 'OUT_FOR_DELIVERY' %}text-amber-700{% else %}text-blue-700{% endif %}">
+                        <i data-lucide="{% if order.status == 'DELIVERED' %}check-circle{% elif order.status == 'OUT_FOR_DELIVERY' %}truck{% else %}package{% endif %}" class="w-4 h-4"></i>
+                        <span>{{ order.get_status_display }}</span>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                    <span class="text-slate-400 block text-[11px] font-medium mb-1">Payment Method</span>
+                    <div class="flex items-center gap-1.5 font-bold text-slate-900">
+                        <i data-lucide="banknote" class="w-4 h-4 text-emerald-600"></i>
+                        <span>{{ order.get_payment_method_display }}</span>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                    <span class="text-slate-400 block text-[11px] font-medium mb-1">COD Collection Status</span>
+                    <div class="flex items-center gap-1.5 font-bold {% if order.payment_status == 'PAID' %}text-emerald-700{% else %}text-amber-700{% endif %}">
+                        <i data-lucide="{% if order.payment_status == 'PAID' %}check{% else %}clock{% endif %}" class="w-4 h-4"></i>
+                        <span>{{ order.get_payment_status_display }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Real-Time Delivery Tracking Progress Bar -->
+            <div class="mt-6 pt-6 border-t border-slate-100 space-y-4">
+                <div class="flex items-center justify-between text-xs">
+                    <span class="font-bold text-slate-900 flex items-center gap-1.5">
+                        <i data-lucide="truck" class="w-4 h-4 text-emerald-600"></i>
+                        <span>Shipment Delivery Journey</span>
+                    </span>
+                    <span class="font-bold text-emerald-700">{{ order.delivery_progress_percent }}% Completed</span>
+                </div>
+
+                <div class="relative">
+                    <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-500" style="width: {{ order.delivery_progress_percent }}%"></div>
+                    </div>
+
+                    <div class="grid grid-cols-5 mt-3 text-center">
+                        <div class="space-y-0.5">
+                            <span class="text-[11px] font-bold block {% if order.delivery_step_index >= 1 %}text-slate-900{% else %}text-slate-400{% endif %}">Placed</span>
+                            <span class="text-[10px] text-slate-400 block">Confirmed</span>
+                        </div>
+                        <div class="space-y-0.5">
+                            <span class="text-[11px] font-bold block {% if order.delivery_step_index >= 2 %}text-slate-900{% else %}text-slate-400{% endif %}">Packed</span>
+                            <span class="text-[10px] text-slate-400 block">At Warehouse</span>
+                        </div>
+                        <div class="space-y-0.5">
+                            <span class="text-[11px] font-bold block {% if order.delivery_step_index >= 3 %}text-slate-900{% else %}text-slate-400{% endif %}">In Transit</span>
+                            <span class="text-[10px] text-slate-400 block">Between Hubs</span>
+                        </div>
+                        <div class="space-y-0.5">
+                            <span class="text-[11px] font-bold block {% if order.delivery_step_index >= 4 %}text-amber-700 font-extrabold{% else %}text-slate-400{% endif %}">Out for Delivery</span>
+                            <span class="text-[10px] text-slate-400 block">With Courier</span>
+                        </div>
+                        <div class="space-y-0.5">
+                            <span class="text-[11px] font-bold block {% if order.delivery_step_index >= 5 %}text-emerald-700 font-extrabold{% else %}text-slate-400{% endif %}">Delivered</span>
+                            <span class="text-[10px] text-slate-400 block">Completed</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Courier, Tracking Code & Live Location Banner -->
+                <div class="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-emerald-600 text-white uppercase tracking-wider">
+                                {{ order.delivery_partner|default:"Cartivo Express Delivery" }}
+                            </span>
+                            <span class="font-mono font-bold text-slate-900">AWB: {{ order.tracking_code }}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 text-slate-700 pt-0.5 font-medium">
+                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i>
+                            <span><strong>Current Location Checkpoint:</strong> {{ order.active_location_display }}</span>
+                        </div>
+                    </div>
+                    <div class="sm:text-right shrink-0">
+                        <span class="text-[11px] text-slate-500 block">Expected Arrival:</span>
+                        <span class="font-bold text-slate-900 block">{{ order.estimated_delivery_date|default:"3-5 Business Days" }}</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- Items Column (8 cols) -->
+            <div class="lg:col-span-8 space-y-6">
+                <div class="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs">
+                    <h2 class="text-base sm:text-lg font-bold text-slate-950 mb-4 pb-3 border-b border-slate-100">
+                        Purchased Items ({{ order.total_items_count }})
+                    </h2>
+
+                    <div class="divide-y divide-slate-100">
+                        {% for item in items %}
+                        <div class="py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div class="min-w-0">
+                                <h3 class="text-sm sm:text-base font-bold text-slate-900">
+                                    {{ item.product_title }}
+                                </h3>
+                                {% if item.variant_name %}
+                                <div class="inline-flex items-center gap-1 mt-1 text-xs text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-full font-medium">
+                                    <span>{{ item.variant_name }}</span>
+                                </div>
+                                {% endif %}
+                                <p class="text-xs text-slate-400 font-mono mt-1">SKU: {{ item.sku }}</p>
+                            </div>
+
+                            <div class="text-right shrink-0">
+                                <span class="text-xs text-slate-500 block">
+                                    {{ item.quantity }} &times; ₹{{ item.unit_price }}
+                                </span>
+                                <span class="text-sm sm:text-base font-extrabold text-slate-900 block mt-0.5">
+                                    ₹{{ item.subtotal }}
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Logistics Checkpoints Timeline -->
+                {% if checkpoints %}
+                <div class="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs">
+                    <h3 class="text-sm sm:text-base font-bold text-slate-950 mb-4 pb-3 border-b border-slate-100 flex items-center gap-2">
+                        <i data-lucide="clock" class="w-4 h-4 text-emerald-600"></i>
+                        <span>Tracking & Checkpoint History</span>
+                    </h3>
+                    <div class="relative pl-6 space-y-4 before:content-[''] before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
+                        {% for cp in checkpoints %}
+                        <div class="relative">
+                            <span class="absolute -left-6 top-1.5 w-2.5 h-2.5 rounded-full {% if forloop.first %}bg-emerald-500 ring-4 ring-emerald-100{% else %}bg-slate-400{% endif %}"></span>
+                            <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 text-xs">
+                                <div class="flex items-center justify-between flex-wrap gap-2">
+                                    <span class="font-bold text-slate-900 flex items-center gap-1.5">
+                                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-600"></i>
+                                        {{ cp.location }}
+                                    </span>
+                                    <span class="text-[11px] text-slate-400 font-mono">{{ cp.timestamp|date:"M d, Y • h:i A" }}</span>
+                                </div>
+                                <div class="mt-1 flex items-center gap-2">
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white text-slate-700 border border-slate-200">
+                                        {{ cp.get_status_display }}
+                                    </span>
+                                    {% if cp.notes %}
+                                    <span class="text-slate-500">{{ cp.notes }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Customer Notes if any -->
+                {% if order.customer_notes %}
+                <div class="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Delivery Instructions</h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">{{ order.customer_notes }}</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Side Financial & Address Column (4 cols) -->
+            <div class="lg:col-span-4 space-y-6">
+                
+                <!-- Financial Breakdown -->
+                <div class="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs space-y-3 text-xs sm:text-sm text-slate-600">
+                    <h3 class="text-sm font-bold text-slate-950 pb-2 border-b border-slate-100">Payment Ledger</h3>
+                    
+                    <div class="flex items-center justify-between">
+                        <span>Items Subtotal</span>
+                        <span class="font-bold text-slate-900">₹{{ order.subtotal }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span>Delivery Fee</span>
+                        <span class="text-emerald-600 font-semibold">Complimentary (₹0.00)</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span>Discount Applied</span>
+                        <span class="font-bold text-slate-900">₹{{ order.discount_amount }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span>Estimated Tax</span>
+                        <span class="font-bold text-slate-900">₹{{ order.tax_amount }}</span>
+                    </div>
+                    <div class="pt-3 border-t border-slate-100 flex items-baseline justify-between">
+                        <span class="text-base font-extrabold text-slate-950">Payable Total</span>
+                        <span class="text-2xl font-black text-slate-950">₹{{ order.total_amount }}</span>
+                    </div>
+                </div>
+
+                <!-- Delivery Address Snapshot -->
+                <div class="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Delivery Address</h3>
+                    <div class="text-xs sm:text-sm text-slate-700 leading-relaxed space-y-1">
+                        <p class="font-bold text-slate-900">{{ order.shipping_name }}</p>
+                        {% if order.shipping_phone %}
+                        <p class="text-slate-500">Phone: {{ order.shipping_phone }}</p>
+                        {% endif %}
+                        <p class="text-slate-600 pt-1">{{ order.formatted_shipping_address }}</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}

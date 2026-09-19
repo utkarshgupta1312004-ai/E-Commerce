@@ -1,0 +1,451 @@
+{% extends 'cms/cms_base.html' %}
+
+{% block page_title %}Curated Category Showcases | CMS Executive{% endblock %}
+
+{% block cms_content %}
+<div class="space-y-6">
+    <!-- Top Action & Statistics Header -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-3">
+                <h1 class="text-2xl font-bold tracking-tight text-white font-display">Curated Category Showcases</h1>
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                    {{ total_count }} Showcases
+                </span>
+            </div>
+            <p class="text-sm text-slate-400 mt-1">Design rich visual cards for top product categories with custom hero photography, badges, and marketing copy.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button type="button" onclick="openModal('addCurationModal')" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm transition-all shadow-lg shadow-blue-600/20 active:scale-95">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                <span>Add Showcase</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Django Admin-style Filter & Search Toolbar -->
+    <div class="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-4 shadow-sm backdrop-blur-md">
+        <form method="GET" action="{% url 'cms:curations' %}" class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <!-- Search Filter -->
+            <div class="relative flex-1 max-w-md">
+                <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <input type="text" name="q" value="{{ search_query }}" placeholder="Search by title, category, or subtitle..." class="w-full pl-10 pr-4 py-2 text-sm bg-slate-950/60 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors">
+            </div>
+
+            <!-- Status Filter -->
+            <div class="flex items-center gap-1.5 bg-slate-950/60 p-1 rounded-xl border border-slate-800 text-xs">
+                <span class="px-2 text-slate-400 font-medium">Status:</span>
+                <a href="?status=all&q={{ search_query }}" class="px-2.5 py-1 rounded-lg transition-colors {% if status_filter == 'all' %}bg-blue-600 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">All</a>
+                <a href="?status=active&q={{ search_query }}" class="px-2.5 py-1 rounded-lg transition-colors {% if status_filter == 'active' %}bg-emerald-600 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">Active</a>
+                <a href="?status=inactive&q={{ search_query }}" class="px-2.5 py-1 rounded-lg transition-colors {% if status_filter == 'inactive' %}bg-rose-600 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">Inactive</a>
+            </div>
+
+            {% if search_query or status_filter != 'all' %}
+            <a href="{% url 'cms:curations' %}" class="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-rose-400 transition-colors flex items-center gap-1 bg-slate-800/40 hover:bg-rose-500/10 border border-slate-700/50 text-xs">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                <span>Reset</span>
+            </a>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Bulk Actions & Table Form -->
+    <form method="POST" action="{% url 'cms:curation_bulk' %}" id="bulkCurationForm" class="space-y-4">
+        {% csrf_token %}
+
+        <!-- Action Bar -->
+        <div class="flex items-center justify-between bg-slate-900/60 border border-slate-800/60 rounded-xl px-4 py-2.5 text-xs text-slate-300">
+            <div class="flex items-center gap-3">
+                <span class="font-semibold text-slate-400">Action:</span>
+                <select name="action" class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
+                    <option value="">--------- Choose Action ---------</option>
+                    <option value="activate">Mark selected as Active</option>
+                    <option value="deactivate">Mark selected as Inactive</option>
+                    <option value="delete">Delete selected Showcases</option>
+                </select>
+                <button type="submit" onclick="return confirmAction(event)" class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-medium transition-colors border border-slate-700">
+                    Go / Apply
+                </button>
+            </div>
+            <div class="text-slate-400">
+                <span id="selectedCount">0</span> of {{ total_count }} selected
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="bg-slate-900/80 border border-slate-800/80 rounded-2xl overflow-hidden shadow-sm">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="bg-slate-950/80 border-b border-slate-800/80 text-xs uppercase font-semibold text-slate-400 tracking-wider">
+                            <th class="py-3.5 px-4 w-10">
+                                <input type="checkbox" id="selectAll" class="w-4 h-4 rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0 focus:ring-offset-0">
+                            </th>
+                            <th class="py-3.5 px-4">Showcase Card</th>
+                            <th class="py-3.5 px-4">Category Link</th>
+                            <th class="py-3.5 px-4">Display Order</th>
+                            <th class="py-3.5 px-4 text-center">Status</th>
+                            <th class="py-3.5 px-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60 font-mono text-xs">
+                        {% for item in curations %}
+                        <tr class="hover:bg-slate-800/30 transition-colors group">
+                            <!-- Checkbox -->
+                            <td class="py-3.5 px-4">
+                                <input type="checkbox" name="selected_ids" value="{{ item.id }}" class="row-checkbox w-4 h-4 rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0 focus:ring-offset-0">
+                            </td>
+
+                            <!-- Showcase Card Details -->
+                            <td class="py-3.5 px-4 font-sans">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-12 rounded-xl bg-slate-950 border border-slate-800 overflow-hidden shrink-0 flex items-center justify-center">
+                                        {% if item.display_image %}
+                                        <img src="{{ item.display_image }}" alt="{{ item.display_title }}" class="w-full h-full object-cover">
+                                        {% else %}
+                                        <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="font-bold text-white text-sm">{{ item.display_title }}</span>
+                                            {% if item.badge_text %}
+                                            <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-{{ item.badge_color }}-500/10 text-{{ item.badge_color }}-400 border border-{{ item.badge_color }}-500/20">
+                                                {{ item.badge_text }}
+                                            </span>
+                                            {% endif %}
+                                        </div>
+                                        <p class="text-xs text-slate-400 mt-0.5">{{ item.custom_subtitle|default:"Standard catalog curation" }}</p>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Category Target -->
+                            <td class="py-3.5 px-4 font-sans text-xs">
+                                <div class="text-slate-200 font-medium">{{ item.category.name }}</div>
+                                <div class="text-[11px] text-blue-400 font-mono mt-0.5">{{ item.target_url }}</div>
+                            </td>
+
+                            <!-- Order -->
+                            <td class="py-3.5 px-4 text-slate-300">
+                                <span class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-semibold text-xs">
+                                    #{{ item.display_order }}
+                                </span>
+                            </td>
+
+                            <!-- Status Toggle Switch -->
+                            <td class="py-3.5 px-4 text-center">
+                                <a href="{% url 'cms:curation_toggle' item.id %}" title="Click to toggle status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold transition-all hover:scale-105 active:scale-95 border {% if item.is_active %}bg-emerald-500/15 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/25{% else %}bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700{% endif %}">
+                                    {% if item.is_active %}
+                                    <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                    <span>Active</span>
+                                    {% else %}
+                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    <span>Inactive</span>
+                                    {% endif %}
+                                </a>
+                            </td>
+
+                            <!-- Actions -->
+                            <td class="py-3.5 px-4 text-right">
+                                <div class="flex items-center justify-end gap-2">
+                                    <button 
+                                        type="button" 
+                                        onclick="openEditCurationModal({
+                                            id: {{ item.id }},
+                                            category: '{{ item.category.id }}',
+                                            custom_title: '{{ item.custom_title|escapejs }}',
+                                            custom_subtitle: '{{ item.custom_subtitle|escapejs }}',
+                                            custom_image_url: '{{ item.custom_image_url|escapejs }}',
+                                            effective_image_url: '{{ item.effective_image_url|escapejs }}',
+                                            badge_text: '{{ item.badge_text|escapejs }}',
+                                            badge_color: '{{ item.badge_color|escapejs }}',
+                                            link_url: '{{ item.link_url|escapejs }}',
+                                            display_order: {{ item.display_order }},
+                                            is_active: {% if item.is_active %}true{% else %}false{% endif %}
+                                        })" 
+                                        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 transition-colors text-xs font-semibold cursor-pointer"
+                                        title="Edit showcase properties"
+                                    >
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                        <span>Edit</span>
+                                    </button>
+                                    <a href="{% url 'cms:curation_toggle' item.id %}" class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors text-xs font-medium" title="Toggle active status">
+                                        Toggle
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="py-12 text-center text-slate-400 font-sans">
+                                <svg class="w-12 h-12 mx-auto text-slate-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                                <p class="text-base font-semibold text-slate-300">No category showcases found</p>
+                                <p class="text-xs text-slate-400 mt-1">Add a curated showcase to highlight key categories on the storefront.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Add Curation Modal (Scrollable with Sticky Header & Footer) -->
+<div id="addCurationModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm overflow-y-auto p-4 sm:p-6 flex items-center justify-center" onclick="if(event.target===this) closeModal('addCurationModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-xl my-auto max-h-[90vh] flex flex-col shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 shrink-0">
+            <h3 class="text-lg font-bold text-white font-display">Add Curated Category Showcase</h3>
+            <button type="button" onclick="closeModal('addCurationModal')" class="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-slate-800">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <form method="POST" action="{% url 'cms:curation_add' %}" enctype="multipart/form-data" class="flex flex-col flex-1 overflow-hidden min-h-0">
+            {% csrf_token %}
+            <div class="p-6 space-y-4 overflow-y-auto flex-1">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Catalog Category *</label>
+                    <select name="category" required class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                        {% for cat in catalog_categories %}
+                        <option value="{{ cat.id }}">{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Custom Title (Optional)</label>
+                    <input type="text" name="custom_title" placeholder="Leave empty to use category name" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Custom Subtitle</label>
+                    <input type="text" name="custom_subtitle" placeholder="e.g. Modern workstation gear" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="p-3 bg-slate-950/60 border border-slate-800 rounded-xl space-y-2.5">
+                    <label class="block text-xs font-semibold uppercase text-slate-300">Custom Showcase Image (Upload or Web URL)</label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] text-slate-400 mb-1">📁 Upload File (Saved to media)</label>
+                            <input type="file" name="custom_image" accept="image/*" class="w-full text-xs text-slate-400 file:mr-2.5 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600/20 file:text-blue-400 hover:file:bg-blue-600/30 border border-slate-800 rounded-lg p-1 bg-slate-900">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-slate-400 mb-1">🔗 Or Image URL (Google / Web)</label>
+                            <input type="url" name="custom_image_url" placeholder="https://images.unsplash.com/..." class="w-full px-3 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-blue-500">
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-400 font-sans">Leave blank to use the catalog category's default image, or provide a custom file/URL.</p>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Badge Text</label>
+                        <input type="text" name="badge_text" placeholder="e.g. HOT, 30% OFF" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Badge Color</label>
+                        <select name="badge_color" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                            <option value="blue">Blue</option>
+                            <option value="purple">Purple</option>
+                            <option value="emerald">Emerald</option>
+                            <option value="amber">Amber</option>
+                            <option value="rose">Rose</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Custom Link URL (Optional)</label>
+                    <input type="text" name="link_url" placeholder="Leave empty to use category URL" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Display Order</label>
+                    <input type="number" name="display_order" value="0" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="pt-2">
+                    <label class="relative flex items-center cursor-pointer">
+                        <input type="checkbox" name="is_active" checked class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        <span class="ml-3 text-sm font-medium text-white">Active Status</span>
+                    </label>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-800 bg-slate-900 shrink-0">
+                <button type="button" onclick="closeModal('addCurationModal')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors">Cancel</button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-all shadow-lg shadow-blue-600/25">Create Showcase</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Curation Modal (Scrollable with Sticky Header & Footer) -->
+<div id="editCurationModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm overflow-y-auto p-4 sm:p-6 flex items-center justify-center" onclick="if(event.target===this) closeModal('editCurationModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-xl my-auto max-h-[90vh] flex flex-col shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 shrink-0">
+            <div class="flex items-center gap-2">
+                <h3 class="text-lg font-bold text-white font-display">Edit Category Showcase</h3>
+                <span id="editCurationIdBadge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/15 text-blue-400 border border-blue-500/20"></span>
+            </div>
+            <button type="button" onclick="closeModal('editCurationModal')" class="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-slate-800">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <form method="POST" id="editCurationForm" action="" enctype="multipart/form-data" class="flex flex-col flex-1 overflow-hidden min-h-0">
+            {% csrf_token %}
+            <div class="p-6 space-y-4 overflow-y-auto flex-1">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Catalog Category *</label>
+                    <select name="category" id="edit_curation_category" required class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                        {% for cat in catalog_categories %}
+                        <option value="{{ cat.id }}">{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Custom Title (Optional)</label>
+                    <input type="text" name="custom_title" id="edit_curation_title" placeholder="Leave empty to use category name" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Custom Subtitle</label>
+                    <input type="text" name="custom_subtitle" id="edit_curation_subtitle" placeholder="e.g. Modern workstation gear" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="p-3 bg-slate-950/60 border border-slate-800 rounded-xl space-y-2.5">
+                    <label class="block text-xs font-semibold uppercase text-slate-300">Custom Showcase Image (Upload or Web URL)</label>
+                    <div id="editCurationImagePreviewWrapper" class="hidden items-center gap-3 p-2 bg-slate-900 border border-slate-800 rounded-lg">
+                        <img id="editCurationImagePreview" src="" alt="Curation Preview" class="w-12 h-12 object-cover rounded-lg border border-slate-700">
+                        <div class="flex-1 min-w-0">
+                            <span class="text-xs text-slate-300 block font-medium">Custom Image Active</span>
+                            <label class="inline-flex items-center gap-1.5 text-xs text-rose-400 hover:text-rose-300 cursor-pointer mt-0.5">
+                                <input type="checkbox" name="clear_image" value="true" class="rounded bg-slate-800 border-slate-700 text-rose-600 focus:ring-0">
+                                <span>Remove custom image (revert to category default)</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] text-slate-400 mb-1">📁 Upload Replacement File (Saved to media)</label>
+                            <input type="file" name="custom_image" accept="image/*" class="w-full text-xs text-slate-400 file:mr-2.5 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600/20 file:text-blue-400 hover:file:bg-blue-600/30 border border-slate-800 rounded-lg p-1 bg-slate-900">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-slate-400 mb-1">🔗 Or Image URL (Google / Web)</label>
+                            <input type="url" name="custom_image_url" id="edit_curation_image_url" placeholder="https://images.unsplash.com/..." class="w-full px-3 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-blue-500">
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-400 font-sans">Upload a local file or enter a web URL. Uploaded files take precedence and are stored locally in media.</p>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Badge Text</label>
+                        <input type="text" name="badge_text" id="edit_curation_badge_text" placeholder="e.g. HOT, 30% OFF" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Badge Color</label>
+                        <select name="badge_color" id="edit_curation_badge_color" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                            <option value="blue">Blue</option>
+                            <option value="purple">Purple</option>
+                            <option value="emerald">Emerald</option>
+                            <option value="amber">Amber</option>
+                            <option value="rose">Rose</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Custom Link URL (Optional)</label>
+                    <input type="text" name="link_url" id="edit_curation_link_url" placeholder="Leave empty to use category URL" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Display Order</label>
+                    <input type="number" name="display_order" id="edit_curation_display_order" value="0" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="pt-2">
+                    <label class="relative flex items-center cursor-pointer">
+                        <input type="checkbox" name="is_active" id="edit_curation_is_active" class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        <span class="ml-3 text-sm font-medium text-white">Active Status</span>
+                    </label>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-800 bg-slate-900 shrink-0">
+                <button type="button" onclick="closeModal('editCurationModal')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors">Cancel</button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-all shadow-lg shadow-blue-600/25">Update Showcase</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openEditCurationModal(data) {
+        document.getElementById('editCurationIdBadge').textContent = '#' + data.id;
+        document.getElementById('editCurationForm').action = '/cms/curations/edit/' + data.id + '/';
+        document.getElementById('edit_curation_category').value = data.category || '';
+        document.getElementById('edit_curation_title').value = data.custom_title || '';
+        document.getElementById('edit_curation_subtitle').value = data.custom_subtitle || '';
+        document.getElementById('edit_curation_image_url').value = data.custom_image_url || '';
+        document.getElementById('edit_curation_badge_text').value = data.badge_text || '';
+        document.getElementById('edit_curation_badge_color').value = data.badge_color || 'blue';
+        document.getElementById('edit_curation_link_url').value = data.link_url || '';
+        document.getElementById('edit_curation_display_order').value = data.display_order ?? 0;
+        document.getElementById('edit_curation_is_active').checked = !!data.is_active;
+
+        const previewWrapper = document.getElementById('editCurationImagePreviewWrapper');
+        const previewImg = document.getElementById('editCurationImagePreview');
+        const clearCheckbox = document.querySelector('#editCurationModal input[name="clear_image"]');
+        if (clearCheckbox) clearCheckbox.checked = false;
+        if (data.effective_image_url) {
+            previewImg.src = data.effective_image_url;
+            previewWrapper.classList.remove('hidden');
+            previewWrapper.classList.add('flex');
+        } else {
+            previewWrapper.classList.remove('flex');
+            previewWrapper.classList.add('hidden');
+        }
+
+        openModal('editCurationModal');
+    }
+    function openModal(id) {
+        document.getElementById(id).classList.remove('hidden');
+    }
+    function closeModal(id) {
+        document.getElementById(id).classList.add('hidden');
+    }
+
+    const selectAll = document.getElementById('selectAll');
+    const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+    const selectedCount = document.getElementById('selectedCount');
+
+    function updateCount() {
+        const checked = document.querySelectorAll('.row-checkbox:checked').length;
+        selectedCount.textContent = checked;
+    }
+
+    if (selectAll) {
+        selectAll.addEventListener('change', () => {
+            rowCheckboxes.forEach(cb => cb.checked = selectAll.checked);
+            updateCount();
+        });
+    }
+
+    rowCheckboxes.forEach(cb => {
+        cb.addEventListener('change', updateCount);
+    });
+
+    function confirmAction(e) {
+        const action = document.querySelector('select[name="action"]').value;
+        if (!action) {
+            alert('Please select an action from the dropdown.');
+            e.preventDefault();
+            return false;
+        }
+        const checked = document.querySelectorAll('.row-checkbox:checked').length;
+        if (checked === 0) {
+            alert('Please select at least one showcase.');
+            e.preventDefault();
+            return false;
+        }
+        if (action === 'delete') {
+            return confirm(`Are you sure you want to delete ${checked} showcase(s)?`);
+        }
+        return true;
+    }
+</script>
+{% endblock %}

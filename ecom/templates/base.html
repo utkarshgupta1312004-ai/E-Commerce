@@ -24,7 +24,21 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <!-- Tailwind CSS Compiled Output -->
-    <link rel="stylesheet" href="{% static 'src/output.css' %}">
+    <link rel="stylesheet" href="{% static 'src/output.css' %}?v=2">
+
+    {% if request.user.is_authenticated %}
+    <!-- Customer Tab Session Initialization Guard -->
+    <script>
+        (function() {
+            try {
+                if (typeof window !== 'undefined' && window.sessionStorage) {
+                    // Initialize tab session key for authenticated user
+                    sessionStorage.setItem('cartivo_customer_tab_session', '1');
+                }
+            } catch (e) {}
+        })();
+    </script>
+    {% endif %}
 
     {% block extra_head %}{% endblock %}
 </head>

@@ -1,0 +1,370 @@
+{% extends 'cms/cms_base.html' %}
+
+{% block page_title %}Value Propositions & Trust Badges | CMS Executive{% endblock %}
+
+{% block cms_content %}
+<div class="space-y-6">
+    <!-- Top Action & Statistics Header -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-3">
+                <h1 class="text-2xl font-bold tracking-tight text-white font-display">Value Propositions & Trust Badges</h1>
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    {{ total_count }} Signals
+                </span>
+            </div>
+            <p class="text-sm text-slate-400 mt-1">Configure customer reassurance badges like Free Shipping, 2-Year Warranty, and 24/7 Concierge Support.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button type="button" onclick="openModal('addBadgeModal')" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm transition-all shadow-lg shadow-blue-600/20 active:scale-95">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                <span>Add Trust Badge</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Django Admin-style Filter & Search Toolbar -->
+    <div class="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-4 shadow-sm backdrop-blur-md">
+        <form method="GET" action="{% url 'cms:trust_badges' %}" class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <!-- Search Filter -->
+            <div class="relative flex-1 max-w-md">
+                <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <input type="text" name="q" value="{{ search_query }}" placeholder="Search by title or subtitle..." class="w-full pl-10 pr-4 py-2 text-sm bg-slate-950/60 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors">
+            </div>
+
+            <!-- Status Filter -->
+            <div class="flex items-center gap-1.5 bg-slate-950/60 p-1 rounded-xl border border-slate-800 text-xs">
+                <span class="px-2 text-slate-400 font-medium">Status:</span>
+                <a href="?status=all&q={{ search_query }}" class="px-2.5 py-1 rounded-lg transition-colors {% if status_filter == 'all' %}bg-blue-600 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">All</a>
+                <a href="?status=active&q={{ search_query }}" class="px-2.5 py-1 rounded-lg transition-colors {% if status_filter == 'active' %}bg-emerald-600 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">Active</a>
+                <a href="?status=inactive&q={{ search_query }}" class="px-2.5 py-1 rounded-lg transition-colors {% if status_filter == 'inactive' %}bg-rose-600 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">Inactive</a>
+            </div>
+
+            {% if search_query or status_filter != 'all' %}
+            <a href="{% url 'cms:trust_badges' %}" class="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-rose-400 transition-colors flex items-center gap-1 bg-slate-800/40 hover:bg-rose-500/10 border border-slate-700/50 text-xs">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                <span>Reset</span>
+            </a>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Bulk Actions & Table Form -->
+    <form method="POST" action="{% url 'cms:trust_badge_bulk' %}" id="bulkBadgeForm" class="space-y-4">
+        {% csrf_token %}
+
+        <!-- Action Bar -->
+        <div class="flex items-center justify-between bg-slate-900/60 border border-slate-800/60 rounded-xl px-4 py-2.5 text-xs text-slate-300">
+            <div class="flex items-center gap-3">
+                <span class="font-semibold text-slate-400">Action:</span>
+                <select name="action" class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
+                    <option value="">--------- Choose Action ---------</option>
+                    <option value="activate">Mark selected as Active</option>
+                    <option value="deactivate">Mark selected as Inactive</option>
+                    <option value="delete">Delete selected Badges</option>
+                </select>
+                <button type="submit" onclick="return confirmAction(event)" class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-medium transition-colors border border-slate-700">
+                    Go / Apply
+                </button>
+            </div>
+            <div class="text-slate-400">
+                <span id="selectedCount">0</span> of {{ total_count }} selected
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="bg-slate-900/80 border border-slate-800/80 rounded-2xl overflow-hidden shadow-sm">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="bg-slate-950/80 border-b border-slate-800/80 text-xs uppercase font-semibold text-slate-400 tracking-wider">
+                            <th class="py-3.5 px-4 w-10">
+                                <input type="checkbox" id="selectAll" class="w-4 h-4 rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0 focus:ring-offset-0">
+                            </th>
+                            <th class="py-3.5 px-4">Trust Proposition</th>
+                            <th class="py-3.5 px-4">Icon & Palette</th>
+                            <th class="py-3.5 px-4">Display Order</th>
+                            <th class="py-3.5 px-4 text-center">Status</th>
+                            <th class="py-3.5 px-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60 font-mono text-xs">
+                        {% for badge in trust_badges %}
+                        <tr class="hover:bg-slate-800/30 transition-colors group">
+                            <!-- Checkbox -->
+                            <td class="py-3.5 px-4">
+                                <input type="checkbox" name="selected_ids" value="{{ badge.id }}" class="row-checkbox w-4 h-4 rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0 focus:ring-offset-0">
+                            </td>
+
+                            <!-- Title & Subtitle -->
+                            <td class="py-3.5 px-4 font-sans">
+                                <div class="font-bold text-white text-sm">{{ badge.title }}</div>
+                                <div class="text-xs text-slate-400 mt-0.5">{{ badge.subtitle }}</div>
+                            </td>
+
+                            <!-- Icon & Color Theme -->
+                            <td class="py-3.5 px-4 font-sans text-xs">
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-0.5 rounded-md font-mono text-[11px] bg-{{ badge.color_theme }}-500/15 text-{{ badge.color_theme }}-400 border border-{{ badge.color_theme }}-500/30">
+                                        {{ badge.icon_name }}
+                                    </span>
+                                    <span class="text-slate-400 text-xs capitalize">{{ badge.color_theme }} theme</span>
+                                </div>
+                            </td>
+
+                            <!-- Order -->
+                            <td class="py-3.5 px-4 text-slate-300">
+                                <span class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-semibold text-xs">
+                                    #{{ badge.display_order }}
+                                </span>
+                            </td>
+
+                            <!-- Status Toggle Switch -->
+                            <td class="py-3.5 px-4 text-center">
+                                <a href="{% url 'cms:trust_badge_toggle' badge.id %}" title="Click to toggle status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold transition-all hover:scale-105 active:scale-95 border {% if badge.is_active %}bg-emerald-500/15 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/25{% else %}bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700{% endif %}">
+                                    {% if badge.is_active %}
+                                    <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                    <span>Active</span>
+                                    {% else %}
+                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    <span>Inactive</span>
+                                    {% endif %}
+                                </a>
+                            </td>
+
+                            <!-- Actions -->
+                            <!-- Actions -->
+                            <td class="py-3.5 px-4 text-right">
+                                <div class="flex items-center justify-end gap-2">
+                                    <button 
+                                        type="button" 
+                                        onclick="openEditTrustBadgeModal({
+                                            id: {{ badge.id }},
+                                            title: '{{ badge.title|escapejs }}',
+                                            subtitle: '{{ badge.subtitle|escapejs }}',
+                                            icon_name: '{{ badge.icon_name|escapejs }}',
+                                            color_theme: '{{ badge.color_theme|escapejs }}',
+                                            display_order: {{ badge.display_order }},
+                                            is_active: {% if badge.is_active %}true{% else %}false{% endif %}
+                                        })" 
+                                        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 transition-colors text-xs font-semibold cursor-pointer"
+                                        title="Edit badge properties"
+                                    >
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                        <span>Edit</span>
+                                    </button>
+                                    <a href="{% url 'cms:trust_badge_toggle' badge.id %}" class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors text-xs font-medium" title="Toggle active status">
+                                        Toggle
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="py-12 text-center text-slate-400 font-sans">
+                                <p class="text-base font-semibold text-slate-300">No trust badges configured</p>
+                                <p class="text-xs text-slate-400 mt-1">Add badges to build buyer confidence across the homepage.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Add Badge Modal (Scrollable with Sticky Header & Footer) -->
+<div id="addBadgeModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm overflow-y-auto p-4 sm:p-6 flex items-center justify-center" onclick="if(event.target===this) closeModal('addBadgeModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg my-auto max-h-[90vh] flex flex-col shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 shrink-0">
+            <h3 class="text-lg font-bold text-white font-display">Add Trust Badge</h3>
+            <button type="button" onclick="closeModal('addBadgeModal')" class="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-slate-800">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <form method="POST" action="{% url 'cms:trust_badge_add' %}" class="flex flex-col flex-1 overflow-hidden min-h-0">
+            {% csrf_token %}
+            <div class="p-6 space-y-4 overflow-y-auto flex-1">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Badge Title *</label>
+                    <input type="text" name="title" required placeholder="e.g. Free Express Shipping" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Subtitle *</label>
+                    <input type="text" name="subtitle" required placeholder="e.g. On all domestic orders over ₹499" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Icon Keyword</label>
+                        <select name="icon_name" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                            <option value="truck">truck (Shipping)</option>
+                            <option value="shield-check">shield-check (Security / Guarantee)</option>
+                            <option value="rotate-ccw">rotate-ccw (Returns)</option>
+                            <option value="headphones">headphones (Support)</option>
+                            <option value="award">award (Certified)</option>
+                            <option value="credit-card">credit-card (Payment)</option>
+                            <option value="zap">zap (Fast / Instant)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Color Palette</label>
+                        <select name="color_theme" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                            <option value="blue">Blue</option>
+                            <option value="emerald">Emerald</option>
+                            <option value="purple">Purple</option>
+                            <option value="amber">Amber</option>
+                            <option value="rose">Rose</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Display Order</label>
+                    <input type="number" name="display_order" value="0" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="pt-2">
+                    <label class="relative flex items-center cursor-pointer">
+                        <input type="checkbox" name="is_active" checked class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        <span class="ml-3 text-sm font-medium text-white">Active Status</span>
+                    </label>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-800 bg-slate-900 shrink-0">
+                <button type="button" onclick="closeModal('addBadgeModal')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors">Cancel</button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-all shadow-lg shadow-blue-600/25">Create Badge</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Badge Modal (Scrollable with Sticky Header & Footer) -->
+<div id="editBadgeModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm overflow-y-auto p-4 sm:p-6 flex items-center justify-center" onclick="if(event.target===this) closeModal('editBadgeModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg my-auto max-h-[90vh] flex flex-col shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 shrink-0">
+            <div class="flex items-center gap-2">
+                <h3 class="text-lg font-bold text-white font-display">Edit Trust Badge</h3>
+                <span id="editBadgeIdBadge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/15 text-blue-400 border border-blue-500/20"></span>
+            </div>
+            <button type="button" onclick="closeModal('editBadgeModal')" class="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-slate-800">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <form method="POST" id="editBadgeForm" action="" class="flex flex-col flex-1 overflow-hidden min-h-0">
+            {% csrf_token %}
+            <div class="p-6 space-y-4 overflow-y-auto flex-1">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Badge Title *</label>
+                    <input type="text" name="title" id="edit_badge_title" required class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Subtitle *</label>
+                    <input type="text" name="subtitle" id="edit_badge_subtitle" required class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Icon Keyword</label>
+                        <select name="icon_name" id="edit_badge_icon_name" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                            <option value="truck">truck (Shipping)</option>
+                            <option value="shield-check">shield-check (Security / Guarantee)</option>
+                            <option value="rotate-ccw">rotate-ccw (Returns)</option>
+                            <option value="headphones">headphones (Support)</option>
+                            <option value="award">award (Certified)</option>
+                            <option value="credit-card">credit-card (Payment)</option>
+                            <option value="zap">zap (Fast / Instant)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Color Palette</label>
+                        <select name="color_theme" id="edit_badge_color_theme" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                            <option value="blue">Blue</option>
+                            <option value="emerald">Emerald</option>
+                            <option value="purple">Purple</option>
+                            <option value="amber">Amber</option>
+                            <option value="rose">Rose</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Display Order</label>
+                    <input type="number" name="display_order" id="edit_badge_display_order" value="0" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="pt-2">
+                    <label class="relative flex items-center cursor-pointer">
+                        <input type="checkbox" name="is_active" id="edit_badge_is_active" class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        <span class="ml-3 text-sm font-medium text-white">Active Status</span>
+                    </label>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-800 bg-slate-900 shrink-0">
+                <button type="button" onclick="closeModal('editBadgeModal')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors">Cancel</button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-all shadow-lg shadow-blue-600/25">Update Badge</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openEditTrustBadgeModal(data) {
+        document.getElementById('editBadgeIdBadge').textContent = '#' + data.id;
+        document.getElementById('editBadgeForm').action = '/cms/trust-badges/edit/' + data.id + '/';
+        document.getElementById('edit_badge_title').value = data.title || '';
+        document.getElementById('edit_badge_subtitle').value = data.subtitle || '';
+        document.getElementById('edit_badge_icon_name').value = data.icon_name || 'truck';
+        document.getElementById('edit_badge_color_theme').value = data.color_theme || 'blue';
+        document.getElementById('edit_badge_display_order').value = data.display_order ?? 0;
+        document.getElementById('edit_badge_is_active').checked = !!data.is_active;
+        openModal('editBadgeModal');
+    }
+    function openModal(id) {
+        document.getElementById(id).classList.remove('hidden');
+    }
+    function closeModal(id) {
+        document.getElementById(id).classList.add('hidden');
+    }
+
+    const selectAll = document.getElementById('selectAll');
+    const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+    const selectedCount = document.getElementById('selectedCount');
+
+    function updateCount() {
+        const checked = document.querySelectorAll('.row-checkbox:checked').length;
+        selectedCount.textContent = checked;
+    }
+
+    if (selectAll) {
+        selectAll.addEventListener('change', () => {
+            rowCheckboxes.forEach(cb => cb.checked = selectAll.checked);
+            updateCount();
+        });
+    }
+
+    rowCheckboxes.forEach(cb => {
+        cb.addEventListener('change', updateCount);
+    });
+
+    function confirmAction(e) {
+        const action = document.querySelector('select[name="action"]').value;
+        if (!action) {
+            alert('Please select an action from the dropdown.');
+            e.preventDefault();
+            return false;
+        }
+        const checked = document.querySelectorAll('.row-checkbox:checked').length;
+        if (checked === 0) {
+            alert('Please select at least one badge.');
+            e.preventDefault();
+            return false;
+        }
+        if (action === 'delete') {
+            return confirm(`Are you sure you want to delete ${checked} badge(s)?`);
+        }
+        return true;
+    }
+</script>
+{% endblock %}

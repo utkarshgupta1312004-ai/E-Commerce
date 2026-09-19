@@ -10,11 +10,22 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env (root workspace or ecom directory)
+try:
+    from dotenv import load_dotenv
+    for _env_candidate in [BASE_DIR.parent / '.env', BASE_DIR / '.env']:
+        if _env_candidate.exists():
+            load_dotenv(dotenv_path=_env_candidate)
+            break
+except ImportError:
+    pass
 
 # Add apps directory to sys.path
 sys.path.insert(0, str(BASE_DIR / 'apps'))
@@ -64,6 +75,7 @@ INSTALLED_APPS = [
     'apps.audit',
     'apps.settings',
     'apps.core',
+    'apps.assistant',
 ]
 
 
@@ -75,7 +87,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'apps.core.middleware.UniversalSessionSecurityMiddleware',
 ]
+
+# Universal Session Security & Cache Configuration
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_HTTPONLY = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_SAVE_EVERY_REQUEST = True
 
 ROOT_URLCONF = 'ecom.urls'
 
@@ -89,6 +108,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'apps.cms.context_processors.cms_context',
+                'apps.cart.context_processors.cart_context',
             ],
         },
     },
@@ -154,3 +175,32 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Authentication & Administration Redirect Settings
+LOGIN_URL = '/management/login/'
+LOGIN_REDIRECT_URL = '/management/dashboard/'
+LOGOUT_REDIRECT_URL = '/management/'
+
+# ==============================================================================
+# Session & Cookie Security Configuration
+# Expire session on browser close & secure session handling
+# ==============================================================================
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+
+# ==============================================================================
+# Google Gemini AI Assistant Settings (Strictly from environment variables)
+# ==============================================================================
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
+GEMINI_MODEL = os.environ.get('GEMINI_MODEL', 'gemini-2.5-flash')
+
+# Cache configuration for Rate Limiting
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'cartivo-cache',
+    }
+}
+

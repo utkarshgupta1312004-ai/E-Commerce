@@ -1,0 +1,146 @@
+{% extends 'inventory/manage/inventory_base.html' %}
+
+{% block title %}Stock Movement Ledger & Audit Log{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-black text-white tracking-tight flex items-center gap-2">
+                <span>Stock Movement Ledger</span>
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    Append-Only
+                </span>
+            </h1>
+            <p class="text-xs text-slate-400 mt-1">Immutable chronological audit log of all physical inventory changes and transactions.</p>
+        </div>
+    </div>
+
+    <!-- Filter Toolbar -->
+    <div class="p-4 rounded-2xl bg-[#0e1424] border border-slate-800/80">
+        <form method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <!-- Search -->
+            <div class="lg:col-span-2 relative">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                <input 
+                    type="text" 
+                    name="q" 
+                    value="{{ q }}" 
+                    placeholder="Search by product, reason, reference ID, or warehouse..." 
+                    class="w-full pl-9 pr-4 py-2 rounded-xl text-xs bg-slate-900 border border-slate-700 text-white placeholder-slate-400 focus:outline-hidden focus:border-emerald-500"
+                >
+            </div>
+
+            <!-- Movement Type Filter -->
+            <div>
+                <select name="type" onchange="this.form.submit()" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-900 border border-slate-700 text-white focus:outline-hidden focus:border-emerald-500">
+                    <option value="">All Movement Types</option>
+                    {% for code, name in movement_types %}
+                    <option value="{{ code }}" {% if selected_type == code %}selected{% endif %}>{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Warehouse Filter -->
+            <div class="flex gap-2">
+                <select name="warehouse" onchange="this.form.submit()" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-900 border border-slate-700 text-white focus:outline-hidden focus:border-emerald-500">
+                    <option value="">All Warehouses</option>
+                    {% for wh in warehouses_list %}
+                    <option value="{{ wh.id }}" {% if selected_warehouse == wh.id|stringformat:"i" %}selected{% endif %}>{{ wh.name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 shrink-0">
+                    Filter
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Ledger Table -->
+    <div class="rounded-2xl bg-[#0e1424] border border-slate-800/80 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full min-w-[900px] text-left text-xs">
+                <thead>
+                    <tr class="border-b border-slate-800 text-slate-400 font-bold uppercase tracking-wider text-[10px] bg-slate-900/60">
+                        <th class="py-3.5 px-4 whitespace-nowrap">Timestamp</th>
+                        <th class="py-3.5 px-4 whitespace-nowrap">Movement Type</th>
+                        <th class="py-3.5 px-4 min-w-[170px]">Product & SKU</th>
+                        <th class="py-3.5 px-4 whitespace-nowrap">Warehouse</th>
+                        <th class="py-3.5 px-4 text-center whitespace-nowrap">Change (Qty)</th>
+                        <th class="py-3.5 px-4 text-center whitespace-nowrap">Before &rarr; After</th>
+                        <th class="py-3.5 px-4 min-w-[200px]">Reference & Reason</th>
+                        <th class="py-3.5 px-4 whitespace-nowrap">Operator</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 font-medium">
+                    {% for m in movements %}
+                    <tr class="hover:bg-slate-900/40 transition-colors">
+                        <td class="py-3.5 px-4 text-slate-400 whitespace-nowrap font-mono text-[11px]">
+                            {{ m.created_at|date:"Y-m-d H:i:s" }}
+                        </td>
+
+                        <td class="py-3.5 px-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap {% if m.movement_type == 'SALE' %}bg-rose-500/10 text-rose-300 border border-rose-500/20{% elif m.movement_type == 'PURCHASE_RECEIPT' %}bg-emerald-500/10 text-emerald-300 border border-emerald-500/20{% elif m.movement_type == 'ADJUSTMENT_IN' or m.movement_type == 'ADJUSTMENT' %}bg-blue-500/10 text-blue-300 border border-blue-500/20{% elif m.movement_type == 'ADJUSTMENT_OUT' or m.movement_type == 'DAMAGE' or m.movement_type == 'LOSS' %}bg-amber-500/10 text-amber-300 border border-amber-500/20{% elif m.movement_type == 'RESERVATION' %}bg-amber-500/10 text-amber-300 border border-amber-500/20{% else %}bg-slate-800 text-slate-300{% endif %}">
+                                {{ m.get_movement_type_display }}
+                            </span>
+                        </td>
+
+                        <td class="py-3.5 px-4">
+                            <div class="font-bold text-white max-w-xs truncate">{{ m.product.title }}</div>
+                            <div class="text-[10px] text-slate-400 font-mono">SKU: {{ m.product.sku|default:"N/A" }}</div>
+                        </td>
+
+                        <td class="py-3.5 px-4 font-semibold font-mono text-slate-300 whitespace-nowrap">
+                            {{ m.warehouse.code }}
+                        </td>
+
+                        <td class="py-3.5 px-4 text-center font-mono font-bold whitespace-nowrap {% if m.quantity > 0 %}text-emerald-400{% elif m.quantity < 0 %}text-rose-400{% else %}text-slate-400{% endif %}">
+                            {% if m.quantity > 0 %}+{% endif %}{{ m.quantity }}
+                        </td>
+
+                        <td class="py-3.5 px-4 text-center font-mono text-slate-400">
+                            {{ m.before_quantity }} &rarr; <span class="text-white font-bold">{{ m.after_quantity }}</span>
+                        </td>
+
+                        <td class="py-3.5 px-4 max-w-sm">
+                            <div class="text-slate-200 truncate">{{ m.reason|default:"Standard movement" }}</div>
+                            {% if m.reference_id %}
+                            <div class="text-[10px] text-slate-400 font-mono">Ref: {{ m.reference_type }} #{{ m.reference_id }}</div>
+                            {% endif %}
+                        </td>
+
+                        <td class="py-3.5 px-4 text-slate-400 text-[11px]">
+                            {{ m.performed_by.username|default:"System / Guest" }}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="py-10 text-center text-slate-400">
+                            No stock movement records found matching the query.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <div class="px-4 py-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+            <div>
+                Showing page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </div>
+            <div class="flex items-center gap-1">
+                {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}&q={{ q }}&type={{ selected_type }}&warehouse={{ selected_warehouse }}" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white">Previous</a>
+                {% endif %}
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&q={{ q }}&type={{ selected_type }}&warehouse={{ selected_warehouse }}" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white">Next</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

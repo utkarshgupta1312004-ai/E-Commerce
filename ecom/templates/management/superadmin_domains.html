@@ -1,0 +1,345 @@
+{% extends "management/superadmin_base.html" %}
+
+{% block title %}20 Modular Domains &amp; Service Architecture{% endblock %}
+
+{% block page_title %}Domain Infrastructure (20 Apps){% endblock %}
+
+{% block page_breadcrumb %}
+<i data-lucide="layers" class="w-3.5 h-3.5 text-amber-400"></i>
+<span>Modular Microservices Architecture</span>
+{% endblock %}
+
+{% block page_actions %}
+<div class="flex items-center gap-2">
+    <a href="{% url 'management:portal' %}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#131c2e] hover:bg-slate-800 text-slate-300 hover:text-white border border-[#1e293b] transition-all shadow-sm">
+        <i data-lucide="globe" class="w-3.5 h-3.5 text-cyan-400"></i>
+        <span>Public Directory</span>
+    </a>
+    <a href="/admin/" target="_blank" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white shadow-md shadow-indigo-600/25 transition-all">
+        <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+        <span>Django Root DB</span>
+    </a>
+</div>
+{% endblock %}
+
+{% block admin_content %}
+<!-- =============================================================== -->
+<!-- ROW 1: 5 Architecture Health Metric Cards                       -->
+<!-- =============================================================== -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    
+    <!-- 1. Total Domains -->
+    <div class="p-5 rounded-3xl bg-[#131c2e] border border-[#1e293b] hover:border-amber-500/40 shadow-xl flex flex-col justify-between transition-all group">
+        <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-400">Total Domains</span>
+            <div class="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center border border-amber-500/25">
+                <i data-lucide="layers" class="w-4 h-4"></i>
+            </div>
+        </div>
+        <div class="mt-3">
+            <div class="text-2xl font-black text-white tracking-tight">20 / 20</div>
+            <div class="text-[11px] text-emerald-400 font-semibold flex items-center gap-1 mt-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 live-dot"></span>
+                <span>100% Service Health</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Core Commerce -->
+    <div class="p-5 rounded-3xl bg-[#131c2e] border border-[#1e293b] hover:border-blue-500/40 shadow-xl flex flex-col justify-between transition-all group">
+        <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-400">Core Commerce</span>
+            <div class="w-8 h-8 rounded-xl bg-blue-500/15 text-blue-400 flex items-center justify-center border border-blue-500/25">
+                <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+            </div>
+        </div>
+        <div class="mt-3">
+            <div class="text-2xl font-black text-white tracking-tight">6 Apps</div>
+            <div class="text-[11px] text-blue-400 font-semibold mt-1">Catalog, Cart, Orders...</div>
+        </div>
+    </div>
+
+    <!-- 3. Operations & Governance -->
+    <div class="p-5 rounded-3xl bg-[#131c2e] border border-[#1e293b] hover:border-purple-500/40 shadow-xl flex flex-col justify-between transition-all group">
+        <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-400">Operations</span>
+            <div class="w-8 h-8 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center border border-purple-500/25">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+            </div>
+        </div>
+        <div class="mt-3">
+            <div class="text-2xl font-black text-white tracking-tight">5 Apps</div>
+            <div class="text-[11px] text-purple-400 font-semibold mt-1">Accounts, Audit, Core...</div>
+        </div>
+    </div>
+
+    <!-- 4. Payments & Logistics -->
+    <div class="p-5 rounded-3xl bg-[#131c2e] border border-[#1e293b] hover:border-emerald-500/40 shadow-xl flex flex-col justify-between transition-all group">
+        <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-400">Logistics &amp; Pay</span>
+            <div class="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center border border-emerald-500/25">
+                <i data-lucide="truck" class="w-4 h-4"></i>
+            </div>
+        </div>
+        <div class="mt-3">
+            <div class="text-2xl font-black text-white tracking-tight">4 Apps</div>
+            <div class="text-[11px] text-emerald-400 font-semibold mt-1">Payments, Shipping, Inv...</div>
+        </div>
+    </div>
+
+    <!-- 5. Marketing & Engagement -->
+    <div class="p-5 rounded-3xl bg-[#131c2e] border border-[#1e293b] hover:border-cyan-500/40 shadow-xl flex flex-col justify-between transition-all group">
+        <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-400">Marketing &amp; CMS</span>
+            <div class="w-8 h-8 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center border border-cyan-500/25">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+            </div>
+        </div>
+        <div class="mt-3">
+            <div class="text-2xl font-black text-white tracking-tight">5 Apps</div>
+            <div class="text-[11px] text-cyan-400 font-semibold mt-1">CMS, Promos, Wishlist...</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- =============================================================== -->
+<!-- ROW 2: Interactive 20-Domain Matrix Console                     -->
+<!-- =============================================================== -->
+<div class="rounded-3xl bg-[#131c2e] border border-[#1e293b] p-5 sm:p-6 shadow-xl space-y-4 print-table-card">
+    
+    <!-- Print-Only Document Header -->
+    <div class="print-title">Cartivo Superadmin — Enterprise Domain Architecture Matrix</div>
+    <div class="print-subtitle">Unified registry of 20 Django micro-domain services, models, and administrative scopes • Printed on {% now "F j, Y, H:i" %}</div>
+
+    <!-- Table Header with Search, Page Size & Print Action -->
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-[#1e293b] no-print">
+        <div>
+            <h2 class="font-black text-white text-base sm:text-lg tracking-tight flex items-center gap-2">
+                <i data-lucide="cpu" class="w-5 h-5 text-indigo-400"></i>
+                <span>Enterprise Domain Infrastructure Matrix</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5">
+                Unified service registry for all 20 Django micro-domain apps, models, and administrative console endpoints.
+            </p>
+        </div>
+
+        <!-- Controls Toolbar -->
+        <div class="flex flex-wrap items-center gap-2.5">
+            <!-- Search -->
+            <div class="relative">
+                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                <input 
+                    type="text" 
+                    id="matrix-search-input"
+                    placeholder="Search domain, namespace, tag..." 
+                    class="pl-8 pr-3 py-2 rounded-xl bg-[#0f172a] border border-[#1e293b] text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-56 sm:w-64"
+                >
+            </div>
+
+            <!-- Page Size Dropdown -->
+            <div class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#0f172a] border border-[#1e293b] text-xs text-slate-400">
+                <span class="text-[11px]">Show:</span>
+                <select id="matrix-page-size" class="bg-transparent text-white text-xs font-semibold focus:outline-none cursor-pointer">
+                    <option value="5" selected class="bg-[#0f172a] text-white">5</option>
+                    <option value="10" class="bg-[#0f172a] text-white">10</option>
+                    <option value="20" class="bg-[#0f172a] text-white">20</option>
+                    <option value="all" class="bg-[#0f172a] text-white">All (20)</option>
+                </select>
+            </div>
+
+            <!-- Dedicated Print List Button -->
+            <button 
+                type="button" 
+                id="matrix-print-btn"
+                class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#0f172a] hover:bg-slate-800 text-slate-200 hover:text-white border border-[#1e293b] hover:border-indigo-500/50 shadow-sm transition-all cursor-pointer"
+                title="Print full list across all pages"
+            >
+                <i data-lucide="printer" class="w-3.5 h-3.5 text-cyan-400"></i>
+                <span>Print List</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Category Filter Pills -->
+    <div class="flex flex-wrap items-center gap-2 pt-1 no-print" id="category-filter-pills">
+        <button type="button" data-cat="all" class="cat-pill active px-3 py-1.5 rounded-xl text-xs font-semibold bg-indigo-600 text-white shadow-sm cursor-pointer transition-colors">
+            All Domains (20)
+        </button>
+        <button type="button" data-cat="core commerce" class="cat-pill px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#0f172a] text-slate-400 hover:text-white border border-[#1e293b] cursor-pointer transition-colors">
+            Core Commerce (6)
+        </button>
+        <button type="button" data-cat="operations & governance" class="cat-pill px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#0f172a] text-slate-400 hover:text-white border border-[#1e293b] cursor-pointer transition-colors">
+            Operations &amp; Governance (5)
+        </button>
+        <button type="button" data-cat="payments & fulfillment" class="cat-pill px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#0f172a] text-slate-400 hover:text-white border border-[#1e293b] cursor-pointer transition-colors">
+            Payments &amp; Logistics (4)
+        </button>
+        <button type="button" data-cat="marketing & engagement" class="cat-pill px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#0f172a] text-slate-400 hover:text-white border border-[#1e293b] cursor-pointer transition-colors">
+            Marketing &amp; CMS (5)
+        </button>
+    </div>
+
+    <!-- Domains Table with Disciplined Columns -->
+    <div class="overflow-x-auto no-scrollbar rounded-2xl border border-[#1e293b] bg-[#0f172a]">
+        <table class="w-full text-left border-collapse text-xs">
+            <thead>
+                <tr class="border-b border-[#1e293b] text-slate-400 uppercase text-[10px] font-bold tracking-wider bg-[#0f172a]/95">
+                    <th class="py-3.5 px-4 w-12 text-center">#</th>
+                    <th class="py-3.5 px-4 min-w-[240px]">Domain Service &amp; Scope</th>
+                    <th class="py-3.5 px-4 hidden md:table-cell w-36">App Namespace</th>
+                    <th class="py-3.5 px-4 hidden sm:table-cell w-36 text-center">Phase</th>
+                    <th class="py-3.5 px-4 w-44">Category</th>
+                    <th class="py-3.5 px-4 hidden lg:table-cell w-36 text-center">Governance Status</th>
+                    <th class="py-3.5 px-4 text-right w-24 no-print">Admin DB</th>
+                </tr>
+            </thead>
+            <tbody id="matrix-tbody" class="divide-y divide-[#1e293b]">
+                {% for dept in departments %}
+                <tr 
+                    class="matrix-row hover:bg-slate-800/40 transition-colors group" 
+                    data-name="{{ dept.name|lower }}" 
+                    data-slug="{{ dept.slug|lower }}"
+                    data-cat="{{ dept.domain_category|lower }}"
+                    data-badge="{{ dept.badge|lower }}"
+                >
+                    <td class="py-3.5 px-4 font-mono text-slate-400 text-[11px] text-center">
+                        #{{ forloop.counter|stringformat:"02d" }}
+                    </td>
+                    <td class="py-3.5 px-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border {% if dept.accent_color == 'emerald' %}bg-emerald-500/15 text-emerald-400 border-emerald-500/30{% elif dept.accent_color == 'amber' %}bg-amber-500/15 text-amber-400 border-amber-500/30{% elif dept.accent_color == 'rose' %}bg-rose-500/15 text-rose-400 border-rose-500/30{% elif dept.accent_color == 'purple' %}bg-purple-500/15 text-purple-400 border-purple-500/30{% else %}bg-indigo-500/15 text-indigo-400 border-indigo-500/30{% endif %} shadow-sm">
+                                <i data-lucide="{{ dept.icon }}" class="w-4 h-4"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-bold text-white group-hover:text-indigo-400 transition-colors text-xs sm:text-sm">{{ dept.name }}</span>
+                                    {% if dept.badge %}
+                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-slate-800 text-indigo-300 border border-slate-700 shrink-0">
+                                        {{ dept.badge }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                                <div class="text-[11px] text-slate-400 truncate max-w-sm sm:max-w-md mt-0.5" title="{{ dept.description }}">
+                                    {{ dept.description }}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-4 hidden md:table-cell">
+                        <code class="px-2 py-0.5 rounded-lg bg-[#0b0f19] border border-slate-800 text-cyan-300 font-mono text-[11px] font-medium inline-block">
+                            apps/{{ dept.slug }}
+                        </code>
+                    </td>
+                    <td class="py-3.5 px-0 hidden sm:table-cell text-center">
+                        <span class="px-1 py-0.5 w-40 rounded-full text-[15px] font-bold bg-slate-800 text-slate-300 border border-slate-700 font-mono">
+                            {{ dept.phase }}
+                        </span>
+                    </td>
+                    <td class="py-3.5 px-4">
+                        {% if dept.domain_category == 'Core Commerce' %}
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/15 text-blue-400 border border-blue-500/30">
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                            <span>Core Commerce</span>
+                        </span>
+                        {% elif dept.domain_category == 'Operations & Governance' %}
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-purple-500/15 text-purple-400 border border-purple-500/30">
+                            <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                            <span>Operations</span>
+                        </span>
+                        {% elif dept.domain_category == 'Payments & Fulfillment' %}
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                            <span>Payments &amp; Logistics</span>
+                        </span>
+                        {% else %}
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
+                            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                            <span>Marketing &amp; CMS</span>
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td class="py-3.5 px-4 hidden lg:table-cell text-center">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 whitespace-nowrap">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 live-dot"></span>
+                            <span>Active • Governed</span>
+                        </span>
+                    </td>
+                    <td class="py-3.5 px-4 text-right no-print">
+                        <a 
+                            href="/admin/{{ dept.slug }}/" 
+                            target="_blank" 
+                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-[#131c2e] hover:bg-indigo-600 text-slate-300 hover:text-white border border-[#1e293b] hover:border-indigo-500 transition-all shadow-sm"
+                            title="Inspect {{ dept.name }} in Django Admin"
+                        >
+                            <span>Admin</span>
+                            <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Zero Results Fallback -->
+        <div id="no-matrix-results" class="hidden py-10 text-center text-slate-400 text-xs">
+            <i data-lucide="search-x" class="w-7 h-7 mx-auto text-slate-500 mb-2"></i>
+            <div class="font-semibold text-slate-300">No matching domains found</div>
+            <div class="text-[11px] text-slate-500 mt-0.5">Try adjusting your search query or switching category filter.</div>
+        </div>
+    </div>
+
+    <!-- Paginator Footer Controls -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-[#1e293b] pagination-controls no-print">
+        <div id="matrix-pagination-info" class="text-xs text-slate-400">
+            Showing <span class="font-bold text-white">1</span> to <span class="font-bold text-white">5</span> of <span class="font-bold text-white">20</span> domains
+        </div>
+        <div id="matrix-pagination-controls" class="flex items-center gap-1.5">
+            <!-- Dynamically populated by TablePaginator -->
+        </div>
+    </div>
+
+</div>
+{% endblock admin_content %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const catPills = document.querySelectorAll('.cat-pill');
+        let activeCategory = 'all';
+
+        // Initialize Table Paginator
+        const paginator = new TablePaginator({
+            tableBodyId: 'matrix-tbody',
+            rowSelector: '.matrix-row',
+            infoId: 'matrix-pagination-info',
+            paginationId: 'matrix-pagination-controls',
+            pageSizeSelectId: 'matrix-page-size',
+            searchInputId: 'matrix-search-input',
+            emptyStateId: 'no-matrix-results',
+            printBtnId: 'matrix-print-btn',
+            defaultPageSize: 5,
+            itemName: 'domains',
+            customFilter: function(row) {
+                if (activeCategory === 'all') return true;
+                const cat = (row.getAttribute('data-cat') || '').toLowerCase();
+                return cat.includes(activeCategory);
+            }
+        });
+
+        // Category Filter Pills Handler
+        catPills.forEach(pill => {
+            pill.addEventListener('click', function() {
+                catPills.forEach(p => {
+                    p.classList.remove('bg-indigo-600', 'text-white');
+                    p.classList.add('bg-[#0f172a]', 'text-slate-400');
+                });
+                this.classList.remove('bg-[#0f172a]', 'text-slate-400');
+                this.classList.add('bg-indigo-600', 'text-white');
+                activeCategory = (this.getAttribute('data-cat') || 'all').toLowerCase();
+                paginator.applyFilter();
+            });
+        });
+    });
+</script>
+{% endblock %}

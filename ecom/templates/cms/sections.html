@@ -1,0 +1,519 @@
+{% extends 'cms/cms_base.html' %}
+
+{% block page_title %}Homepage Section Orchestration | CMS Executive{% endblock %}
+
+{% block cms_content %}
+<div class="space-y-6">
+    <!-- Top Action & Statistics Header -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-3">
+                <h1 class="text-2xl font-bold tracking-tight text-white font-display">Homepage Section Blocks</h1>
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                    {{ total_count }} Sections
+                </span>
+            </div>
+            <p class="text-sm text-slate-400 mt-1">Reorder, enable, disable, and configure the structural modules displayed on the Cartivo storefront homepage.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button type="button" onclick="openModal('addSectionModal')" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm transition-all shadow-lg shadow-blue-600/20 active:scale-95">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                <span>Add Section</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Django Admin-style Filter & Search Toolbar -->
+    <div class="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-4 shadow-sm backdrop-blur-md">
+        <form method="GET" action="{% url 'cms:sections' %}" class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <!-- Search Filter -->
+            <div class="relative flex-1 max-w-md">
+                <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <input type="text" name="q" value="{{ search_query }}" placeholder="Search by section name, title, or subtitle..." class="w-full pl-10 pr-4 py-2 text-sm bg-slate-950/60 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors">
+            </div>
+
+            <!-- Multi-faceted Filter Selectors -->
+            <div class="flex flex-wrap items-center gap-3 text-xs">
+                <!-- Status Filter -->
+                <div class="flex items-center gap-1.5 bg-slate-950/60 p-1 rounded-xl border border-slate-800">
+                    <span class="px-2 text-slate-400 font-medium">Status:</span>
+                    <a href="?status=all&section_type={{ section_type_filter }}&q={{ search_query }}" class="px-2.5 py-1 rounded-lg transition-colors {% if status_filter == 'all' %}bg-blue-600 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">All</a>
+                    <a href="?status=active&section_type={{ section_type_filter }}&q={{ search_query }}" class="px-2.5 py-1 rounded-lg transition-colors {% if status_filter == 'active' %}bg-emerald-600 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">Active</a>
+                    <a href="?status=inactive&section_type={{ section_type_filter }}&q={{ search_query }}" class="px-2.5 py-1 rounded-lg transition-colors {% if status_filter == 'inactive' %}bg-rose-600 text-white font-semibold{% else %}text-slate-400 hover:text-white{% endif %}">Inactive</a>
+                </div>
+
+                <!-- Section Type Filter Dropdown -->
+                <div class="flex items-center gap-2 bg-slate-950/60 px-3 py-1 rounded-xl border border-slate-800">
+                    <span class="text-slate-400 font-medium">Type:</span>
+                    <select onchange="window.location.href='?status={{ status_filter }}&section_type=' + this.value + '&q={{ search_query }}'" class="bg-transparent text-white font-semibold focus:outline-none text-xs">
+                        <option value="all" class="bg-slate-900 text-white" {% if section_type_filter == 'all' %}selected{% endif %}>All Types</option>
+                        {% for type_val, type_label in section_types %}
+                        <option value="{{ type_val }}" class="bg-slate-900 text-white" {% if section_type_filter == type_val %}selected{% endif %}>{{ type_label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                {% if search_query or status_filter != 'all' or section_type_filter != 'all' %}
+                <a href="{% url 'cms:sections' %}" class="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-rose-400 transition-colors flex items-center gap-1 bg-slate-800/40 hover:bg-rose-500/10 border border-slate-700/50">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    <span>Reset</span>
+                </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <!-- Bulk Actions & Table Form -->
+    <form method="POST" action="{% url 'cms:section_bulk' %}" id="bulkSectionForm" class="space-y-4">
+        {% csrf_token %}
+
+        <!-- Django Admin Style Action Bar -->
+        <div class="flex items-center justify-between bg-slate-900/60 border border-slate-800/60 rounded-xl px-4 py-2.5 text-xs text-slate-300">
+            <div class="flex items-center gap-3">
+                <span class="font-semibold text-slate-400">Action:</span>
+                <select name="action" class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
+                    <option value="">--------- Choose Action ---------</option>
+                    <option value="activate">Mark selected as Active</option>
+                    <option value="deactivate">Mark selected as Inactive</option>
+                    <option value="delete">Delete selected Sections</option>
+                </select>
+                <button type="submit" onclick="return confirmAction(event)" class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-medium transition-colors border border-slate-700">
+                    Go / Apply
+                </button>
+            </div>
+            <div class="text-slate-400">
+                <span id="selectedCount">0</span> of {{ total_count }} selected
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="bg-slate-900/80 border border-slate-800/80 rounded-2xl overflow-hidden shadow-sm">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="bg-slate-950/80 border-b border-slate-800/80 text-xs uppercase font-semibold text-slate-400 tracking-wider">
+                            <th class="py-3.5 px-4 w-10">
+                                <input type="checkbox" id="selectAll" class="w-4 h-4 rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0 focus:ring-offset-0">
+                            </th>
+                            <th class="py-3.5 px-4">Section Module</th>
+                            <th class="py-3.5 px-4">Type & Configuration</th>
+                            <th class="py-3.5 px-4">Display Order</th>
+                            <th class="py-3.5 px-4 text-center">Status</th>
+                            <th class="py-3.5 px-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60 font-mono text-xs">
+                        {% for section in sections %}
+                        <tr class="hover:bg-slate-800/30 transition-colors group">
+                            <!-- Checkbox -->
+                            <td class="py-3.5 px-4">
+                                <input type="checkbox" name="selected_ids" value="{{ section.id }}" class="row-checkbox w-4 h-4 rounded bg-slate-900 border-slate-700 text-blue-600 focus:ring-0 focus:ring-offset-0">
+                            </td>
+
+                            <!-- Section Name & Title -->
+                            <td class="py-3.5 px-4 font-sans">
+                                <div class="flex items-center gap-3">
+                                    {% if section.effective_image_url %}
+                                    <img src="{{ section.effective_image_url }}" alt="{{ section.name }}" class="w-10 h-10 rounded-xl object-cover border border-slate-700 shrink-0 bg-slate-950">
+                                    {% else %}
+                                    <div class="w-10 h-10 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center text-slate-600 shrink-0">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                    </div>
+                                    {% endif %}
+                                    <div class="min-w-0">
+                                        <span class="font-bold text-white text-sm truncate block">{{ section.name }}</span>
+                                        {% if section.title %}
+                                        <div class="text-xs text-slate-300 font-medium mt-0.5 truncate">{{ section.title }}</div>
+                                        {% endif %}
+                                        {% if section.subtitle %}
+                                        <div class="text-[11px] text-slate-500 mt-0.5 truncate">{{ section.subtitle }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Type & Options -->
+                            <td class="py-3.5 px-4 font-sans text-xs">
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-0.5 rounded-md font-semibold text-[11px]
+                                        {% if section.section_type == 'hero_banners' %}bg-blue-500/10 text-blue-400 border border-blue-500/20
+                                        {% elif section.section_type == 'product_grid' %}bg-emerald-500/10 text-emerald-400 border border-emerald-500/20
+                                        {% elif section.section_type == 'curated_categories' %}bg-purple-500/10 text-purple-400 border border-purple-500/20
+                                        {% elif section.section_type == 'trust_bar' %}bg-amber-500/10 text-amber-400 border border-amber-500/20
+                                        {% else %}bg-slate-800 text-slate-300 border border-slate-700{% endif %}">
+                                        {{ section.get_section_type_display }}
+                                    </span>
+                                    {% if section.section_type == 'product_grid' %}
+                                    <span class="text-slate-400 text-[11px]">({{ section.get_product_filter_type_display }} &bull; Max {{ section.max_items }})</span>
+                                    {% endif %}
+                                </div>
+                                {% if section.view_all_url %}
+                                <div class="text-[11px] text-slate-500 mt-1">
+                                    Link: <span class="text-blue-400">{{ section.view_all_text }} &rarr; {{ section.view_all_url }}</span>
+                                </div>
+                                {% endif %}
+                            </td>
+
+                            <!-- Order -->
+                            <td class="py-3.5 px-4 text-slate-300">
+                                <span class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 font-semibold text-xs">
+                                    #{{ section.display_order }}
+                                </span>
+                            </td>
+
+                            <!-- Status Toggle Switch (Django Admin Tick/Cross equivalent) -->
+                            <td class="py-3.5 px-4 text-center">
+                                <a href="{% url 'cms:section_toggle' section.id %}" title="Click to toggle status" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold transition-all hover:scale-105 active:scale-95 border {% if section.is_active %}bg-emerald-500/15 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/25{% else %}bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700{% endif %}">
+                                    {% if section.is_active %}
+                                    <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                    <span>Active</span>
+                                    {% else %}
+                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    <span>Inactive</span>
+                                    {% endif %}
+                                </a>
+                            </td>
+
+                            <!-- Actions -->
+                            <td class="py-3.5 px-4 text-right">
+                                <div class="flex items-center justify-end gap-2">
+                                    <button 
+                                        type="button" 
+                                        onclick="openEditSectionModal({
+                                            id: {{ section.id }},
+                                            name: '{{ section.name|escapejs }}',
+                                            section_type: '{{ section.section_type|escapejs }}',
+                                            title: '{{ section.title|escapejs }}',
+                                            subtitle: '{{ section.subtitle|escapejs }}',
+                                            image_url: '{{ section.image_url|escapejs }}',
+                                            effective_image_url: '{{ section.effective_image_url|escapejs }}',
+                                            product_filter_type: '{{ section.product_filter_type|escapejs }}',
+                                            max_items: {{ section.max_items }},
+                                            view_all_text: '{{ section.view_all_text|escapejs }}',
+                                            view_all_url: '{{ section.view_all_url|escapejs }}',
+                                            display_order: {{ section.display_order }},
+                                            is_active: {% if section.is_active %}true{% else %}false{% endif %}
+                                        })" 
+                                        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 transition-colors text-xs font-semibold cursor-pointer"
+                                        title="Edit section properties"
+                                    >
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                        <span>Edit</span>
+                                    </button>
+                                    <a href="{% url 'cms:section_toggle' section.id %}" class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors text-xs font-medium" title="Toggle active status">
+                                        Toggle
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="py-12 text-center text-slate-400 font-sans">
+                                <svg class="w-12 h-12 mx-auto text-slate-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                                <p class="text-base font-semibold text-slate-300">No homepage sections found</p>
+                                <p class="text-xs text-slate-400 mt-1">Add a new section module to configure the layout of the storefront.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Add Section Modal (Scrollable with Sticky Header & Footer) -->
+<div id="addSectionModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm overflow-y-auto p-4 sm:p-6 flex items-center justify-center" onclick="if(event.target===this) closeModal('addSectionModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl my-auto max-h-[90vh] flex flex-col shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 shrink-0">
+            <h3 class="text-lg font-bold text-white font-display">Add Homepage Section Block</h3>
+            <button type="button" onclick="closeModal('addSectionModal')" class="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-slate-800">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <form method="POST" action="{% url 'cms:section_add' %}" enctype="multipart/form-data" class="flex flex-col flex-1 overflow-hidden min-h-0">
+            {% csrf_token %}
+            <div class="p-6 space-y-4 overflow-y-auto flex-1">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Internal Name *</label>
+                        <input type="text" name="name" required placeholder="e.g. Featured Electronics Grid" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Section Type *</label>
+                        <select name="section_type" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                            <option value="category_bar">Category Bar</option>
+                            <option value="hero_banners">Hero Carousel</option>
+                            <option value="trust_bar">Trust Bar</option>
+                            <option value="curated_categories">Curated Categories Grid</option>
+                            <option value="product_grid" selected>Dynamic Product Grid</option>
+                            <option value="newsletter">Newsletter Signup</option>
+                            <option value="custom_html">Custom Block</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Display Title</label>
+                        <input type="text" name="title" placeholder="e.g. Trending Innovations" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Subtitle</label>
+                        <input type="text" name="subtitle" placeholder="e.g. Hand-selected hardware designed to empower." class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+
+                    <!-- Dual Image Input: File Upload OR External/Google URL -->
+                    <div class="md:col-span-2 p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <label class="block text-xs font-semibold uppercase text-slate-300">Section Image / Banner (Optional)</label>
+                            <span class="text-[10px] text-slate-400">Upload to media storage or paste web/Google link</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] text-slate-400 mb-1">📁 Upload File (Saved to media)</label>
+                                <input type="file" name="image" accept="image/*" class="w-full text-xs text-slate-400 file:mr-2.5 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] text-slate-400 mb-1">🔗 Or Paste Image URL (Google / Web)</label>
+                                <input type="url" name="image_url" placeholder="https://... (e.g. Google images, Unsplash)" class="w-full px-3 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-blue-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Product Filter Feed</label>
+                        <select name="product_filter_type" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                            <option value="trending">Trending Now</option>
+                            <option value="deals">Flash Deals</option>
+                            <option value="top_rated">Top Rated</option>
+                            <option value="new_arrivals">New Arrivals</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Max Items to Show</label>
+                        <input type="number" name="max_items" value="4" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">View All Button Text</label>
+                        <input type="text" name="view_all_text" value="Explore All" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">View All Target URL</label>
+                        <input type="text" name="view_all_url" value="/products/" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Display Order Priority</label>
+                        <input type="number" name="display_order" value="0" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="flex items-center gap-3 pt-6">
+                        <label class="relative flex items-center cursor-pointer">
+                            <input type="checkbox" name="is_active" checked class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            <span class="ml-3 text-sm font-medium text-white">Active Status</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-800 bg-slate-900 shrink-0">
+                <button type="button" onclick="closeModal('addSectionModal')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors">Cancel</button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-all shadow-lg shadow-blue-600/25">Create Section</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Section Modal (Scrollable with Sticky Header & Footer) -->
+<div id="editSectionModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm overflow-y-auto p-4 sm:p-6 flex items-center justify-center" onclick="if(event.target===this) closeModal('editSectionModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl my-auto max-h-[90vh] flex flex-col shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 shrink-0">
+            <div class="flex items-center gap-2">
+                <h3 class="text-lg font-bold text-white font-display">Edit Homepage Section</h3>
+                <span id="editSectionIdBadge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/15 text-blue-400 border border-blue-500/20"></span>
+            </div>
+            <button type="button" onclick="closeModal('editSectionModal')" class="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-slate-800">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <form method="POST" id="editSectionForm" action="" enctype="multipart/form-data" class="flex flex-col flex-1 overflow-hidden min-h-0">
+            {% csrf_token %}
+            <div class="p-6 space-y-4 overflow-y-auto flex-1">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Internal Name *</label>
+                        <input type="text" name="name" id="edit_section_name" required class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Section Type *</label>
+                        <select name="section_type" id="edit_section_type" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                            <option value="category_bar">Category Bar</option>
+                            <option value="hero_banners">Hero Carousel</option>
+                            <option value="trust_bar">Trust Bar</option>
+                            <option value="curated_categories">Curated Categories Grid</option>
+                            <option value="product_grid">Dynamic Product Grid</option>
+                            <option value="newsletter">Newsletter Signup</option>
+                            <option value="custom_html">Custom Block</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Display Title</label>
+                        <input type="text" name="title" id="edit_section_title" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Subtitle</label>
+                        <input type="text" name="subtitle" id="edit_section_subtitle" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+
+                    <!-- Dual Image Input in Edit Modal -->
+                    <div class="md:col-span-2 p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <label class="block text-xs font-semibold uppercase text-slate-300">Section Image / Banner</label>
+                            <span class="text-[10px] text-slate-400">Upload to media storage or paste web/Google link</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] text-slate-400 mb-1">📁 Change/Upload File</label>
+                                <input type="file" name="image" accept="image/*" class="w-full text-xs text-slate-400 file:mr-2.5 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] text-slate-400 mb-1">🔗 Or Image URL (Google / Web)</label>
+                                <input type="url" name="image_url" id="edit_section_image_url" placeholder="https://... (e.g. Google images, Unsplash)" class="w-full px-3 py-1.5 text-xs bg-slate-900 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-blue-500">
+                            </div>
+                        </div>
+                        <!-- Current Image Preview -->
+                        <div id="edit_section_preview_wrap" class="hidden items-center justify-between p-2 rounded-lg bg-slate-900/80 border border-slate-800 mt-2">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <img id="edit_section_preview_img" src="" alt="Current" class="w-10 h-10 rounded-lg object-cover border border-slate-700 shrink-0">
+                                <div class="min-w-0">
+                                    <span class="text-[11px] font-semibold text-slate-300 block">Current Attached Image</span>
+                                    <span id="edit_section_preview_src" class="text-[10px] text-cyan-400 truncate block font-mono"></span>
+                                </div>
+                            </div>
+                            <label class="inline-flex items-center gap-1.5 text-xs text-rose-400 hover:text-rose-300 cursor-pointer shrink-0">
+                                <input type="checkbox" name="clear_image" class="rounded border-slate-700 bg-slate-800 text-rose-500 focus:ring-0">
+                                <span>Clear</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Product Filter Feed</label>
+                        <select name="product_filter_type" id="edit_section_filter_type" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                            <option value="trending">Trending Now</option>
+                            <option value="deals">Flash Deals</option>
+                            <option value="top_rated">Top Rated</option>
+                            <option value="new_arrivals">New Arrivals</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Max Items to Show</label>
+                        <input type="number" name="max_items" id="edit_section_max_items" value="4" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">View All Button Text</label>
+                        <input type="text" name="view_all_text" id="edit_section_view_all_text" value="Explore All" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">View All Target URL</label>
+                        <input type="text" name="view_all_url" id="edit_section_view_all_url" value="/products/" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-1.5">Display Order Priority</label>
+                        <input type="number" name="display_order" id="edit_section_display_order" value="0" class="w-full px-3.5 py-2 text-sm bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="flex items-center gap-3 pt-6">
+                        <label class="relative flex items-center cursor-pointer">
+                            <input type="checkbox" name="is_active" id="edit_section_is_active" class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            <span class="ml-3 text-sm font-medium text-white">Active Status</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-800 bg-slate-900 shrink-0">
+                <button type="button" onclick="closeModal('editSectionModal')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors">Cancel</button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-all shadow-lg shadow-blue-600/25">Update Section</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openEditSectionModal(data) {
+        document.getElementById('editSectionIdBadge').textContent = '#' + data.id;
+        document.getElementById('editSectionForm').action = '/cms/sections/edit/' + data.id + '/';
+        document.getElementById('edit_section_name').value = data.name || '';
+        document.getElementById('edit_section_type').value = data.section_type || 'product_grid';
+        document.getElementById('edit_section_title').value = data.title || '';
+        document.getElementById('edit_section_subtitle').value = data.subtitle || '';
+        document.getElementById('edit_section_image_url').value = data.image_url || '';
+        
+        const previewWrap = document.getElementById('edit_section_preview_wrap');
+        const previewImg = document.getElementById('edit_section_preview_img');
+        const previewSrc = document.getElementById('edit_section_preview_src');
+        if (data.effective_image_url) {
+            previewImg.src = data.effective_image_url;
+            previewSrc.textContent = data.effective_image_url;
+            previewWrap.classList.remove('hidden');
+            previewWrap.classList.add('flex');
+        } else {
+            previewWrap.classList.add('hidden');
+            previewWrap.classList.remove('flex');
+        }
+
+        document.getElementById('edit_section_filter_type').value = data.product_filter_type || 'trending';
+        document.getElementById('edit_section_max_items').value = data.max_items ?? 4;
+        document.getElementById('edit_section_view_all_text').value = data.view_all_text || 'Explore All';
+        document.getElementById('edit_section_view_all_url').value = data.view_all_url || '/products/';
+        document.getElementById('edit_section_display_order').value = data.display_order ?? 0;
+        document.getElementById('edit_section_is_active').checked = !!data.is_active;
+        openModal('editSectionModal');
+    }
+    function openModal(id) {
+        document.getElementById(id).classList.remove('hidden');
+    }
+    function closeModal(id) {
+        document.getElementById(id).classList.add('hidden');
+    }
+
+    const selectAll = document.getElementById('selectAll');
+    const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+    const selectedCount = document.getElementById('selectedCount');
+
+    function updateCount() {
+        const checked = document.querySelectorAll('.row-checkbox:checked').length;
+        selectedCount.textContent = checked;
+    }
+
+    if (selectAll) {
+        selectAll.addEventListener('change', () => {
+            rowCheckboxes.forEach(cb => cb.checked = selectAll.checked);
+            updateCount();
+        });
+    }
+
+    rowCheckboxes.forEach(cb => {
+        cb.addEventListener('change', updateCount);
+    });
+
+    function confirmAction(e) {
+        const action = document.querySelector('select[name="action"]').value;
+        if (!action) {
+            alert('Please select an action from the dropdown.');
+            e.preventDefault();
+            return false;
+        }
+        const checked = document.querySelectorAll('.row-checkbox:checked').length;
+        if (checked === 0) {
+            alert('Please select at least one section.');
+            e.preventDefault();
+            return false;
+        }
+        if (action === 'delete') {
+            return confirm(`Are you sure you want to delete ${checked} section(s)? This cannot be undone.`);
+        }
+        return true;
+    }
+</script>
+{% endblock %}

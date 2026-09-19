@@ -1,0 +1,215 @@
+{% extends 'catalog/manage/catalog_base.html' %}
+{% load static %}
+
+{% block title %}Products Master &bull; Catalog Console{% endblock %}
+{% block header_title %}Products Master{% endblock %}
+{% block header_subtitle %}Complete Catalog Repository ({{ total_count }} total){% endblock %}
+
+{% block catalog_content %}
+<div class="space-y-6 max-w-7xl mx-auto">
+
+    <!-- Search & Filter Controls Card -->
+    <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 space-y-4">
+        <form method="GET" action="{% url 'catalog:product_admin_list' %}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-center">
+            
+            <!-- Search input -->
+            <div class="lg:col-span-4 relative">
+                <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                <input 
+                    type="text" 
+                    name="q" 
+                    value="{{ q }}" 
+                    placeholder="Search by title, SKU, description..."
+                    class="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-200 placeholder-slate-500 focus:outline-hidden focus:border-blue-500 transition-colors"
+                >
+            </div>
+
+            <!-- Status filter -->
+            <div class="lg:col-span-2">
+                <select name="status" class="w-full px-3 py-2 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-300 focus:outline-hidden focus:border-blue-500">
+                    <option value="">All Statuses</option>
+                    <option value="ACTIVE" {% if status_filter == 'ACTIVE' %}selected{% endif %}>Active</option>
+                    <option value="DRAFT" {% if status_filter == 'DRAFT' %}selected{% endif %}>Draft</option>
+                    <option value="ARCHIVED" {% if status_filter == 'ARCHIVED' %}selected{% endif %}>Archived</option>
+                </select>
+            </div>
+
+            <!-- Category filter -->
+            <div class="lg:col-span-3">
+                <select name="category_id" class="w-full px-3 py-2 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-300 focus:outline-hidden focus:border-blue-500">
+                    <option value="">All Categories</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if category_id == cat.id|stringformat:"i" %}selected{% endif %}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Brand filter -->
+            <div class="lg:col-span-2">
+                <select name="brand_id" class="w-full px-3 py-2 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-300 focus:outline-hidden focus:border-blue-500">
+                    <option value="">All Brands</option>
+                    {% for b in brands %}
+                    <option value="{{ b.id }}" {% if brand_id == b.id|stringformat:"i" %}selected{% endif %}>{{ b.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Submit & Reset buttons -->
+            <div class="lg:col-span-1 flex items-center gap-1.5">
+                <button type="submit" class="flex-1 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-colors cursor-pointer text-center">
+                    Filter
+                </button>
+                {% if q or status_filter or category_id or brand_id %}
+                <a href="{% url 'catalog:product_admin_list' %}" title="Clear filters" class="p-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition-colors">
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <!-- Products Data Table -->
+    <div class="rounded-2xl bg-slate-900/60 border border-slate-800/80 overflow-hidden shadow-xs">
+        <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left">
+                <thead class="bg-slate-950/80 text-slate-400 uppercase text-[10px] font-bold tracking-wider border-b border-slate-800/80">
+                    <tr>
+                        <th class="py-3.5 px-4">Product Details</th>
+                        <th class="py-3.5 px-4">Taxonomy</th>
+                        <th class="py-3.5 px-4">Master Pricing</th>
+                        <th class="py-3.5 px-4">Variants</th>
+                        <th class="py-3.5 px-4">Status & Visibility</th>
+                        <th class="py-3.5 px-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/40">
+                    {% for p in products %}
+                    <tr class="hover:bg-slate-800/20 transition-colors">
+                        <!-- Product Title, Image & SKU -->
+                        <td class="py-3.5 px-4">
+                            <div class="flex items-center gap-3">
+                                <img src="{{ p.primary_image_url }}" alt="" class="w-11 h-11 rounded-xl object-cover bg-slate-800 shrink-0 border border-slate-700/60">
+                                <div class="min-w-0">
+                                    <div class="font-bold text-slate-100 truncate max-w-[220px]">{{ p.title }}</div>
+                                    <div class="flex items-center gap-2 text-[10px] text-slate-500 font-mono mt-0.5">
+                                        <span>SKU: <strong class="text-slate-400">{{ p.sku|default:"GLOBAL" }}</strong></span>
+                                        {% if p.is_featured %}
+                                        <span class="text-amber-400 font-sans font-semibold">&bull; Featured</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Category & Brand -->
+                        <td class="py-3.5 px-4">
+                            <div class="text-slate-200 font-medium">{{ p.category.name|default:"Unassigned" }}</div>
+                            <div class="text-[10px] text-slate-500">{{ p.brand.name|default:"Independent" }}</div>
+                        </td>
+
+                        <!-- Pricing -->
+                        <td class="py-3.5 px-4">
+                            <div class="font-extrabold text-slate-100">₹{{ p.base_price }}</div>
+                            {% if p.compare_at_price %}
+                            <div class="text-[10px] text-slate-500 line-through">₹{{ p.compare_at_price }}</div>
+                            {% endif %}
+                        </td>
+
+                        <!-- Variants count -->
+                        <td class="py-3.5 px-4">
+                            {% with v_count=p.variants.count %}
+                            {% if v_count > 0 %}
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 font-bold text-[10px]">
+                                {{ v_count }} variant{{ v_count|pluralize }}
+                            </span>
+                            {% else %}
+                            <span class="text-[11px] text-slate-500">Standard</span>
+                            {% endif %}
+                            {% endwith %}
+                        </td>
+
+                        <!-- Status & Visibility -->
+                        <td class="py-3.5 px-4">
+                            <div class="flex flex-col gap-1 items-start">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider {% if p.status == 'ACTIVE' %}bg-emerald-500/10 text-emerald-400 border border-emerald-500/20{% elif p.status == 'DRAFT' %}bg-amber-500/10 text-amber-400 border border-amber-500/20{% else %}bg-slate-700/50 text-slate-400 border border-slate-700{% endif %}">
+                                    {{ p.status }}
+                                </span>
+                                <span class="text-[10px] text-slate-500">
+                                    {{ p.visibility|lower }}
+                                </span>
+                            </div>
+                        </td>
+
+                        <!-- Actions -->
+                        <td class="py-3.5 px-4 text-right">
+                            <div class="inline-flex items-center gap-1.5">
+                                <!-- Toggle Status -->
+                                <a href="{% url 'catalog:product_toggle_status' p.id %}" title="Toggle Active/Draft" class="p-1.5 rounded-lg text-slate-400 hover:text-amber-400 hover:bg-slate-800 transition-colors">
+                                    <i data-lucide="power" class="w-3.5 h-3.5"></i>
+                                </a>
+
+                                <!-- Edit -->
+                                <a href="{% url 'catalog:product_edit' p.id %}" title="Edit Product" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+                                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                                </a>
+
+                                <!-- Live Storefront Preview -->
+                                <a href="{% url 'catalog:product_detail' p.slug %}" target="_blank" title="Preview on Storefront" class="p-1.5 rounded-lg text-slate-400 hover:text-blue-400 hover:bg-slate-800 transition-colors">
+                                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                                </a>
+
+                                <!-- Archive (if not already archived) -->
+                                {% if p.status != 'ARCHIVED' %}
+                                <a href="{% url 'catalog:product_archive' p.id %}" onclick="return confirm('Archive product {{ p.title|escapejs }}? This hides it from shoppers while preserving historical integrity.')" title="Archive Product" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition-colors">
+                                    <i data-lucide="archive" class="w-3.5 h-3.5"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="py-12 text-center">
+                            <div class="flex flex-col items-center justify-center">
+                                <div class="w-12 h-12 rounded-2xl bg-slate-800/80 flex items-center justify-center text-slate-500 mb-3">
+                                    <i data-lucide="box" class="w-6 h-6"></i>
+                                </div>
+                                <h4 class="text-sm font-bold text-slate-300">No products match your criteria</h4>
+                                <p class="text-xs text-slate-500 mt-1 mb-4">Try clearing your filters or create a new product.</p>
+                                <a href="{% url 'catalog:product_add' %}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all">
+                                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                    <span>Create Product</span>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        {% if page_obj.has_other_pages %}
+        <div class="px-4 py-3 bg-slate-950/60 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+            <div>
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </div>
+            <div class="flex items-center gap-1.5">
+                {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_id %}&category_id={{ category_id }}{% endif %}{% if brand_id %}&brand_id={{ brand_id }}{% endif %}" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition-colors">
+                    Previous
+                </a>
+                {% endif %}
+
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_id %}&category_id={{ category_id }}{% endif %}{% if brand_id %}&brand_id={{ brand_id }}{% endif %}" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition-colors">
+                    Next
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

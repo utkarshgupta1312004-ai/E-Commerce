@@ -1,0 +1,161 @@
+{% extends 'orders/manage/orders_base.html' %}
+
+{% block title %}Order Operations Command Center{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-7xl mx-auto">
+
+    <!-- Title & Action Bar -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-black text-white tracking-tight">Order Operations Command Center</h1>
+            <p class="text-xs text-slate-400 mt-1">Real-time purchase flow, inventory deduction audit, and COD payment tracking.</p>
+        </div>
+
+        <div class="flex items-center gap-2.5">
+            <a href="{% url 'orders:manage_list' %}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white transition-all shadow-md shadow-blue-600/20">
+                <i data-lucide="list-ordered" class="w-3.5 h-3.5"></i>
+                <span>View All Orders</span>
+            </a>
+            <a href="{% url 'inventory:movement_list' %}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 transition-all shadow-xs">
+                <i data-lucide="activity" class="w-3.5 h-3.5 text-emerald-400"></i>
+                <span>Stock Movements</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- KPI Metric Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <!-- Total Orders -->
+        <div class="p-5 rounded-2xl bg-[#0e1424] border border-slate-800/80">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Orders</span>
+                <div class="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center">
+                    <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                </div>
+            </div>
+            <div class="text-2xl font-black text-white tracking-tight">{{ total_orders_count }}</div>
+            <span class="text-[11px] text-slate-400 mt-1 block">Completed purchase records</span>
+        </div>
+
+        <!-- Total Revenue -->
+        <div class="p-5 rounded-2xl bg-[#0e1424] border border-slate-800/80">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Sales Value</span>
+                <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                    <i data-lucide="dollar-sign" class="w-4 h-4"></i>
+                </div>
+            </div>
+            <div class="text-2xl font-black text-white tracking-tight">₹{{ total_revenue|default:"0.00" }}</div>
+            <span class="text-[11px] text-emerald-400 mt-1 block font-medium">Accumulated order ledger</span>
+        </div>
+
+        <!-- Confirmed Orders -->
+        <div class="p-5 rounded-2xl bg-[#0e1424] border border-slate-800/80">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Confirmed Orders</span>
+                <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                    <i data-lucide="check-circle" class="w-4 h-4"></i>
+                </div>
+            </div>
+            <div class="text-2xl font-black text-white tracking-tight">{{ confirmed_orders_count }}</div>
+            <span class="text-[11px] text-slate-400 mt-1 block">Awaiting shipping & fulfillment</span>
+        </div>
+
+        <!-- Pending COD Collection -->
+        <div class="p-5 rounded-2xl bg-[#0e1424] border border-slate-800/80">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pending COD Cash</span>
+                <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                    <i data-lucide="clock" class="w-4 h-4"></i>
+                </div>
+            </div>
+            <div class="text-2xl font-black text-white tracking-tight">₹{{ pending_cod_amount|default:"0.00" }}</div>
+            <span class="text-[11px] text-amber-400 mt-1 block font-medium">{{ pending_cod_count }} orders pending cash receipt</span>
+        </div>
+
+    </div>
+
+    <!-- Recent Orders Table -->
+    <div class="rounded-2xl bg-[#0e1424] border border-slate-800/80 overflow-hidden">
+        <div class="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between">
+            <div>
+                <h2 class="text-base font-bold text-white tracking-tight">Recent Orders</h2>
+                <p class="text-xs text-slate-400 mt-0.5">Showing newest placed orders with historical snapshots.</p>
+            </div>
+            <a href="{% url 'orders:manage_list' %}" class="text-xs font-bold text-blue-400 hover:text-blue-300 transition-colors">
+                View All &rarr;
+            </a>
+        </div>
+
+        {% if not recent_orders %}
+        <div class="p-12 text-center text-slate-500 text-xs">
+            No customer orders placed yet.
+        </div>
+        {% else %}
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead>
+                    <tr class="border-b border-slate-800 text-slate-400 font-bold uppercase tracking-wider text-[10px] bg-slate-900/60">
+                        <th class="py-3 px-4">Order Number</th>
+                        <th class="py-3 px-4">Customer & City</th>
+                        <th class="py-3 px-4">Date</th>
+                        <th class="py-3 px-4 text-center">Items</th>
+                        <th class="py-3 px-4 text-center">Status</th>
+                        <th class="py-3 px-4 text-center">Payment</th>
+                        <th class="py-3 px-4 text-right">Total</th>
+                        <th class="py-3 px-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 font-medium">
+                    {% for order in recent_orders %}
+                    <tr class="hover:bg-slate-900/40 transition-colors">
+                        <td class="py-3 px-4 font-mono font-bold text-blue-400">
+                            <a href="{% url 'orders:manage_detail' order.order_number %}" class="hover:underline">
+                                {{ order.order_number }}
+                            </a>
+                        </td>
+                        <td class="py-3 px-4">
+                            <span class="text-white font-bold block">{{ order.shipping_name }}</span>
+                            <span class="text-[11px] text-slate-400 block">{{ order.shipping_city }}, {{ order.shipping_state }}</span>
+                        </td>
+                        <td class="py-3 px-4 text-slate-400">
+                            {{ order.created_at|date:"M d, Y H:i" }}
+                        </td>
+                        <td class="py-3 px-4 text-center font-bold text-slate-300">
+                            {{ order.total_items_count }}
+                        </td>
+                        <td class="py-3 px-4 text-center">
+                            <span class="inline-flex items-center gap-1 font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 text-[10px]">
+                                {{ order.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-center">
+                            <span class="inline-flex items-center gap-1 font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20 text-[10px]">
+                                COD ({{ order.get_payment_status_display }})
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-right font-bold text-white">
+                            ₹{{ order.total_amount }}
+                        </td>
+                        <td class="py-3 px-4 text-right">
+                            <div class="inline-flex items-center gap-2">
+                                <a href="{% url 'orders:manage_detail' order.order_number %}" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors" title="Inspect Order">
+                                    <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                                </a>
+                                <a href="{% url 'orders:order_receipt' order.order_number %}" target="_blank" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors" title="Print Receipt">
+                                    <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

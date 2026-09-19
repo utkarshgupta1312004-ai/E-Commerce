@@ -17,11 +17,33 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.shortcuts import redirect
 from django.urls import path, include
+
+# Direct admin login redirect to Superadmin Dashboard (admindash)
+_original_admin_login = admin.site.login
+
+def _admindash_redirecting_admin_login(request, extra_context=None):
+    if request.user.is_authenticated and request.user.is_superuser and request.method == 'GET':
+        return redirect('management:dashboard')
+    response = _original_admin_login(request, extra_context)
+    if request.method == 'POST' and request.user.is_authenticated and request.user.is_superuser:
+        request.session.cycle_key()
+        return redirect('management:dashboard')
+    return response
+
+admin.site.login = _admindash_redirecting_admin_login
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('apps.accounts.urls')),
+    path('management/', include('apps.core.management_urls', namespace='management')),
+    path('inventory/', include('apps.inventory.urls', namespace='inventory')),
+    path('cart/', include('apps.cart.urls', namespace='cart')),
+    path('checkout/', include('apps.checkout.urls', namespace='checkout')),
+    path('orders/', include('apps.orders.urls', namespace='orders')),
+    path('api/assistant/', include('apps.assistant.urls', namespace='assistant')),
+    path('', include('apps.catalog.urls', namespace='catalog')),
     path('', include('apps.cms.urls')),
 ]
 

@@ -1,0 +1,277 @@
+{% extends 'inventory/manage/inventory_base.html' %}
+
+{% block title %}Executive Inventory Command Center{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-black text-white tracking-tight flex items-center gap-2.5">
+                <span>Inventory Command Center</span>
+            </h1>
+            <p class="text-xs text-slate-400 mt-1">Multi-warehouse stock levels, real-time allocations, and inventory ledger.</p>
+        </div>
+
+        <div class="flex items-center gap-2.5 flex-wrap">
+            <a href="{% url 'inventory:stock_adjustments' %}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 transition-all shadow-xs">
+                <i data-lucide="wrench" class="w-3.5 h-3.5"></i>
+                <span>Adjust Stock</span>
+            </a>
+            <a href="{% url 'inventory:stock_transfers' %}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 transition-all shadow-xs">
+                <i data-lucide="truck" class="w-3.5 h-3.5"></i>
+                <span>Transfer Stock</span>
+            </a>
+            <a href="{% url 'inventory:stock_list' %}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-md shadow-emerald-600/20">
+                <i data-lucide="boxes" class="w-3.5 h-3.5"></i>
+                <span>Stock Directory</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- KPI Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Card 1: On-Hand & Available Units -->
+        <div class="p-5 rounded-2xl bg-[#0e1424] border border-slate-800/80 shadow-xs relative overflow-hidden">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Total Units</span>
+                <span class="p-2 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                    <i data-lucide="boxes" class="w-4 h-4"></i>
+                </span>
+            </div>
+            <div class="mt-3 flex items-baseline gap-2">
+                <span class="text-3xl font-black text-white tracking-tight">{{ total_on_hand }}</span>
+                <span class="text-xs text-slate-300 font-medium">on hand</span>
+            </div>
+            <div class="mt-3 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
+                <span class="text-emerald-300 font-semibold flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                    {{ total_available }} Available
+                </span>
+                <span class="text-amber-300 font-semibold flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                    {{ total_reserved }} Reserved
+                </span>
+            </div>
+        </div>
+
+        <!-- Card 2: Total Valuation -->
+        <div class="p-5 rounded-2xl bg-[#0e1424] border border-slate-800/80 shadow-xs">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Inventory Value</span>
+                <span class="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <i data-lucide="circle-dollar-sign" class="w-4 h-4"></i>
+                </span>
+            </div>
+            <div class="mt-3 flex items-baseline gap-2">
+                <span class="text-3xl font-black text-white tracking-tight">₹{{ total_valuation|floatformat:2 }}</span>
+            </div>
+            <div class="mt-3 pt-3 border-t border-slate-800/80 text-xs text-slate-300 font-medium">
+                Across {{ unique_products_count }} unique catalog items
+            </div>
+        </div>
+
+        <!-- Card 3: Low Stock Alerts -->
+        <div class="p-5 rounded-2xl bg-[#0e1424] border border-slate-800/80 shadow-xs">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Low Stock Triggers</span>
+                <span class="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                    <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                </span>
+            </div>
+            <div class="mt-3 flex items-baseline gap-2">
+                <span class="text-3xl font-black text-amber-400 tracking-tight">{{ low_stock_count }}</span>
+                <span class="text-xs text-slate-300 font-medium">SKUs near reorder</span>
+            </div>
+            <div class="mt-3 pt-3 border-t border-slate-800/80 text-xs text-slate-300">
+                <a href="{% url 'inventory:stock_list' %}?status=LOW_STOCK" class="text-amber-400 hover:text-amber-300 font-semibold inline-flex items-center gap-1">
+                    <span>Inspect items</span>
+                    <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Card 4: Out of Stock -->
+        <div class="p-5 rounded-2xl bg-[#0e1424] border border-slate-800/80 shadow-xs">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Out of Stock</span>
+                <span class="p-2 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                    <i data-lucide="slash" class="w-4 h-4"></i>
+                </span>
+            </div>
+            <div class="mt-3 flex items-baseline gap-2">
+                <span class="text-3xl font-black text-rose-400 tracking-tight">{{ out_of_stock_count }}</span>
+                <span class="text-xs text-slate-300 font-medium">zero inventory</span>
+            </div>
+            <div class="mt-3 pt-3 border-t border-slate-800/80 text-xs text-slate-300">
+                <a href="{% url 'inventory:stock_list' %}?status=OUT_OF_STOCK" class="text-rose-400 hover:text-rose-300 font-semibold inline-flex items-center gap-1">
+                    <span>Replenish now</span>
+                    <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Split Section: Low/Out Stock vs Warehouses -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Low & Out of Stock Card -->
+        <div class="p-5 rounded-2xl bg-[#0e1424] border border-slate-800/80 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i data-lucide="alert-circle" class="w-4 h-4 text-amber-400"></i>
+                            <span>Stock Attention List</span>
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-0.5">Critical items requiring immediate purchasing or restocking</p>
+                    </div>
+                    <a href="{% url 'inventory:stock_list' %}" class="text-xs text-slate-400 hover:text-white font-semibold">View all</a>
+                </div>
+
+                <div class="space-y-2.5">
+                    {% for item in out_of_stock_items %}
+                    <div class="p-3 rounded-xl bg-slate-900/60 border border-rose-900/30 flex items-center justify-between">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
+                            <div class="truncate">
+                                <div class="text-xs font-bold text-white truncate">{{ item.product.title }}</div>
+                                <div class="text-[10px] text-slate-400">{{ item.warehouse.name }} &bull; SKU: {{ item.product.sku|default:"N/A" }}</div>
+                            </div>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-lg text-[10px] font-extrabold bg-rose-500/20 text-rose-300 border border-rose-500/30 shrink-0">
+                            0 Units (Out of Stock)
+                        </span>
+                    </div>
+                    {% endfor %}
+
+                    {% for item in low_stock_items %}
+                    <div class="p-3 rounded-xl bg-slate-900/60 border border-amber-900/30 flex items-center justify-between">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
+                            <div class="truncate">
+                                <div class="text-xs font-bold text-white truncate">{{ item.product.title }}</div>
+                                <div class="text-[10px] text-slate-400">{{ item.warehouse.name }} &bull; Reorder: {{ item.reorder_point }}</div>
+                            </div>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-lg text-[10px] font-extrabold bg-amber-500/20 text-amber-300 border border-amber-500/30 shrink-0">
+                            Only {{ item.available_quantity }} Left
+                        </span>
+                    </div>
+                    {% empty %}
+                    {% if not out_of_stock_items %}
+                    <div class="py-8 text-center text-xs text-slate-400">
+                        <i data-lucide="check-circle" class="w-6 h-6 text-emerald-400 mx-auto mb-2"></i>
+                        <span>All inventory balances healthy. No items below safety thresholds.</span>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
+                <span class="text-slate-400">Automated Reorder Thresholds Active</span>
+                <a href="{% url 'inventory:stock_adjustments' %}" class="text-emerald-400 hover:underline font-semibold">Perform Reconciliation &rarr;</a>
+            </div>
+        </div>
+
+        <!-- Warehouses Distribution Card -->
+        <div class="p-5 rounded-2xl bg-[#0e1424] border border-slate-800/80 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i data-lucide="warehouse" class="w-4 h-4 text-emerald-400"></i>
+                            <span>Fulfillment Facilities</span>
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-0.5">Physical distribution hubs and current on-hand units</p>
+                    </div>
+                    <a href="{% url 'inventory:warehouse_list' %}" class="text-xs text-slate-400 hover:text-white font-semibold">Manage</a>
+                </div>
+
+                <div class="space-y-3">
+                    {% for wh in warehouses %}
+                    <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800/80">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-xs text-white">{{ wh.name }}</span>
+                                {% if wh.is_primary %}
+                                <span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 text-[10px] font-bold border border-blue-500/30">Primary</span>
+                                {% endif %}
+                            </div>
+                            <span class="text-xs font-mono font-bold text-emerald-400">{{ wh.code }}</span>
+                        </div>
+                        <div class="text-[11px] text-slate-400 mb-2">{{ wh.address|default:"Logistics facility" }}</div>
+                        <div class="flex items-center justify-between text-xs text-slate-300 pt-2 border-t border-slate-800/50 font-medium">
+                            <span>SKUs Stored: <b class="text-white">{{ wh.sku_count|default:0 }}</b></span>
+                            <span>On Hand: <b class="text-white">{{ wh.stock_units|default:0 }} units</b></span>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="py-8 text-center text-xs text-slate-400">No active warehouses configured.</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
+                <span class="text-slate-400">Multi-warehouse isolation enabled</span>
+                <a href="{% url 'inventory:stock_transfers' %}" class="text-emerald-400 hover:underline font-semibold">Initiate Stock Transfer &rarr;</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Stock Movements Audit Trail -->
+    <div class="p-5 rounded-2xl bg-[#0e1424] border border-slate-800/80">
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                    <i data-lucide="arrow-left-right" class="w-4 h-4 text-emerald-400"></i>
+                    <span>Real-Time Stock Movement Ledger</span>
+                </h2>
+                <p class="text-xs text-slate-400 mt-0.5">Immutable audit log of all sales, receipts, reservations, and transfers</p>
+            </div>
+            <a href="{% url 'inventory:movement_list' %}" class="text-xs text-slate-400 hover:text-white font-semibold">View Full Ledger &rarr;</a>
+        </div>
+
+        <div class="overflow-x-auto -mx-5 px-5 sm:mx-0 sm:px-0">
+            <table class="w-full min-w-[850px] text-left text-xs">
+                <thead>
+                    <tr class="border-b border-slate-800 text-slate-400 font-bold uppercase tracking-wider text-[10px] bg-slate-900/40">
+                        <th class="py-3 px-4 whitespace-nowrap">Timestamp</th>
+                        <th class="py-3 px-4 min-w-[170px]">Product</th>
+                        <th class="py-3 px-4 whitespace-nowrap">Type</th>
+                        <th class="py-3 px-4 whitespace-nowrap">Warehouse</th>
+                        <th class="py-3 px-4 text-center whitespace-nowrap">Quantity</th>
+                        <th class="py-3 px-4 text-center whitespace-nowrap">Balance (Before &rarr; After)</th>
+                        <th class="py-3 px-4 min-w-[200px]">Reason / Ref</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 font-medium">
+                    {% for m in recent_movements %}
+                    <tr class="hover:bg-slate-900/40 transition-colors">
+                        <td class="py-3.5 px-4 text-slate-400 whitespace-nowrap font-mono text-[11px]">{{ m.created_at|date:"M d, H:i" }}</td>
+                        <td class="py-3.5 px-4 font-bold text-white max-w-xs truncate">{{ m.product.title }}</td>
+                        <td class="py-3.5 px-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap {% if m.movement_type == 'SALE' %}bg-rose-500/10 text-rose-300 border border-rose-500/20{% elif m.movement_type == 'PURCHASE_RECEIPT' %}bg-emerald-500/10 text-emerald-300 border border-emerald-500/20{% elif m.movement_type == 'ADJUSTMENT_IN' or m.movement_type == 'ADJUSTMENT' %}bg-blue-500/10 text-blue-300 border border-blue-500/20{% elif m.movement_type == 'ADJUSTMENT_OUT' or m.movement_type == 'DAMAGE' or m.movement_type == 'LOSS' %}bg-amber-500/10 text-amber-300 border border-amber-500/20{% else %}bg-slate-800 text-slate-300{% endif %}">
+                                {{ m.get_movement_type_display }}
+                            </span>
+                        </td>
+                        <td class="py-3.5 px-4 text-slate-300 whitespace-nowrap font-mono font-semibold">{{ m.warehouse.code }}</td>
+                        <td class="py-3.5 px-4 text-center font-mono font-bold whitespace-nowrap {% if m.quantity > 0 %}text-emerald-400{% elif m.quantity < 0 %}text-rose-400{% else %}text-slate-400{% endif %}">
+                            {% if m.quantity > 0 %}+{% endif %}{{ m.quantity }}
+                        </td>
+                        <td class="py-3.5 px-4 text-center text-slate-400 font-mono whitespace-nowrap">
+                            {{ m.before_quantity }} &rarr; <span class="text-white font-bold">{{ m.after_quantity }}</span>
+                        </td>
+                        <td class="py-3.5 px-4 text-slate-400 max-w-xs truncate">{{ m.reason }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="py-6 px-4 text-center text-slate-400">No stock movements recorded yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

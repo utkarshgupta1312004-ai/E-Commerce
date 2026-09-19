@@ -1,0 +1,461 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-[#0b0f19] text-slate-100 antialiased dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>{% block title %}Cartivo Management{% endblock %} | Enterprise Console</title>
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="{% static 'images/favicon.png' %}">
+    <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
+
+    <!-- Google Fonts: Poppins & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Offline Compiled Tailwind CSS (Local Fast Load, Zero CDN Network Overhead) -->
+    <link rel="stylesheet" href="{% static 'src/output.css' %}">
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+
+    <!-- Offline Lucide Icons (Local Bundle with fallback) -->
+    <script src="{% static 'js/lucide.min.js' %}"></script>
+    <script>
+        if (typeof lucide === 'undefined') {
+            document.write('<script src="https://unpkg.com/lucide@latest"><\/script>');
+        }
+    </script>
+
+    <!-- Bulletproof High-Fidelity Management Stylesheet -->
+    <style>
+        :root {
+            --bg-canvas: #0b0f19;
+            --bg-sidebar: #0f172a;
+            --bg-header: #0f172a;
+            --bg-card: #131c2e;
+            --bg-card-hover: #172338;
+            --bg-surface: #162238;
+            --border-subtle: #1e293b;
+            --border-highlight: rgba(99, 102, 241, 0.25);
+        }
+
+        html, body {
+            background-color: var(--bg-canvas) !important;
+            color: #f8fafc !important;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        header {
+            background-color: var(--bg-header) !important;
+            border-bottom: 1px solid var(--border-subtle) !important;
+        }
+
+        footer {
+            background-color: var(--bg-header) !important;
+            border-top: 1px solid var(--border-subtle) !important;
+        }
+
+        .dash-card {
+            background-color: var(--bg-card) !important;
+            border: 1px solid var(--border-subtle) !important;
+            border-radius: 1.25rem;
+        }
+
+        /* Subtle scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0f19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Smooth pulse animation */
+        @keyframes subtlePulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .live-dot {
+            animation: subtlePulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="min-h-full flex flex-col bg-[#0b0f19] text-slate-100 selection:bg-indigo-600 selection:text-white">
+
+    <!-- Top Management Navigation Bar Matching Superadmin Aesthetic -->
+    <header class="sticky top-0 z-40 w-full border-b border-[#1e293b] bg-[#0f172a]/95 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                
+                <!-- Left: Brand Emblem & Title -->
+                <div class="flex items-center gap-3">
+                    <!-- Mobile Hamburger Button for Slide-over Drawer -->
+                    <button 
+                        type="button" 
+                        id="mgmt-drawer-open"
+                        class="lg:hidden p-2 -ml-1 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-xl transition-colors cursor-pointer"
+                        aria-label="Open Management Menu"
+                    >
+                        <i data-lucide="menu" class="w-5 h-5"></i>
+                    </button>
+
+                    <a href="{% url 'management:portal' %}" class="flex items-center gap-3 group">
+                        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-600 p-0.5 shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform duration-200 shrink-0">
+                            <div class="w-full h-full bg-[#0f172a] rounded-[10px] flex items-center justify-center">
+                                <i data-lucide="shield-check" class="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400"></i>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="flex items-center gap-1.5 sm:gap-2">
+                                <span class="font-black text-sm sm:text-base tracking-tight text-white group-hover:text-cyan-400 transition-colors">CARTIVO</span>
+                                <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">Management</span>
+                            </div>
+                            <span class="hidden sm:inline text-[10px] text-slate-400 font-medium">Domain Services Directory</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Center: Direct Navigation Links (Large Desktop 1024px+) -->
+                <div class="hidden lg:flex items-center gap-2">
+                    {% if user.is_authenticated and user.is_superuser %}
+                    <a href="{% url 'management:dashboard' %}" class="flex items-center gap-2 px-3.5 py-1.5 text-xs font-bold rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-md shadow-blue-600/25 transition-all">
+                        <i data-lucide="crown" class="w-3.5 h-3.5 text-amber-300"></i>
+                        <span>Superadmin Dashboard</span>
+                    </a>
+                    {% endif %}
+
+                    <a href="{% url 'management:portal' %}" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl bg-[#131c2e] text-blue-400 border border-blue-500/30 shadow-xs transition-colors">
+                        <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-blue-400"></i>
+                        <span>Domain Directory</span>
+                    </a>
+
+                    <a href="/" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors">
+                        <i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-amber-400"></i>
+                        <span>Storefront</span>
+                    </a>
+
+                    <a href="/accounts/login/" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors">
+                        <i data-lucide="user" class="w-3.5 h-3.5 text-emerald-400"></i>
+                        <span>Customer Auth</span>
+                    </a>
+
+                    {% if user.is_authenticated and user.is_superuser %}
+                    <a href="/admin/" target="_blank" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors">
+                        <i data-lucide="database" class="w-3.5 h-3.5 text-indigo-400"></i>
+                        <span>Django Admin</span>
+                        <i data-lucide="external-link" class="w-2.5 h-2.5 opacity-60"></i>
+                    </a>
+                    {% endif %}
+                </div>
+
+                <!-- Right: Status Badge & Auth Actions -->
+                <div class="flex items-center gap-2 sm:gap-3">
+                    
+                    <!-- Systems Online Pill -->
+                    <div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span>
+                        <span>20/20 Systems Online</span>
+                    </div>
+
+                    {% if user.is_authenticated and user.is_superuser %}
+                        <a href="{% url 'management:dashboard' %}" class="flex items-center gap-2 bg-[#131c2e] hover:bg-slate-800 border border-[#1e293b] rounded-full pl-2.5 sm:pl-3 pr-1 py-1 transition-all group shadow-sm" title="Go to Superadmin Dashboard">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span>
+                            <div class="flex flex-col text-right">
+                                <span class="text-xs font-bold text-white leading-tight truncate max-w-[90px] sm:max-w-[120px]">{{ user.username }}</span>
+                                <span class="text-[9px] text-amber-400 font-semibold leading-tight hidden xs:inline">Root Superadmin</span>
+                            </div>
+                            <span class="p-1 sm:p-1.5 rounded-full bg-slate-800 text-amber-400 group-hover:scale-105 transition-transform">
+                                <i data-lucide="crown" class="w-3.5 h-3.5"></i>
+                            </span>
+                        </a>
+                        <a href="{% url 'management:logout' %}" title="Sign Out of Superadmin" class="p-2 rounded-xl bg-[#131c2e] border border-[#1e293b] hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 transition-colors">
+                            <i data-lucide="log-out" class="w-4 h-4"></i>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'management:login' %}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-600/25 transition-all">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                            <span><span class="hidden sm:inline">Superadmin </span>Sign In</span>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================================================================= -->
+        <!-- Responsive Horizontal Header Option Slider (Tablet & Mobile Screens)   -->
+        <!-- ======================================================================= -->
+        <div class="lg:hidden border-t border-[#1e293b] bg-[#0f172a] overflow-x-auto no-scrollbar scroll-smooth snap-x">
+            <div class="flex items-center gap-2 px-3 py-2 w-max min-w-full">
+                {% if user.is_authenticated and user.is_superuser %}
+                <a href="{% url 'management:dashboard' %}" class="snap-start shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-sm">
+                    <i data-lucide="crown" class="w-3.5 h-3.5 text-amber-300"></i>
+                    <span>Superadmin Dashboard</span>
+                </a>
+                {% endif %}
+                <a href="{% url 'management:portal' %}" class="snap-start shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-blue-600/20 border border-blue-500/30 text-blue-400">
+                    <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                    <span>Domain Directory</span>
+                </a>
+                <a href="/" class="snap-start shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-[#131c2e] border border-[#1e293b] text-slate-300 hover:text-white">
+                    <i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-amber-400"></i>
+                    <span>Storefront</span>
+                </a>
+                <a href="/accounts/login/" class="snap-start shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-[#131c2e] border border-[#1e293b] text-slate-300 hover:text-white">
+                    <i data-lucide="user" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    <span>Customer Auth</span>
+                </a>
+                {% if user.is_authenticated and user.is_superuser %}
+                <a href="/admin/" target="_blank" class="snap-start shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-[#131c2e] border border-[#1e293b] text-slate-300 hover:text-white">
+                    <i data-lucide="database" class="w-3.5 h-3.5 text-indigo-400"></i>
+                    <span>Django Admin</span>
+                    <i data-lucide="external-link" class="w-2.5 h-2.5 opacity-60"></i>
+                </a>
+                {% endif %}
+                {% if not user.is_authenticated or not user.is_superuser %}
+                <a href="{% url 'management:login' %}" class="snap-start shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#131c2e] border border-amber-500/30 text-amber-300 hover:bg-slate-800">
+                    <i data-lucide="crown" class="w-3.5 h-3.5 text-amber-400"></i>
+                    <span>Superadmin Root</span>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <!-- ======================================================================= -->
+    <!-- Mobile & Tablet Slide-Over Navigation Drawer                            -->
+    <!-- ======================================================================= -->
+    <div id="mgmt-drawer-backdrop" class="fixed inset-0 bg-[#030712]/80 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300 lg:hidden"></div>
+
+    <aside 
+        id="mgmt-drawer" 
+        class="fixed inset-y-0 left-0 max-w-[280px] xs:max-w-xs w-full bg-[#0f172a] border-r border-[#1e293b] z-50 shadow-2xl transform -translate-x-full transition-transform duration-300 ease-out flex flex-col lg:hidden"
+    >
+        <!-- Drawer Header -->
+        <div class="p-4 border-b border-[#1e293b] flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-600 p-0.5">
+                    <div class="w-full h-full bg-[#0f172a] rounded-[10px] flex items-center justify-center">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-cyan-400"></i>
+                    </div>
+                </div>
+                <div>
+                    <div class="text-sm font-black text-white tracking-tight">CARTIVO</div>
+                    <div class="text-[10px] text-blue-400 font-bold uppercase tracking-wider">Management Console</div>
+                </div>
+            </div>
+            <button 
+                type="button" 
+                id="mgmt-drawer-close"
+                class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                aria-label="Close Management Menu"
+            >
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Superadmin Status Card in Drawer -->
+        <div class="p-4 border-b border-[#1e293b] bg-[#131c2e]/50">
+            {% if user.is_authenticated and user.is_superuser %}
+            <div class="flex items-center gap-3 p-3 rounded-2xl bg-[#131c2e] border border-emerald-500/30">
+                <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/30">
+                    <i data-lucide="crown" class="w-5 h-5"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="text-xs font-bold text-white truncate">{{ user.username }}</div>
+                    <div class="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 live-dot"></span>
+                        <span>Super Administrator</span>
+                    </div>
+                </div>
+                <a href="{% url 'management:logout' %}" title="Logout" class="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-rose-400">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                </a>
+            </div>
+            {% else %}
+            <a href="{% url 'management:login' %}" class="flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-blue-600/20 to-indigo-600/20 border border-blue-500/30 text-blue-300 hover:text-white group transition-colors">
+                <div class="flex items-center gap-2.5">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-cyan-400"></i>
+                    <span class="text-xs font-semibold">Sign in as Superadmin</span>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- Drawer Navigation Links -->
+        <nav class="flex-1 overflow-y-auto p-4 space-y-1 text-xs">
+            <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 px-3 py-1">Console Navigation</span>
+            
+            {% if user.is_authenticated and user.is_superuser %}
+            <a href="{% url 'management:dashboard' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md mb-2">
+                <i data-lucide="crown" class="w-4 h-4 text-amber-300"></i>
+                <span>Superadmin Dashboard</span>
+            </a>
+            {% endif %}
+
+            <a href="{% url 'management:portal' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold bg-[#131c2e] text-blue-400 border border-blue-500/30">
+                <i data-lucide="layout-grid" class="w-4 h-4 text-blue-400"></i>
+                <span>All 20 Domain Directories</span>
+            </a>
+
+            <a href="/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition-colors">
+                <i data-lucide="shopping-bag" class="w-4 h-4 text-amber-400"></i>
+                <span>Cartivo Storefront</span>
+            </a>
+
+            <a href="/accounts/login/" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition-colors">
+                <i data-lucide="user" class="w-4 h-4 text-emerald-400"></i>
+                <span>Customer Login / Portal</span>
+            </a>
+
+            {% if user.is_authenticated and user.is_superuser %}
+            <a href="/admin/" target="_blank" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition-colors">
+                <span class="flex items-center gap-3">
+                    <i data-lucide="database" class="w-4 h-4 text-indigo-400"></i>
+                    <span>Django Admin Database</span>
+                </span>
+                <i data-lucide="external-link" class="w-3 h-3 text-slate-500"></i>
+            </a>
+            {% endif %}
+
+            <div class="pt-4 mt-4 border-t border-[#1e293b] space-y-2">
+                <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 px-3">System Specifications</span>
+                <div class="px-3 py-2.5 rounded-2xl bg-[#131c2e] border border-[#1e293b] text-[11px] text-slate-400 space-y-1.5 font-mono">
+                    <div class="flex items-center justify-between">
+                        <span class="font-sans">Architecture</span>
+                        <span class="text-white font-semibold">Modular Monolith</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="font-sans">Framework</span>
+                        <span class="text-white font-semibold">Django 5.2</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="font-sans">Active Domains</span>
+                        <span class="text-emerald-400 font-bold">20/20 Nominal</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Drawer Footer -->
+        <div class="p-4 border-t border-[#1e293b] bg-[#0f172a] text-slate-500 text-[11px] text-center">
+            Cartivo &bull; Centralized Enterprise Console
+        </div>
+    </aside>
+
+    <!-- Global Messages / Alerts -->
+    {% if messages %}
+    <div id="management-messages-container" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 w-full space-y-2">
+        {% for message in messages %}
+        <div class="message-alert flex items-center justify-between p-3.5 rounded-2xl text-xs sm:text-sm font-medium {% if message.tags == 'error' %}bg-rose-950/80 border border-rose-800/70 text-rose-200{% elif message.tags == 'success' %}bg-emerald-950/80 border border-emerald-700/60 text-emerald-200{% else %}bg-blue-950/80 border border-blue-800/70 text-blue-200{% endif %} shadow-lg transition-all duration-500">
+            <div class="flex items-center gap-2.5">
+                <i data-lucide="{% if message.tags == 'error' %}alert-circle{% elif message.tags == 'success' %}check-circle-2{% else %}info{% endif %}" class="w-4 h-4 shrink-0"></i>
+                <span>{{ message }}</span>
+            </div>
+            <button type="button" onclick="dismissManagementMessage(this.closest('.message-alert'))" class="text-slate-400 hover:text-white p-1 cursor-pointer">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    <script>
+        function dismissManagementMessage(el) {
+            if (!el) return;
+            el.style.transition = 'opacity 0.4s ease, transform 0.4s ease, max-height 0.4s ease';
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(-6px)';
+            setTimeout(() => { if (el.parentNode) el.remove(); }, 400);
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('#management-messages-container .message-alert').forEach((el) => {
+                setTimeout(() => {
+                    dismissManagementMessage(el);
+                }, 3000);
+            });
+        });
+    </script>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="flex-1">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer Matching Superadmin Aesthetic -->
+    <footer class="border-t border-[#1e293b] bg-[#0f172a] py-6 mt-12 text-slate-500 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+            <div class="flex items-center justify-center sm:justify-start gap-2">
+                <i data-lucide="layers" class="w-3.5 h-3.5 text-blue-400 shrink-0"></i>
+                <span>Cartivo Platform &bull; Modular Monolith Architecture</span>
+            </div>
+            <div class="flex items-center justify-center gap-3 sm:gap-4 text-[11px] text-slate-400 font-mono">
+                <span>Django 5.2</span>
+                <span>&bull;</span>
+                <span>Tailwind CSS v4</span>
+                <span>&bull;</span>
+                <span class="text-emerald-400">20 Domains Active</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Initialize Lucide Icons & Mobile Drawer Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+
+            // Mobile Drawer Toggle Logic
+            const openBtn = document.getElementById('mgmt-drawer-open');
+            const closeBtn = document.getElementById('mgmt-drawer-close');
+            const drawer = document.getElementById('mgmt-drawer');
+            const backdrop = document.getElementById('mgmt-drawer-backdrop');
+
+            function openDrawer() {
+                if (drawer && backdrop) {
+                    backdrop.classList.remove('opacity-0', 'pointer-events-none');
+                    backdrop.classList.add('opacity-100');
+                    drawer.classList.remove('-translate-x-full');
+                    drawer.classList.add('translate-x-0');
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+
+            function closeDrawer() {
+                if (drawer && backdrop) {
+                    backdrop.classList.remove('opacity-100');
+                    backdrop.classList.add('opacity-0', 'pointer-events-none');
+                    drawer.classList.remove('translate-x-0');
+                    drawer.classList.add('-translate-x-full');
+                    document.body.style.overflow = '';
+                }
+            }
+
+            openBtn?.addEventListener('click', openDrawer);
+            closeBtn?.addEventListener('click', closeDrawer);
+            backdrop?.addEventListener('click', closeDrawer);
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeDrawer();
+                }
+            });
+        });
+    </script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

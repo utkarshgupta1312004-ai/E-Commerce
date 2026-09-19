@@ -1,487 +1,148 @@
-    <!-- Flipkart-Style Promotional Offer Banners (Continuous Animated Infinite Loop)   -->
-    <!-- ============================================================================== -->
-    <section id="banner-slider-section" class="bg-slate-100/70 py-4 sm:py-5 border-b border-slate-200 select-none overflow-hidden relative group">
-        
-        <!-- Ambient Edge Fades -->
-        <div class="absolute left-0 inset-y-0 w-12 sm:w-28 bg-gradient-to-r from-slate-100 to-transparent z-20 pointer-events-none"></div>
-        <div class="absolute right-0 inset-y-0 w-12 sm:w-28 bg-gradient-to-l from-slate-100 to-transparent z-20 pointer-events-none"></div>
+<!-- ============================================================================== -->
+<!-- Flipkart-Style Promotional Offer Banners (Continuous Animated Infinite Loop)   -->
+<!-- Dynamic CMS Driven                                                             -->
+<!-- ============================================================================== -->
+{% if promo_banners %}
+<section id="banner-slider-section" class="bg-slate-100/70 py-4 sm:py-5 border-b border-slate-200 select-none overflow-hidden relative group">
+    
+    <!-- Ambient Edge Fades -->
+    <div class="absolute left-0 inset-y-0 w-12 sm:w-28 bg-gradient-to-r from-slate-100 to-transparent z-20 pointer-events-none"></div>
+    <div class="absolute right-0 inset-y-0 w-12 sm:w-28 bg-gradient-to-l from-slate-100 to-transparent z-20 pointer-events-none"></div>
 
-        <!-- Continuous Smooth Marquee Track -->
-        <div class="animate-marquee-smooth flex items-center gap-4 sm:gap-6 py-1">
+    <!-- Continuous Smooth Marquee Track -->
+    <div class="animate-marquee-smooth flex items-center gap-4 sm:gap-6 py-1">
 
-            <!-- ============================================================== -->
-            <!-- PRIMARY SET (Banners 1 to 5)                                   -->
-            <!-- ============================================================== -->
+        <!-- PRIMARY SET -->
+        {% for banner in promo_banners %}
+        <a 
+            href="{{ banner.button_url|default:'/products/' }}" 
+            style="{{ banner.gradient_style }} {{ banner.card_border_style }}"
+            class="shrink-0 w-[300px] sm:w-[460px] md:w-[520px] lg:w-[560px] xl:w-[580px] h-[190px] sm:h-[220px] md:h-[235px] rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 relative flex items-center justify-between p-4 sm:p-6 border group/card cursor-pointer {% if banner.text_color_theme == 'light' %}text-slate-950{% else %}text-white{% endif %}"
+        >
+            <!-- Left Promo Content -->
+            <div class="flex flex-col justify-between h-full z-10 max-w-[62%] sm:max-w-[60%]">
+                {% if banner.subtitle %}
+                <div class="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold tracking-tight">
+                    <span class="font-extrabold tracking-wider {% if banner.text_color_theme == 'light' %}text-slate-800{% else %}text-slate-300{% endif %}">
+                        {{ banner.subtitle }}
+                    </span>
+                </div>
+                {% endif %}
 
-            <!-- BANNER 1: VIRAT V1 5G Tech Flagship (Dark Carbon) -->
-            <a 
-                href="/products/" 
-                class="shrink-0 w-[300px] sm:w-[460px] md:w-[520px] lg:w-[560px] xl:w-[580px] h-[190px] sm:h-[220px] md:h-[235px] rounded-3xl overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 relative flex items-center justify-between p-4 sm:p-6 bg-gradient-to-r from-neutral-950 via-slate-900 to-neutral-950 text-white border border-slate-800/80 group/card cursor-pointer"
-            >
-                <!-- Left Promo Content -->
-                <div class="flex flex-col justify-between h-full z-10 max-w-[62%] sm:max-w-[60%]">
-                    <div class="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-slate-300 tracking-tight">
-                        <span class="font-extrabold text-white tracking-wider">CARTIVO</span>
-                        <span class="text-slate-600">|</span>
-                        <span class="text-blue-400 font-medium">Exclusive</span>
+                <div class="space-y-0.5 sm:space-y-1 my-auto">
+                    <h3 class="text-lg sm:text-2xl font-bold tracking-tight leading-tight {% if banner.text_color_theme == 'light' %}text-slate-950{% else %}text-white{% endif %}">
+                        {{ banner.title }}
+                    </h3>
+                    {% if banner.price_tag %}
+                    <div class="text-xl sm:text-3xl font-black tracking-tight {% if banner.text_color_theme == 'light' %}text-slate-950{% else %}text-white{% endif %}">
+                        {{ banner.price_tag }}
                     </div>
-
-                    <div class="space-y-0.5 sm:space-y-1 my-auto">
-                        <h3 class="text-lg sm:text-2xl font-bold tracking-tight text-white leading-tight">
-                            VIRAT V1 5G
-                        </h3>
-                        <div class="text-xl sm:text-3xl font-black text-white tracking-tight">
-                            From ₹14,499
-                        </div>
-                        <p class="text-[11px] sm:text-xs text-slate-400 font-medium">
-                            Now with 128 GB storage
-                        </p>
-                    </div>
-
-                    <div class="flex items-center gap-2 pt-1">
-                        <span class="text-[9px] text-slate-500 font-semibold">*T&C Apply</span>
-                        <span class="text-[9px] font-bold bg-white/15 text-slate-300 px-1.5 py-0.2 rounded uppercase">AD</span>
-                    </div>
+                    {% endif %}
+                    {% if banner.description %}
+                    <p class="text-[11px] sm:text-xs font-medium {% if banner.text_color_theme == 'light' %}text-slate-700{% else %}text-slate-300{% endif %}">
+                        {{ banner.description }}
+                    </p>
+                    {% endif %}
                 </div>
 
-                <!-- Top Right Yellow Big Bachat Days Badge -->
-                <div class="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
-                    <div class="bg-amber-400 text-blue-950 border border-amber-300 font-black text-[9px] sm:text-[10px] px-2 py-0.5 rounded-lg shadow-sm uppercase tracking-tight flex items-center gap-1">
-                        <i data-lucide="zap" class="w-3 h-3 fill-amber-500 text-amber-600"></i>
-                        <span>BIG BACHAT DAYS</span>
+                <div class="flex items-center gap-2 pt-1">
+                    <span class="text-[9px] font-semibold {% if banner.text_color_theme == 'light' %}text-slate-600{% else %}text-slate-400{% endif %}">*T&C Apply</span>
+                    {% if banner.button_text %}
+                    <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider {% if banner.text_color_theme == 'light' %}bg-slate-950 text-white hover:bg-slate-800{% else %}bg-white/20 text-white hover:bg-white/30 backdrop-blur-xs{% endif %} transition-colors">
+                        {{ banner.button_text }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Top Right Yellow Badge -->
+            {% if banner.badge_text %}
+            <div class="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
+                <div class="bg-amber-400 text-blue-950 border border-amber-300 font-black text-[9px] sm:text-[10px] px-2 py-0.5 rounded-lg shadow-sm uppercase tracking-tight flex items-center gap-1">
+                    <i data-lucide="zap" class="w-3 h-3 fill-amber-500 text-amber-600"></i>
+                    <span>{{ banner.badge_text }}</span>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Right Product Image -->
+            <div class="relative w-36 sm:w-48 md:w-56 h-full flex items-center justify-end overflow-hidden shrink-0">
+                {% if banner.effective_image_url %}
+                <img 
+                    src="{{ banner.effective_image_url }}" 
+                    alt="{{ banner.title }}"
+                    class="w-full h-full object-cover object-center group-hover/card:scale-108 transition-transform duration-500 ease-out"
+                >
+                {% endif %}
+            </div>
+        </a>
+        {% endfor %}
+
+        <!-- CLONED SET (Seamless Infinite Loop Mirror) -->
+        {% for banner in promo_banners %}
+        <a 
+            href="{{ banner.button_url|default:'/products/' }}" 
+            style="{{ banner.gradient_style }} {{ banner.card_border_style }}"
+            aria-hidden="true"
+            tabindex="-1"
+            class="shrink-0 w-[300px] sm:w-[460px] md:w-[520px] lg:w-[560px] xl:w-[580px] h-[190px] sm:h-[220px] md:h-[235px] rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 relative flex items-center justify-between p-4 sm:p-6 border group/card cursor-pointer {% if banner.text_color_theme == 'light' %}text-slate-950{% else %}text-white{% endif %}"
+        >
+            <div class="flex flex-col justify-between h-full z-10 max-w-[62%] sm:max-w-[60%]">
+                {% if banner.subtitle %}
+                <div class="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold tracking-tight">
+                    <span class="font-extrabold tracking-wider {% if banner.text_color_theme == 'light' %}text-slate-800{% else %}text-slate-300{% endif %}">
+                        {{ banner.subtitle }}
+                    </span>
+                </div>
+                {% endif %}
+
+                <div class="space-y-0.5 sm:space-y-1 my-auto">
+                    <h3 class="text-lg sm:text-2xl font-bold tracking-tight leading-tight {% if banner.text_color_theme == 'light' %}text-slate-950{% else %}text-white{% endif %}">
+                        {{ banner.title }}
+                    </h3>
+                    {% if banner.price_tag %}
+                    <div class="text-xl sm:text-3xl font-black tracking-tight {% if banner.text_color_theme == 'light' %}text-slate-950{% else %}text-white{% endif %}">
+                        {{ banner.price_tag }}
                     </div>
+                    {% endif %}
+                    {% if banner.description %}
+                    <p class="text-[11px] sm:text-xs font-medium {% if banner.text_color_theme == 'light' %}text-slate-700{% else %}text-slate-300{% endif %}">
+                        {{ banner.description }}
+                    </p>
+                    {% endif %}
                 </div>
 
-                <!-- Right Product Image -->
-                <div class="relative w-36 sm:w-48 md:w-56 h-full flex items-center justify-end overflow-hidden shrink-0">
-                    <img 
-                        src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?q=80&w=600&auto=format&fit=crop" 
-                        alt="VIRAT V1 5G Smartphone"
-                        class="w-full h-full object-cover object-center group-hover/card:scale-108 transition-transform duration-500 ease-out"
-                    >
+                <div class="flex items-center gap-2 pt-1">
+                    <span class="text-[9px] font-semibold {% if banner.text_color_theme == 'light' %}text-slate-600{% else %}text-slate-400{% endif %}">*T&C Apply</span>
+                    {% if banner.button_text %}
+                    <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider {% if banner.text_color_theme == 'light' %}bg-slate-950 text-white hover:bg-slate-800{% else %}bg-white/20 text-white hover:bg-white/30 backdrop-blur-xs{% endif %} transition-colors">
+                        {{ banner.button_text }}
+                    </span>
+                    {% endif %}
                 </div>
-            </a>
+            </div>
 
-            <!-- BANNER 2: Ortho Slippers (Cyan Sky Grid Pattern) -->
-            <a 
-                href="/category/footwear/" 
-                class="shrink-0 w-[300px] sm:w-[460px] md:w-[520px] lg:w-[560px] xl:w-[580px] h-[190px] sm:h-[220px] md:h-[235px] rounded-3xl overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 relative flex items-center justify-between p-4 sm:p-6 bg-gradient-to-r from-sky-400 via-cyan-400 to-teal-300 text-slate-950 border border-cyan-300 group/card cursor-pointer"
-            >
-                <!-- Left Promo Content -->
-                <div class="flex flex-col justify-between h-full z-10 max-w-[62%] sm:max-w-[60%]">
-                    <div class="w-fit">
-                        <div class="bg-amber-400 text-blue-950 border border-amber-300 font-black text-[9px] sm:text-[10px] px-2 py-0.5 rounded-lg shadow-sm uppercase tracking-tight flex items-center gap-1">
-                            <i data-lucide="zap" class="w-3 h-3 fill-amber-500 text-amber-600"></i>
-                            <span>BIG BACHAT DAYS</span>
-                        </div>
-                    </div>
-
-                    <div class="space-y-0.5 sm:space-y-1 my-auto">
-                        <h3 class="text-lg sm:text-2xl font-black tracking-tight text-slate-950 leading-tight">
-                            Ortho slippers
-                        </h3>
-                        <div class="text-xl sm:text-3xl font-black text-slate-950 tracking-tight">
-                            Under ₹399
-                        </div>
-                        <p class="text-[11px] sm:text-xs text-slate-800 font-semibold">
-                            Comfy picks, going fast!
-                        </p>
-                    </div>
-
-                    <div class="inline-flex items-center gap-1.5 sm:gap-2 bg-white/95 backdrop-blur-xs px-2 sm:px-2.5 py-1 rounded-lg border border-white/60 shadow-xs max-w-fit">
-                        <span class="bg-rose-600 text-white font-black text-[8px] sm:text-[9px] px-1 py-0.5 rounded uppercase tracking-tighter">pnb</span>
-                        <div class="text-[8px] sm:text-[9px] leading-tight">
-                            <div class="font-bold text-slate-900">Up to ₹4,200 Instant Discount*</div>
-                            <div class="text-[7px] sm:text-[8px] text-slate-500 font-medium">on Credit Card Transactions</div>
-                        </div>
-                    </div>
+            {% if banner.badge_text %}
+            <div class="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
+                <div class="bg-amber-400 text-blue-950 border border-amber-300 font-black text-[9px] sm:text-[10px] px-2 py-0.5 rounded-lg shadow-sm uppercase tracking-tight flex items-center gap-1">
+                    <i data-lucide="zap" class="w-3 h-3 fill-amber-500 text-amber-600"></i>
+                    <span>{{ banner.badge_text }}</span>
                 </div>
+            </div>
+            {% endif %}
 
-                <!-- Right Framed Product Image -->
-                <div class="relative w-36 sm:w-44 md:w-52 h-[88%] rounded-2xl border-2 border-white/90 overflow-hidden shadow-md bg-white/40 backdrop-blur-xs shrink-0 flex items-center justify-center p-1">
-                    <img 
-                        src="https://images.unsplash.com/photo-1603808033192-082d6919d3e1?q=80&w=600&auto=format&fit=crop" 
-                        alt="Ortho Slippers"
-                        class="w-full h-full object-cover rounded-xl group-hover/card:scale-108 transition-transform duration-500 ease-out"
-                    >
-                </div>
-            </a>
+            <div class="relative w-36 sm:w-48 md:w-56 h-full flex items-center justify-end overflow-hidden shrink-0">
+                {% if banner.effective_image_url %}
+                <img 
+                    src="{{ banner.effective_image_url }}" 
+                    alt="{{ banner.title }}"
+                    class="w-full h-full object-cover object-center group-hover/card:scale-108 transition-transform duration-500 ease-out"
+                >
+                {% endif %}
+            </div>
+        </a>
+        {% endfor %}
 
-            <!-- BANNER 3: Best Fragrance Picks (Teal Mint Gradient) -->
-            <a 
-                href="/category/beauty/" 
-                class="shrink-0 w-[300px] sm:w-[460px] md:w-[520px] lg:w-[560px] xl:w-[580px] h-[190px] sm:h-[220px] md:h-[235px] rounded-3xl overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 relative flex items-center justify-between p-4 sm:p-6 bg-gradient-to-r from-teal-400 via-emerald-300 to-cyan-400 text-slate-950 border border-teal-300 group/card cursor-pointer"
-            >
-                <!-- Left Promo Content -->
-                <div class="flex flex-col justify-between h-full z-10 max-w-[62%] sm:max-w-[60%]">
-                    <div class="w-fit">
-                        <div class="bg-amber-400 text-blue-950 border border-amber-300 font-black text-[9px] sm:text-[10px] px-2 py-0.5 rounded-lg shadow-sm uppercase tracking-tight flex items-center gap-1">
-                            <i data-lucide="zap" class="w-3 h-3 fill-amber-500 text-amber-600"></i>
-                            <span>BIG BACHAT DAYS</span>
-                        </div>
-                    </div>
-
-                    <div class="space-y-0.5 sm:space-y-1 my-auto">
-                        <h3 class="text-lg sm:text-2xl font-black tracking-tight text-slate-950 leading-tight">
-                            Best fragrance picks
-                        </h3>
-                        <div class="text-xl sm:text-3xl font-black text-slate-950 tracking-tight">
-                            Min. 50% Off
-                        </div>
-                        <p class="text-[11px] sm:text-xs text-slate-800 font-semibold uppercase tracking-tight truncate">
-                            PARK AVENUE, BEARDO, DIOR...
-                        </p>
-                    </div>
-
-                    <div class="inline-flex items-center gap-1.5 sm:gap-2 bg-white/95 backdrop-blur-xs px-2 sm:px-2.5 py-1 rounded-lg border border-white/60 shadow-xs max-w-fit">
-                        <span class="bg-rose-600 text-white font-black text-[8px] sm:text-[9px] px-1 py-0.5 rounded uppercase tracking-tighter">pnb</span>
-                        <div class="text-[8px] sm:text-[9px] leading-tight">
-                            <div class="font-bold text-slate-900">Up to ₹4,200 Instant Discount*</div>
-                            <div class="text-[7px] sm:text-[8px] text-slate-500 font-medium">on Credit Card Transactions</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Framed Product Image -->
-                <div class="relative w-36 sm:w-44 md:w-52 h-[88%] rounded-2xl border-2 border-white/90 overflow-hidden shadow-md bg-white/40 backdrop-blur-xs shrink-0 flex items-center justify-center p-1">
-                    <img 
-                        src="https://images.unsplash.com/photo-1523293182086-7651a899d37f?q=80&w=600&auto=format&fit=crop" 
-                        alt="Luxury Fragrance"
-                        class="w-full h-full object-cover rounded-xl group-hover/card:scale-108 transition-transform duration-500 ease-out"
-                    >
-                </div>
-            </a>
-
-            <!-- BANNER 4: Studio Wireless ANC Audio (Midnight Indigo) -->
-            <a 
-                href="/category/audio/" 
-                class="shrink-0 w-[300px] sm:w-[460px] md:w-[520px] lg:w-[560px] xl:w-[580px] h-[190px] sm:h-[220px] md:h-[235px] rounded-3xl overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 relative flex items-center justify-between p-4 sm:p-6 bg-gradient-to-r from-indigo-950 via-slate-900 to-blue-950 text-white border border-indigo-800/80 group/card cursor-pointer"
-            >
-                <!-- Left Promo Content -->
-                <div class="flex flex-col justify-between h-full z-10 max-w-[62%] sm:max-w-[60%]">
-                    <div class="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-slate-300 tracking-tight">
-                        <span class="font-extrabold text-white tracking-wider">CARTIVO</span>
-                        <span class="text-slate-600">|</span>
-                        <span class="text-indigo-400 font-medium">Acoustic Pro</span>
-                    </div>
-
-                    <div class="space-y-0.5 sm:space-y-1 my-auto">
-                        <h3 class="text-lg sm:text-2xl font-bold tracking-tight text-white leading-tight">
-                            Studio Wireless ANC
-                        </h3>
-                        <div class="text-xl sm:text-3xl font-black text-amber-300 tracking-tight">
-                            Flat 45% Off
-                        </div>
-                        <p class="text-[11px] sm:text-xs text-slate-400 font-medium">
-                            Spatial audio &bull; 40H playtime
-                        </p>
-                    </div>
-
-                    <div class="inline-flex items-center gap-1.5 sm:gap-2 bg-white/95 backdrop-blur-xs px-2 sm:px-2.5 py-1 rounded-lg border border-white/60 shadow-xs max-w-fit">
-                        <span class="bg-blue-600 text-white font-black text-[8px] sm:text-[9px] px-1 py-0.5 rounded uppercase tracking-tighter">HDFC</span>
-                        <div class="text-[8px] sm:text-[9px] leading-tight">
-                            <div class="font-bold text-slate-900">Flat 10% Instant Cashback*</div>
-                            <div class="text-[7px] sm:text-[8px] text-slate-500 font-medium">with Cartivo Pay</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Top Right Yellow Big Bachat Days Badge -->
-                <div class="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
-                    <div class="bg-amber-400 text-blue-950 border border-amber-300 font-black text-[9px] sm:text-[10px] px-2 py-0.5 rounded-lg shadow-sm uppercase tracking-tight flex items-center gap-1">
-                        <i data-lucide="zap" class="w-3 h-3 fill-amber-500 text-amber-600"></i>
-                        <span>BIG BACHAT DAYS</span>
-                    </div>
-                </div>
-
-                <!-- Right Product Image -->
-                <div class="relative w-36 sm:w-48 md:w-56 h-full flex items-center justify-end overflow-hidden shrink-0">
-                    <img 
-                        src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600&auto=format&fit=crop" 
-                        alt="Studio ANC Pro Headphones"
-                        class="w-full h-full object-cover object-center group-hover/card:scale-108 transition-transform duration-500 ease-out"
-                    >
-                </div>
-            </a>
-
-            <!-- BANNER 5: Smart Chronograph & Watches (Sunset Amber) -->
-            <a 
-                href="/category/timepieces/" 
-                class="shrink-0 w-[300px] sm:w-[460px] md:w-[520px] lg:w-[560px] xl:w-[580px] h-[190px] sm:h-[220px] md:h-[235px] rounded-3xl overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 relative flex items-center justify-between p-4 sm:p-6 bg-gradient-to-r from-amber-500 via-orange-400 to-rose-400 text-slate-950 border border-amber-300 group/card cursor-pointer"
-            >
-                <!-- Left Promo Content -->
-                <div class="flex flex-col justify-between h-full z-10 max-w-[62%] sm:max-w-[60%]">
-                    <div class="w-fit">
-                        <div class="bg-amber-400 text-blue-950 border border-amber-300 font-black text-[9px] sm:text-[10px] px-2 py-0.5 rounded-lg shadow-sm uppercase tracking-tight flex items-center gap-1">
-                            <i data-lucide="zap" class="w-3 h-3 fill-amber-500 text-amber-600"></i>
-                            <span>BIG BACHAT DAYS</span>
-                        </div>
-                    </div>
-
-                    <div class="space-y-0.5 sm:space-y-1 my-auto">
-                        <h3 class="text-lg sm:text-2xl font-black tracking-tight text-slate-950 leading-tight">
-                            Smart Chronographs
-                        </h3>
-                        <div class="text-xl sm:text-3xl font-black text-slate-950 tracking-tight">
-                            Under ₹2,999
-                        </div>
-                        <p class="text-[11px] sm:text-xs text-slate-900 font-semibold">
-                            Titanium build &bull; 10-day battery
-                        </p>
-                    </div>
-
-                    <div class="inline-flex items-center gap-1.5 sm:gap-2 bg-white/95 backdrop-blur-xs px-2 sm:px-2.5 py-1 rounded-lg border border-white/60 shadow-xs max-w-fit">
-                        <span class="bg-emerald-600 text-white font-black text-[8px] sm:text-[9px] px-1 py-0.5 rounded uppercase tracking-tighter">EMI</span>
-                        <div class="text-[8px] sm:text-[9px] leading-tight">
-                            <div class="font-bold text-slate-900">No-Cost EMI Available*</div>
-                            <div class="text-[7px] sm:text-[8px] text-slate-500 font-medium">on major credit & debit cards</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Product Image -->
-                <div class="relative w-36 sm:w-48 md:w-56 h-full flex items-center justify-end overflow-hidden shrink-0">
-                    <img 
-                        src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600&auto=format&fit=crop" 
-                        alt="Titanium Chronograph"
-                        class="w-full h-full object-cover object-center group-hover/card:scale-108 transition-transform duration-500 ease-out"
-                    >
-                </div>
-            </a>
-
-
-            <!-- ============================================================== -->
-            <!-- DUPLICATE SET FOR SEAMLESS INFINITE ANIMATION LOOP             -->
-            <!-- ============================================================== -->
-
-            <!-- Duplicate Banner 1 -->
-            <a 
-                href="/products/" 
-                class="shrink-0 w-[300px] sm:w-[460px] md:w-[520px] lg:w-[560px] xl:w-[580px] h-[190px] sm:h-[220px] md:h-[235px] rounded-3xl overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 relative flex items-center justify-between p-4 sm:p-6 bg-gradient-to-r from-neutral-950 via-slate-900 to-neutral-950 text-white border border-slate-800/80 group/card cursor-pointer"
-                aria-hidden="true"
-            >
-                <div class="flex flex-col justify-between h-full z-10 max-w-[62%] sm:max-w-[60%]">
-                    <div class="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-slate-300 tracking-tight">
-                        <span class="font-extrabold text-white tracking-wider">CARTIVO</span>
-                        <span class="text-slate-600">|</span>
-                        <span class="text-blue-400 font-medium">Exclusive</span>
-                    </div>
-
-                    <div class="space-y-0.5 sm:space-y-1 my-auto">
-                        <h3 class="text-lg sm:text-2xl font-bold tracking-tight text-white leading-tight">
-                            VIRAT V1 5G
-                        </h3>
-                        <div class="text-xl sm:text-3xl font-black text-white tracking-tight">
-                            From ₹14,499
-                        </div>
-                        <p class="text-[11px] sm:text-xs text-slate-400 font-medium">
-                            Now with 128 GB storage
-                        </p>
-                    </div>
-
-                    <div class="flex items-center gap-2 pt-1">
-                        <span class="text-[9px] text-slate-500 font-semibold">*T&C Apply</span>
-                        <span class="text-[9px] font-bold bg-white/15 text-slate-300 px-1.5 py-0.2 rounded uppercase">AD</span>
-                    </div>
-                </div>
-
-                <div class="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
-                    <div class="bg-amber-400 text-blue-950 border border-amber-300 font-black text-[9px] sm:text-[10px] px-2 py-0.5 rounded-lg shadow-sm uppercase tracking-tight flex items-center gap-1">
-                        <i data-lucide="zap" class="w-3 h-3 fill-amber-500 text-amber-600"></i>
-                        <span>BIG BACHAT DAYS</span>
-                    </div>
-                </div>
-
-                <div class="relative w-36 sm:w-48 md:w-56 h-full flex items-center justify-end overflow-hidden shrink-0">
-                    <img 
-                        src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?q=80&w=600&auto=format&fit=crop" 
-                        alt="VIRAT V1 5G Smartphone"
-                        class="w-full h-full object-cover object-center group-hover/card:scale-108 transition-transform duration-500 ease-out"
-                    >
-                </div>
-            </a>
-
-            <!-- Duplicate Banner 2 -->
-            <a 
-                href="/category/footwear/" 
-                class="shrink-0 w-[300px] sm:w-[460px] md:w-[520px] lg:w-[560px] xl:w-[580px] h-[190px] sm:h-[220px] md:h-[235px] rounded-3xl overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 relative flex items-center justify-between p-4 sm:p-6 bg-gradient-to-r from-sky-400 via-cyan-400 to-teal-300 text-slate-950 border border-cyan-300 group/card cursor-pointer"
-                aria-hidden="true"
-            >
-                <div class="flex flex-col justify-between h-full z-10 max-w-[62%] sm:max-w-[60%]">
-                    <div class="w-fit">
-                        <div class="bg-amber-400 text-blue-950 border border-amber-300 font-black text-[9px] sm:text-[10px] px-2 py-0.5 rounded-lg shadow-sm uppercase tracking-tight flex items-center gap-1">
-                            <i data-lucide="zap" class="w-3 h-3 fill-amber-500 text-amber-600"></i>
-                            <span>BIG BACHAT DAYS</span>
-                        </div>
-                    </div>
-
-                    <div class="space-y-0.5 sm:space-y-1 my-auto">
-                        <h3 class="text-lg sm:text-2xl font-black tracking-tight text-slate-950 leading-tight">
-                            Ortho slippers
-                        </h3>
-                        <div class="text-xl sm:text-3xl font-black text-slate-950 tracking-tight">
-                            Under ₹399
-                        </div>
-                        <p class="text-[11px] sm:text-xs text-slate-800 font-semibold">
-                            Comfy picks, going fast!
-                        </p>
-                    </div>
-
-                    <div class="inline-flex items-center gap-1.5 sm:gap-2 bg-white/95 backdrop-blur-xs px-2 sm:px-2.5 py-1 rounded-lg border border-white/60 shadow-xs max-w-fit">
-                        <span class="bg-rose-600 text-white font-black text-[8px] sm:text-[9px] px-1 py-0.5 rounded uppercase tracking-tighter">pnb</span>
-                        <div class="text-[8px] sm:text-[9px] leading-tight">
-                            <div class="font-bold text-slate-900">Up to ₹4,200 Instant Discount*</div>
-                            <div class="text-[7px] sm:text-[8px] text-slate-500 font-medium">on Credit Card Transactions</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="relative w-36 sm:w-44 md:w-52 h-[88%] rounded-2xl border-2 border-white/90 overflow-hidden shadow-md bg-white/40 backdrop-blur-xs shrink-0 flex items-center justify-center p-1">
-                    <img 
-                        src="https://images.unsplash.com/photo-1603808033192-082d6919d3e1?q=80&w=600&auto=format&fit=crop" 
-                        alt="Ortho Slippers"
-                        class="w-full h-full object-cover rounded-xl group-hover/card:scale-108 transition-transform duration-500 ease-out"
-                    >
-                </div>
-            </a>
-
-            <!-- Duplicate Banner 3 -->
-            <a 
-                href="/category/beauty/" 
-                class="shrink-0 w-[300px] sm:w-[460px] md:w-[520px] lg:w-[560px] xl:w-[580px] h-[190px] sm:h-[220px] md:h-[235px] rounded-3xl overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 relative flex items-center justify-between p-4 sm:p-6 bg-gradient-to-r from-teal-400 via-emerald-300 to-cyan-400 text-slate-950 border border-teal-300 group/card cursor-pointer"
-                aria-hidden="true"
-            >
-                <div class="flex flex-col justify-between h-full z-10 max-w-[62%] sm:max-w-[60%]">
-                    <div class="w-fit">
-                        <div class="bg-amber-400 text-blue-950 border border-amber-300 font-black text-[9px] sm:text-[10px] px-2 py-0.5 rounded-lg shadow-sm uppercase tracking-tight flex items-center gap-1">
-                            <i data-lucide="zap" class="w-3 h-3 fill-amber-500 text-amber-600"></i>
-                            <span>BIG BACHAT DAYS</span>
-                        </div>
-                    </div>
-
-                    <div class="space-y-0.5 sm:space-y-1 my-auto">
-                        <h3 class="text-lg sm:text-2xl font-black tracking-tight text-slate-950 leading-tight">
-                            Best fragrance picks
-                        </h3>
-                        <div class="text-xl sm:text-3xl font-black text-slate-950 tracking-tight">
-                            Min. 50% Off
-                        </div>
-                        <p class="text-[11px] sm:text-xs text-slate-800 font-semibold uppercase tracking-tight truncate">
-                            PARK AVENUE, BEARDO, DIOR...
-                        </p>
-                    </div>
-
-                    <div class="inline-flex items-center gap-1.5 sm:gap-2 bg-white/95 backdrop-blur-xs px-2 sm:px-2.5 py-1 rounded-lg border border-white/60 shadow-xs max-w-fit">
-                        <span class="bg-rose-600 text-white font-black text-[8px] sm:text-[9px] px-1 py-0.5 rounded uppercase tracking-tighter">pnb</span>
-                        <div class="text-[8px] sm:text-[9px] leading-tight">
-                            <div class="font-bold text-slate-900">Up to ₹4,200 Instant Discount*</div>
-                            <div class="text-[7px] sm:text-[8px] text-slate-500 font-medium">on Credit Card Transactions</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="relative w-36 sm:w-44 md:w-52 h-[88%] rounded-2xl border-2 border-white/90 overflow-hidden shadow-md bg-white/40 backdrop-blur-xs shrink-0 flex items-center justify-center p-1">
-                    <img 
-                        src="https://images.unsplash.com/photo-1523293182086-7651a899d37f?q=80&w=600&auto=format&fit=crop" 
-                        alt="Luxury Fragrance"
-                        class="w-full h-full object-cover rounded-xl group-hover/card:scale-108 transition-transform duration-500 ease-out"
-                    >
-                </div>
-            </a>
-
-            <!-- Duplicate Banner 4 -->
-            <a 
-                href="/category/audio/" 
-                class="shrink-0 w-[300px] sm:w-[460px] md:w-[520px] lg:w-[560px] xl:w-[580px] h-[190px] sm:h-[220px] md:h-[235px] rounded-3xl overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 relative flex items-center justify-between p-4 sm:p-6 bg-gradient-to-r from-indigo-950 via-slate-900 to-blue-950 text-white border border-indigo-800/80 group/card cursor-pointer"
-                aria-hidden="true"
-            >
-                <div class="flex flex-col justify-between h-full z-10 max-w-[62%] sm:max-w-[60%]">
-                    <div class="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-slate-300 tracking-tight">
-                        <span class="font-extrabold text-white tracking-wider">CARTIVO</span>
-                        <span class="text-slate-600">|</span>
-                        <span class="text-indigo-400 font-medium">Acoustic Pro</span>
-                    </div>
-
-                    <div class="space-y-0.5 sm:space-y-1 my-auto">
-                        <h3 class="text-lg sm:text-2xl font-bold tracking-tight text-white leading-tight">
-                            Studio Wireless ANC
-                        </h3>
-                        <div class="text-xl sm:text-3xl font-black text-amber-300 tracking-tight">
-                            Flat 45% Off
-                        </div>
-                        <p class="text-[11px] sm:text-xs text-slate-400 font-medium">
-                            Spatial audio &bull; 40H playtime
-                        </p>
-                    </div>
-
-                    <div class="inline-flex items-center gap-1.5 sm:gap-2 bg-white/95 backdrop-blur-xs px-2 sm:px-2.5 py-1 rounded-lg border border-white/60 shadow-xs max-w-fit">
-                        <span class="bg-blue-600 text-white font-black text-[8px] sm:text-[9px] px-1 py-0.5 rounded uppercase tracking-tighter">HDFC</span>
-                        <div class="text-[8px] sm:text-[9px] leading-tight">
-                            <div class="font-bold text-slate-900">Flat 10% Instant Cashback*</div>
-                            <div class="text-[7px] sm:text-[8px] text-slate-500 font-medium">with Cartivo Pay</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="absolute top-3 right-3 sm:top-4 sm:right-4 z-20">
-                    <div class="bg-amber-400 text-blue-950 border border-amber-300 font-black text-[9px] sm:text-[10px] px-2 py-0.5 rounded-lg shadow-sm uppercase tracking-tight flex items-center gap-1">
-                        <i data-lucide="zap" class="w-3 h-3 fill-amber-500 text-amber-600"></i>
-                        <span>BIG BACHAT DAYS</span>
-                    </div>
-                </div>
-
-                <div class="relative w-36 sm:w-48 md:w-56 h-full flex items-center justify-end overflow-hidden shrink-0">
-                    <img 
-                        src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600&auto=format&fit=crop" 
-                        alt="Studio ANC Pro Headphones"
-                        class="w-full h-full object-cover object-center group-hover/card:scale-108 transition-transform duration-500 ease-out"
-                    >
-                </div>
-            </a>
-
-            <!-- Duplicate Banner 5 -->
-            <a 
-                href="/category/timepieces/" 
-                class="shrink-0 w-[300px] sm:w-[460px] md:w-[520px] lg:w-[560px] xl:w-[580px] h-[190px] sm:h-[220px] md:h-[235px] rounded-3xl overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 relative flex items-center justify-between p-4 sm:p-6 bg-gradient-to-r from-amber-500 via-orange-400 to-rose-400 text-slate-950 border border-amber-300 group/card cursor-pointer"
-                aria-hidden="true"
-            >
-                <div class="flex flex-col justify-between h-full z-10 max-w-[62%] sm:max-w-[60%]">
-                    <div class="w-fit">
-                        <div class="bg-amber-400 text-blue-950 border border-amber-300 font-black text-[9px] sm:text-[10px] px-2 py-0.5 rounded-lg shadow-sm uppercase tracking-tight flex items-center gap-1">
-                            <i data-lucide="zap" class="w-3 h-3 fill-amber-500 text-amber-600"></i>
-                            <span>BIG BACHAT DAYS</span>
-                        </div>
-                    </div>
-
-                    <div class="space-y-0.5 sm:space-y-1 my-auto">
-                        <h3 class="text-lg sm:text-2xl font-black tracking-tight text-slate-950 leading-tight">
-                            Smart Chronographs
-                        </h3>
-                        <div class="text-xl sm:text-3xl font-black text-slate-950 tracking-tight">
-                            Under ₹2,999
-                        </div>
-                        <p class="text-[11px] sm:text-xs text-slate-900 font-semibold">
-                            Titanium build &bull; 10-day battery
-                        </p>
-                    </div>
-
-                    <div class="inline-flex items-center gap-1.5 sm:gap-2 bg-white/95 backdrop-blur-xs px-2 sm:px-2.5 py-1 rounded-lg border border-white/60 shadow-xs max-w-fit">
-                        <span class="bg-emerald-600 text-white font-black text-[8px] sm:text-[9px] px-1 py-0.5 rounded uppercase tracking-tighter">EMI</span>
-                        <div class="text-[8px] sm:text-[9px] leading-tight">
-                            <div class="font-bold text-slate-900">No-Cost EMI Available*</div>
-                            <div class="text-[7px] sm:text-[8px] text-slate-500 font-medium">on major credit & debit cards</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="relative w-36 sm:w-48 md:w-56 h-full flex items-center justify-end overflow-hidden shrink-0">
-                    <img 
-                        src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600&auto=format&fit=crop" 
-                        alt="Titanium Chronograph"
-                        class="w-full h-full object-cover object-center group-hover/card:scale-108 transition-transform duration-500 ease-out"
-                    >
-                </div>
-            </a>
-
-        </div>
-    </section>
+    </div>
+</section>
+{% endif %}

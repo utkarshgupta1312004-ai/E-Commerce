@@ -1,0 +1,148 @@
+{% extends 'orders/manage/orders_base.html' %}
+
+{% block title %}All Orders Directory{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-7xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-black text-white tracking-tight">Order Directory</h1>
+            <p class="text-xs text-slate-400 mt-1">Master list of customer purchase orders, items, and delivery addresses.</p>
+        </div>
+        <span class="text-xs font-bold text-slate-300 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700">
+            Total: {{ total_count }} orders
+        </span>
+    </div>
+
+    <!-- Filter & Search Toolbar -->
+    <div class="p-4 rounded-2xl bg-[#0e1424] border border-slate-800/80">
+        <form method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <!-- Search -->
+            <div class="lg:col-span-2 relative">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                <input 
+                    type="text" 
+                    name="q" 
+                    value="{{ q }}" 
+                    placeholder="Search by order #, customer name, email, or city..." 
+                    class="w-full pl-9 pr-4 py-2 rounded-xl text-xs bg-slate-900 border border-slate-700 text-white placeholder-slate-400 focus:outline-hidden focus:border-blue-500"
+                >
+            </div>
+
+            <!-- Order Status Filter -->
+            <div>
+                <select name="status" onchange="this.form.submit()" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-900 border border-slate-700 text-white focus:outline-hidden focus:border-blue-500">
+                    <option value="">All Order Statuses</option>
+                    <option value="CONFIRMED" {% if selected_status == 'CONFIRMED' %}selected{% endif %}>Confirmed</option>
+                    <option value="PROCESSING" {% if selected_status == 'PROCESSING' %}selected{% endif %}>Processing</option>
+                    <option value="SHIPPED" {% if selected_status == 'SHIPPED' %}selected{% endif %}>Shipped</option>
+                    <option value="DELIVERED" {% if selected_status == 'DELIVERED' %}selected{% endif %}>Delivered</option>
+                    <option value="CANCELLED" {% if selected_status == 'CANCELLED' %}selected{% endif %}>Cancelled</option>
+                </select>
+            </div>
+
+            <!-- Payment Status Filter -->
+            <div class="flex gap-2">
+                <select name="payment_status" onchange="this.form.submit()" class="w-full px-3 py-2 rounded-xl text-xs bg-slate-900 border border-slate-700 text-white focus:outline-hidden focus:border-blue-500">
+                    <option value="">All Payment Statuses</option>
+                    <option value="PENDING" {% if selected_payment_status == 'PENDING' %}selected{% endif %}>Pending COD</option>
+                    <option value="PAID" {% if selected_payment_status == 'PAID' %}selected{% endif %}>Paid</option>
+                    <option value="FAILED" {% if selected_payment_status == 'FAILED' %}selected{% endif %}>Failed</option>
+                </select>
+                <button type="submit" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 shrink-0">
+                    Filter
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Orders Directory Table -->
+    <div class="rounded-2xl bg-[#0e1424] border border-slate-800/80 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead>
+                    <tr class="border-b border-slate-800 text-slate-400 font-bold uppercase tracking-wider text-[10px] bg-slate-900/60">
+                        <th class="py-3.5 px-4">Order #</th>
+                        <th class="py-3.5 px-4">Customer & City</th>
+                        <th class="py-3.5 px-4">Date</th>
+                        <th class="py-3.5 px-4 text-center">Items</th>
+                        <th class="py-3.5 px-4 text-center">Order Status</th>
+                        <th class="py-3.5 px-4 text-center">Payment (COD)</th>
+                        <th class="py-3.5 px-4 text-right">Total Amount</th>
+                        <th class="py-3.5 px-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 font-medium">
+                    {% for order in page_obj %}
+                    <tr class="hover:bg-slate-900/40 transition-colors">
+                        <td class="py-3.5 px-4 font-mono font-bold text-blue-400">
+                            <a href="{% url 'orders:manage_detail' order.order_number %}" class="hover:underline">
+                                {{ order.order_number }}
+                            </a>
+                        </td>
+                        <td class="py-3.5 px-4">
+                            <span class="text-white font-bold block">{{ order.shipping_name }}</span>
+                            <span class="text-[11px] text-slate-400 block">{{ order.shipping_city }}, {{ order.shipping_state }}</span>
+                        </td>
+                        <td class="py-3.5 px-4 text-slate-400">
+                            {{ order.created_at|date:"M d, Y H:i" }}
+                        </td>
+                        <td class="py-3.5 px-4 text-center font-bold text-slate-300">
+                            {{ order.total_items_count }}
+                        </td>
+                        <td class="py-3.5 px-4 text-center">
+                            <span class="inline-flex items-center gap-1 font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20 text-[10px]">
+                                {{ order.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="py-3.5 px-4 text-center">
+                            <span class="inline-flex items-center gap-1 font-bold {% if order.payment_status == 'PAID' %}text-emerald-400 bg-emerald-500/10 border-emerald-500/20{% else %}text-amber-400 bg-amber-500/10 border-amber-500/20{% endif %} px-2.5 py-0.5 rounded-full border text-[10px]">
+                                COD ({{ order.get_payment_status_display }})
+                            </span>
+                        </td>
+                        <td class="py-3.5 px-4 text-right font-bold text-white text-sm">
+                            ₹{{ order.total_amount }}
+                        </td>
+                        <td class="py-3.5 px-4 text-right">
+                            <div class="inline-flex items-center gap-2">
+                                <a href="{% url 'orders:manage_detail' order.order_number %}" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white transition-colors text-[11px] font-bold">
+                                    Details
+                                </a>
+                                <a href="{% url 'orders:order_receipt' order.order_number %}" target="_blank" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors" title="Print Receipt">
+                                    <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="py-12 text-center text-slate-500 text-xs">
+                            No orders found matching the filter criteria.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <div class="p-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+            <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            <div class="flex items-center gap-2">
+                {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}&q={{ q }}&status={{ selected_status }}&payment_status={{ selected_payment_status }}" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-semibold">Previous</a>
+                {% endif %}
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&q={{ q }}&status={{ selected_status }}&payment_status={{ selected_payment_status }}" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-semibold">Next</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+</div>
+{% endblock %}

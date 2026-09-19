@@ -1,0 +1,91 @@
+{% extends 'catalog/manage/catalog_base.html' %}
+{% load static %}
+
+{% block title %}Brands & Manufacturers &bull; Catalog Console{% endblock %}
+{% block header_title %}Brands Master{% endblock %}
+{% block header_subtitle %}Authoritative brand registry and manufacturer partners{% endblock %}
+
+{% block catalog_content %}
+<div class="space-y-6 max-w-7xl mx-auto">
+
+    <!-- Header Action Bar -->
+    <div class="flex items-center justify-between">
+        <div class="text-xs text-slate-400">
+            Total of <strong class="text-slate-200">{{ brands|length }}</strong> brands registered in the product master.
+        </div>
+        <a href="{% url 'catalog:brand_add' %}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold transition-all shadow-xs shadow-cyan-500/20">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Add Brand</span>
+        </a>
+    </div>
+
+    <!-- Brands Table -->
+    <div class="rounded-2xl bg-slate-900/60 border border-slate-800/80 overflow-hidden shadow-xs">
+        <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left">
+                <thead class="bg-slate-950/80 text-slate-400 uppercase text-[10px] font-bold tracking-wider border-b border-slate-800/80">
+                    <tr>
+                        <th class="py-3.5 px-4">Brand / Manufacturer</th>
+                        <th class="py-3.5 px-4">Slug</th>
+                        <th class="py-3.5 px-4">Products Linked</th>
+                        <th class="py-3.5 px-4">Status</th>
+                        <th class="py-3.5 px-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/40">
+                    {% for b in brands %}
+                    <tr class="hover:bg-slate-800/20 transition-colors">
+                        <td class="py-3.5 px-4">
+                            <div class="flex items-center gap-3">
+                                {% if b.effective_logo_url %}
+                                <img src="{{ b.effective_logo_url }}" alt="" class="w-9 h-9 rounded-lg object-contain bg-white p-1 border border-slate-700/60">
+                                {% else %}
+                                <div class="w-9 h-9 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center font-bold">
+                                    {{ b.name|slice:":1" }}
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <div class="font-bold text-slate-100">{{ b.name }}</div>
+                                    {% if b.description %}
+                                    <div class="text-[10px] text-slate-500 truncate max-w-sm">{{ b.description }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-3.5 px-4 font-mono text-slate-400">{{ b.slug }}</td>
+                        <td class="py-3.5 px-4 font-bold text-slate-200">
+                            {{ b.p_count }} item{{ b.p_count|pluralize }}
+                        </td>
+                        <td class="py-3.5 px-4">
+                            {% if b.is_active %}
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Active</span>
+                            {% else %}
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-800 text-slate-500 border border-slate-700">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3.5 px-4 text-right">
+                            <div class="inline-flex items-center gap-1.5">
+                                <a href="{% url 'catalog:brand_toggle_status' b.id %}" title="Toggle Active Status" class="p-1.5 rounded-lg text-slate-400 hover:text-amber-400 hover:bg-slate-800 transition-colors">
+                                    <i data-lucide="power" class="w-3.5 h-3.5"></i>
+                                </a>
+                                <a href="{% url 'catalog:brand_edit' b.id %}" title="Edit Brand" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+                                    <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                                </a>
+                                <a href="{% url 'catalog:product_list' %}?brand={{ b.slug }}" target="_blank" title="View Brand Products" class="p-1.5 rounded-lg text-slate-400 hover:text-cyan-400 hover:bg-slate-800 transition-colors">
+                                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="py-10 text-center text-slate-500">No partner brands registered yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

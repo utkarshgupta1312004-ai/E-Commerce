@@ -1,0 +1,52 @@
+<!-- ============================================================================== -->
+<!-- Curated Categories (Tablet 2x2 & Mobile Scrollable) - Dynamic CMS Driven       -->
+<!-- ============================================================================== -->
+{% if curated_categories %}
+<section class="py-12 sm:py-16 lg:py-24 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4 mb-8 sm:mb-12">
+            <div>
+                <span class="text-xs font-bold text-blue-600 tracking-wider uppercase">{{ section.subtitle|default:"Collections" }}</span>
+                <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-950">{{ section.title|default:"Curated Categories" }}</h2>
+            </div>
+            {% if section.view_all_url %}
+            <a href="{{ section.view_all_url }}" class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-700 hover:text-blue-600 transition-colors">
+                <span>{{ section.view_all_text|default:"Explore All Categories" }}</span>
+                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- Categories Grid: 1 col on XS, 2 cols on Tablet md, 4 cols on Desktop lg -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {% for cat_item in curated_categories %}
+            <a href="{{ cat_item.effective_url }}" class="group relative rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 h-72 sm:h-80 flex flex-col justify-end p-6">
+                <div class="shimmer-placeholder absolute inset-0 bg-slate-200 shimmer-effect z-10 transition-opacity duration-700"></div>
+                {% if cat_item.effective_image_url %}
+                <img 
+                    src="{{ cat_item.effective_image_url }}" 
+                    alt="{{ cat_item.display_title }}" 
+                    loading="lazy"
+                    onload="this.classList.remove('opacity-0'); this.parentElement.querySelector('.shimmer-placeholder')?.classList.add('opacity-0');"
+                    class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-0"
+                >
+                {% endif %}
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/30 to-transparent z-10"></div>
+                <div class="relative z-20 text-white">
+                    {% if cat_item.badge_text %}
+                    <span class="text-[10px] font-semibold tracking-wider uppercase {% if cat_item.badge_color == 'amber' %}text-amber-400{% elif cat_item.badge_color == 'emerald' %}text-emerald-400{% elif cat_item.badge_color == 'purple' %}text-purple-400{% else %}text-blue-400{% endif %}">
+                        {{ cat_item.badge_text }}
+                    </span>
+                    {% endif %}
+                    <h3 class="text-lg font-bold">{{ cat_item.display_title }}</h3>
+                    {% if cat_item.custom_subtitle %}
+                    <p class="text-xs text-slate-300 mt-1">{{ cat_item.custom_subtitle }}</p>
+                    {% endif %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}

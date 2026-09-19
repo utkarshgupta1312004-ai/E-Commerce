@@ -1,6 +1,11 @@
 {
+  "venvPath": ".",
+  "venv": "venv",
   "extraPaths": [
     "./ecom",
     "./ecom/apps"
-  ]
+  ],
+  "reportIncompatibleMethodOverride": "none",
+  "reportIncompatibleVariableOverride": "none",
+  "reportMissingTypeStubs": "none"
 }

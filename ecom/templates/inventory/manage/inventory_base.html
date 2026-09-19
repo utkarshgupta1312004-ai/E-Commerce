@@ -1,0 +1,326 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-[#0b0f19] text-slate-100 antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Inventory & Warehouse Operations{% endblock %} | Cartivo Operations</title>
+
+    <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Compiled Tailwind CSS -->
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+
+    <!-- Lucide Icons -->
+    <script src="{% static 'js/lucide.min.js' %}"></script>
+    <script>
+        if (typeof lucide === 'undefined') {
+            document.write('<script src="https://unpkg.com/lucide@latest"><\/script>');
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            letter-spacing: -0.015em;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0b0f19; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Pulse live indicator */
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.2); }
+        }
+        .live-dot { animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+        @media (min-width: 1024px) {
+            #sidebar {
+                position: static !important;
+                transform: none !important;
+                transition: width 0.25s ease-in-out !important;
+            }
+            #sidebar.collapsed {
+                width: 5rem !important;
+            }
+            #sidebar.collapsed .sidebar-text,
+            #sidebar.collapsed .sidebar-section-title,
+            #sidebar.collapsed .sidebar-badge,
+            #sidebar.collapsed .sidebar-header-text,
+            #sidebar.collapsed .sidebar-arrow {
+                display: none !important;
+            }
+            #sidebar.collapsed .sidebar-item {
+                justify-content: center !important;
+                padding-left: 0.75rem !important;
+                padding-right: 0.75rem !important;
+            }
+            #sidebar.collapsed .sidebar-brand-wrapper {
+                justify-content: center !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+        }
+
+        @media (max-width: 1023px) {
+            #sidebar {
+                position: fixed !important;
+                top: 0 !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                transform: translateX(-100%);
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 50;
+            }
+            #sidebar.open {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body class="h-full flex overflow-hidden bg-[#070a13] text-slate-100">
+
+    <!-- Mobile Overlay -->
+    <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 hidden lg:hidden"></div>
+
+    <!-- ========================================================================= -->
+    <!-- ENTERPRISE INVENTORY SIDEBAR                                              -->
+    <!-- ========================================================================= -->
+    <aside id="sidebar" class="w-68 bg-[#0b0f19] border-r border-slate-800/80 flex flex-col shrink-0 select-none z-30 transition-all duration-200">
+        <!-- Logo Header -->
+        <div class="h-16 flex items-center justify-between px-5 border-b border-slate-800/80 sidebar-brand-wrapper">
+            <a href="{% url 'inventory:dashboard' %}" class="flex items-center gap-3 group">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+                    <i data-lucide="boxes" class="w-5 h-5"></i>
+                </div>
+                <div class="flex flex-col sidebar-header-text">
+                    <span class="font-extrabold text-sm tracking-tight text-white flex items-center gap-1.5">
+                        Cartivo <span class="text-xs px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20">INV</span>
+                    </span>
+                    <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Inventory Hub</span>
+                </div>
+            </a>
+            <button onclick="toggleSidebarCollapse()" class="hidden lg:flex p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors cursor-pointer">
+                <i data-lucide="panel-left-close" class="w-4 h-4"></i>
+            </button>
+        </div>
+
+        <!-- Live Operations Pill -->
+        <div class="px-4 pt-4 pb-2 sidebar-text">
+            <div class="flex items-center justify-between px-3 py-2 rounded-xl bg-emerald-950/30 border border-emerald-800/30 text-emerald-400 text-xs font-semibold">
+                <span class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span>
+                    Multi-Hub Inventory
+                </span>
+                <span class="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Live</span>
+            </div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav class="flex-1 px-3 py-3 space-y-6 overflow-y-auto no-scrollbar">
+            <!-- Core -->
+            <div>
+                <div class="px-3 mb-2 text-[10px] font-bold text-slate-300 uppercase tracking-wider sidebar-section-title">
+                    Overview
+                </div>
+                <div class="space-y-1">
+                    <a href="{% url 'inventory:dashboard' %}" class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {% if active_tab == 'dashboard' %}bg-emerald-600 text-white shadow-md shadow-emerald-600/20 font-bold{% else %}text-slate-200 hover:text-white hover:bg-slate-800/60{% endif %}">
+                        <div class="flex items-center gap-2.5">
+                            <i data-lucide="layout-dashboard" class="w-4 h-4 {% if active_tab == 'dashboard' %}text-white{% else %}text-slate-400{% endif %}"></i>
+                            <span class="sidebar-text">Command Center</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Stock & Inventory -->
+            <div>
+                <div class="px-3 mb-2 text-[10px] font-bold text-slate-300 uppercase tracking-wider sidebar-section-title">
+                    Stock & Distribution
+                </div>
+                <div class="space-y-1">
+                    <a href="{% url 'inventory:stock_list' %}" class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {% if active_tab == 'stock' %}bg-emerald-600 text-white shadow-md shadow-emerald-600/20 font-bold{% else %}text-slate-200 hover:text-white hover:bg-slate-800/60{% endif %}">
+                        <div class="flex items-center gap-2.5">
+                            <i data-lucide="boxes" class="w-4 h-4 {% if active_tab == 'stock' %}text-white{% else %}text-slate-400{% endif %}"></i>
+                            <span class="sidebar-text">Stock Directory</span>
+                        </div>
+                        {% if sidebar_stock_count %}
+                        <span class="sidebar-badge px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-300">
+                            {{ sidebar_stock_count }}
+                        </span>
+                        {% endif %}
+                    </a>
+
+                    <a href="{% url 'inventory:warehouse_list' %}" class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {% if active_tab == 'warehouses' %}bg-emerald-600 text-white shadow-md shadow-emerald-600/20 font-bold{% else %}text-slate-200 hover:text-white hover:bg-slate-800/60{% endif %}">
+                        <div class="flex items-center gap-2.5">
+                            <i data-lucide="warehouse" class="w-4 h-4 {% if active_tab == 'warehouses' %}text-white{% else %}text-slate-400{% endif %}"></i>
+                            <span class="sidebar-text">Warehouses & Hubs</span>
+                        </div>
+                        {% if sidebar_warehouse_count %}
+                        <span class="sidebar-badge px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-300">
+                            {{ sidebar_warehouse_count }}
+                        </span>
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+
+            <!-- Operations & Audit -->
+            <div>
+                <div class="px-3 mb-2 text-[10px] font-bold text-slate-300 uppercase tracking-wider sidebar-section-title">
+                    Operations & Ledger
+                </div>
+                <div class="space-y-1">
+                    <a href="{% url 'inventory:movement_list' %}" class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {% if active_tab == 'movements' %}bg-emerald-600 text-white shadow-md shadow-emerald-600/20 font-bold{% else %}text-slate-200 hover:text-white hover:bg-slate-800/60{% endif %}">
+                        <div class="flex items-center gap-2.5">
+                            <i data-lucide="arrow-left-right" class="w-4 h-4 {% if active_tab == 'movements' %}text-white{% else %}text-slate-400{% endif %}"></i>
+                            <span class="sidebar-text">Movement Ledger</span>
+                        </div>
+                    </a>
+
+                    <a href="{% url 'inventory:stock_adjustments' %}" class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {% if active_tab == 'adjustments' %}bg-emerald-600 text-white shadow-md shadow-emerald-600/20 font-bold{% else %}text-slate-200 hover:text-white hover:bg-slate-800/60{% endif %}">
+                        <div class="flex items-center gap-2.5">
+                            <i data-lucide="wrench" class="w-4 h-4 {% if active_tab == 'adjustments' %}text-white{% else %}text-slate-400{% endif %}"></i>
+                            <span class="sidebar-text">Reconciliations</span>
+                        </div>
+                    </a>
+
+                    <a href="{% url 'inventory:stock_transfers' %}" class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all {% if active_tab == 'transfers' %}bg-emerald-600 text-white shadow-md shadow-emerald-600/20 font-bold{% else %}text-slate-200 hover:text-white hover:bg-slate-800/60{% endif %}">
+                        <div class="flex items-center gap-2.5">
+                            <i data-lucide="truck" class="w-4 h-4 {% if active_tab == 'transfers' %}text-white{% else %}text-slate-400{% endif %}"></i>
+                            <span class="sidebar-text">Stock Transfers</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Health & Alerts -->
+            <div>
+                <div class="px-3 mb-2 text-[10px] font-bold text-slate-300 uppercase tracking-wider sidebar-section-title">
+                    Stock Triggers
+                </div>
+                <div class="space-y-1">
+                    <a href="{% url 'inventory:stock_list' %}?status=LOW_STOCK" class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-amber-300 hover:bg-amber-950/30 transition-all">
+                        <div class="flex items-center gap-2.5">
+                            <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-400"></i>
+                            <span class="sidebar-text">Low Stock Alerts</span>
+                        </div>
+                        {% if sidebar_low_stock_count %}
+                        <span class="sidebar-badge px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                            {{ sidebar_low_stock_count }}
+                        </span>
+                        {% endif %}
+                    </a>
+
+                    <a href="{% url 'inventory:stock_list' %}?status=OUT_OF_STOCK" class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-rose-300 hover:bg-rose-950/30 transition-all">
+                        <div class="flex items-center gap-2.5">
+                            <i data-lucide="slash" class="w-4 h-4 text-rose-400"></i>
+                            <span class="sidebar-text">Out of Stock</span>
+                        </div>
+                        {% if sidebar_out_of_stock_count %}
+                        <span class="sidebar-badge px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                            {{ sidebar_out_of_stock_count }}
+                        </span>
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Department Footer -->
+        <div class="p-3 border-t border-slate-800/80 bg-slate-900/40">
+            <a href="{% url 'management:dashboard' %}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors">
+                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                <span class="sidebar-text">Management Portal</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- ========================================================================= -->
+    <!-- MAIN APPLICATION WRAPPER                                                  -->
+    <!-- ========================================================================= -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-[#070a13]">
+        <!-- Top Navigation Bar -->
+        <header class="h-16 border-b border-slate-800/80 bg-[#0b0f19]/80 backdrop-blur-md flex items-center justify-between px-4 sm:px-6 z-20 shrink-0">
+            <div class="flex items-center gap-3">
+                <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+                <div class="flex items-center gap-2 text-xs">
+                    <span class="text-slate-300 font-medium">Cartivo Enterprise</span>
+                    <span class="text-slate-400">/</span>
+                    <span class="text-slate-200 font-bold">Inventory Hub</span>
+                </div>
+            </div>
+
+            <!-- Header Right Actions -->
+            <div class="flex items-center gap-3">
+                <a href="{% url 'catalog:product_list' %}" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800/80 hover:bg-slate-700/80 text-slate-200 transition-colors">
+                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                    <span>View Storefront</span>
+                </a>
+                <a href="{% url 'catalog:dashboard' %}" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-blue-600/10 hover:bg-blue-600/20 text-blue-400 border border-blue-500/20 transition-colors">
+                    <i data-lucide="tag" class="w-3.5 h-3.5"></i>
+                    <span>Catalog Studio</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- Flash Messages -->
+        {% if messages %}
+        <div class="p-4 space-y-2 z-30 shrink-0">
+            {% for message in messages %}
+            <div class="p-3.5 rounded-xl text-xs font-semibold flex items-center justify-between border {% if message.tags == 'error' %}bg-rose-950/60 text-rose-200 border-rose-800/50{% elif message.tags == 'success' %}bg-emerald-950/60 text-emerald-200 border-emerald-800/50{% else %}bg-slate-900/80 text-slate-200 border-slate-700{% endif %}">
+                <div class="flex items-center gap-2.5">
+                    <i data-lucide="info" class="w-4 h-4 shrink-0"></i>
+                    <span>{{ message }}</span>
+                </div>
+                <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Content Area -->
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- UI Scripts -->
+    <script>
+        function toggleSidebar() {
+            const sb = document.getElementById('sidebar');
+            const ov = document.getElementById('sidebar-overlay');
+            sb.classList.toggle('open');
+            ov.classList.toggle('hidden');
+        }
+
+        function toggleSidebarCollapse() {
+            const sb = document.getElementById('sidebar');
+            sb.classList.toggle('collapsed');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

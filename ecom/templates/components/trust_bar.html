@@ -1,0 +1,22 @@
+<!-- ============================================================================== -->
+<!-- Value Propositions / Trust Bar - Dynamic CMS Driven                            -->
+<!-- ============================================================================== -->
+{% if trust_badges %}
+<section class="border-b border-slate-200 bg-white py-6 sm:py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {% for badge in trust_badges %}
+            <div class="flex items-center gap-3.5 sm:gap-4 p-3 rounded-2xl hover:bg-slate-50 transition-colors">
+                <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl {% if badge.color_theme == 'emerald' %}bg-emerald-50 text-emerald-600{% elif badge.color_theme == 'amber' %}bg-amber-50 text-amber-600{% elif badge.color_theme == 'purple' %}bg-purple-50 text-purple-600{% else %}bg-blue-50 text-blue-600{% endif %} flex items-center justify-center shrink-0">
+                    <i data-lucide="{{ badge.icon_name|default:'shield-check' }}" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm font-semibold text-slate-900">{{ badge.title }}</h4>
+                    <p class="text-xs text-slate-500">{{ badge.subtitle }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}

@@ -1,0 +1,91 @@
+{% load static %}
+<!-- Cartivo AI Shopping Assistant Widget -->
+<link rel="stylesheet" href="{% static 'assistant/css/chat-widget.css' %}">
+
+<!-- Floating Launcher Button -->
+<button id="assistant-launcher" aria-label="Open AI Shopping Assistant" title="Open AI Shopping Assistant">
+    <div class="launcher-icon">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+        </svg>
+    </div>
+    <span>Ask AI</span>
+    <span class="pulse-dot"></span>
+</button>
+
+<!-- Floating Chat Drawer -->
+<div id="assistant-drawer" class="hidden" role="dialog" aria-modal="true" aria-labelledby="assistant-title">
+    <!-- Header -->
+    <div class="assistant-header">
+        <div class="assistant-header-info">
+            <div class="assistant-avatar">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                </svg>
+            </div>
+            <div class="assistant-header-text">
+                <h3 id="assistant-title">Cartivo AI Assistant</h3>
+                <span><span class="status-indicator"></span> Online • Ready to help</span>
+            </div>
+        </div>
+        <div class="assistant-header-actions">
+            <button id="assistant-clear-btn" class="assistant-btn-icon" title="Clear Conversation" aria-label="Clear Conversation">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+            </button>
+            <button id="assistant-close-btn" class="assistant-btn-icon" title="Close Assistant" aria-label="Close Assistant">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Message History Area -->
+    <div id="assistant-messages" class="assistant-messages">
+        <div class="assistant-msg assistant assistant-msg-initial">
+            <div class="assistant-bubble">
+                Hello! 👋 I'm your Cartivo AI personal shopping assistant.<br><br>
+                I can help you find products, apply discounts, filter by budget, and manage your cart. Try tapping one of the quick suggestions below or ask me anything!
+            </div>
+            <div class="assistant-msg-time">Just now</div>
+        </div>
+
+        <!-- Typing Indicator (Hidden by default) -->
+        <div id="assistant-typing" class="assistant-typing hidden">
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+        </div>
+    </div>
+
+    <!-- Quick Suggestion Chips -->
+    <div id="assistant-chips" class="assistant-chips">
+        <button type="button" class="assistant-chip" data-prompt="Find running shoes under ₹1,000">👟 Shoes under ₹1,000</button>
+        <button type="button" class="assistant-chip" data-prompt="Show trending electronics">⚡ Electronics</button>
+        <button type="button" class="assistant-chip" data-prompt="Apply coupon code SAVE10">🏷️ Apply SAVE10</button>
+        <button type="button" class="assistant-chip" data-prompt="Track my recent order">📦 Track Order</button>
+    </div>
+
+    <!-- Footer Input Form -->
+    <div class="assistant-footer">
+        <form id="assistant-form" class="assistant-form">
+            <input 
+                type="text" 
+                id="assistant-input" 
+                class="assistant-input" 
+                placeholder="Ask about products, deals, discounts..." 
+                autocomplete="off"
+                maxlength="500"
+            >
+            <button type="submit" id="assistant-send-btn" class="assistant-send-btn" aria-label="Send Message" title="Send">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                </svg>
+            </button>
+        </form>
+    </div>
+</div>
+
+<script src="{% static 'assistant/js/chat-widget.js' %}" defer></script>

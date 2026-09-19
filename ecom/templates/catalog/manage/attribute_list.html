@@ -1,0 +1,83 @@
+{% extends 'catalog/manage/catalog_base.html' %}
+{% load static %}
+
+{% block title %}Attributes & Variations &bull; Catalog Console{% endblock %}
+{% block header_title %}Attributes Master{% endblock %}
+{% block header_subtitle %}Define configurable variant attributes (Color, Size, Material, Storage){% endblock %}
+
+{% block catalog_content %}
+<div class="space-y-6 max-w-7xl mx-auto">
+
+    <!-- Header Action Bar -->
+    <div class="flex items-center justify-between">
+        <div class="text-xs text-slate-400">
+            Total of <strong class="text-slate-200">{{ attributes|length }}</strong> attributes registered for variant matrix generation.
+        </div>
+        <a href="{% url 'catalog:attribute_add' %}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-xs shadow-emerald-500/20">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Add Attribute</span>
+        </a>
+    </div>
+
+    <!-- Attributes Table -->
+    <div class="rounded-2xl bg-slate-900/60 border border-slate-800/80 overflow-hidden shadow-xs">
+        <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left">
+                <thead class="bg-slate-950/80 text-slate-400 uppercase text-[10px] font-bold tracking-wider border-b border-slate-800/80">
+                    <tr>
+                        <th class="py-3.5 px-4">Attribute Name</th>
+                        <th class="py-3.5 px-4">Internal Code</th>
+                        <th class="py-3.5 px-4">Configured Values</th>
+                        <th class="py-3.5 px-4">Value Count</th>
+                        <th class="py-3.5 px-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/40">
+                    {% for attr in attributes %}
+                    <tr class="hover:bg-slate-800/20 transition-colors">
+                        <td class="py-3.5 px-4">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold">
+                                    <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
+                                </div>
+                                <span class="font-bold text-slate-100">{{ attr.name }}</span>
+                            </div>
+                        </td>
+                        <td class="py-3.5 px-4 font-mono text-slate-400">{{ attr.code }}</td>
+                        <td class="py-3.5 px-4">
+                            <div class="flex flex-wrap gap-1.5 max-w-lg">
+                                {% for val in attr.values.all %}
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-slate-800 text-slate-200 text-[10px] font-medium border border-slate-700/60">
+                                    {{ val.value }}
+                                </span>
+                                {% empty %}
+                                <span class="text-slate-500 italic text-[11px]">No values configured yet</span>
+                                {% endfor %}
+                            </div>
+                        </td>
+                        <td class="py-3.5 px-4 font-bold text-slate-200">
+                            {{ attr.values.count }}
+                        </td>
+                        <td class="py-3.5 px-4 text-right">
+                            <div class="inline-flex items-center gap-1.5">
+                                <a href="{% url 'catalog:attribute_edit' attr.id %}" title="Edit Attribute" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+                                    <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                                </a>
+                                <a href="{% url 'catalog:attribute_delete' attr.id %}" onclick="return confirm('Delete attribute {{ attr.name|escapejs }}? Existing variants using this attribute will have their links detached.')" title="Delete Attribute" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition-colors">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="py-10 text-center text-slate-500">No variant attributes configured.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

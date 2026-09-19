@@ -1,0 +1,99 @@
+{% extends 'catalog/manage/catalog_base.html' %}
+{% load static %}
+
+{% block title %}{% if is_edit %}Edit {{ attribute.name }}{% else %}Add Attribute{% endif %} &bull; Catalog Console{% endblock %}
+{% block header_title %}{% if is_edit %}Edit Attribute{% else %}New Configurable Attribute{% endif %}{% endblock %}
+{% block header_subtitle %}{% if is_edit %}{{ attribute.name }} (ID: {{ attribute.id }}){% else %}Create an attribute for product variations{% endif %}{% endblock %}
+
+{% block catalog_content %}
+<div class="space-y-6 max-w-3xl mx-auto pb-16">
+
+    <div class="flex items-center justify-between">
+        <a href="{% url 'catalog:attribute_list' %}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>Back to Attributes</span>
+        </a>
+    </div>
+
+    <form method="POST" class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 space-y-6">
+        {% csrf_token %}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Name -->
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-1.5">Attribute Name *</label>
+                <input 
+                    type="text" 
+                    name="name" 
+                    required 
+                    value="{{ attribute.name|default:'' }}" 
+                    placeholder="e.g. Color, Storage, Case Size"
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-emerald-500"
+                >
+            </div>
+
+            <!-- Code -->
+            <div>
+                <label class="block text-xs font-bold text-slate-300 mb-1.5">Internal Code (Unique)</label>
+                <input 
+                    type="text" 
+                    name="code" 
+                    value="{{ attribute.code|default:'' }}" 
+                    placeholder="color, storage, case_size"
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-300 font-mono placeholder-slate-500 focus:outline-hidden focus:border-emerald-500"
+                >
+            </div>
+
+            {% if not is_edit %}
+            <!-- Values Comma Separated (Add mode) -->
+            <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-300 mb-1.5">Initial Values (Comma-separated)</label>
+                <input 
+                    type="text" 
+                    name="values" 
+                    placeholder="Black, Silver, Midnight Blue, Starlight"
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-200 placeholder-slate-500 focus:outline-hidden focus:border-emerald-500"
+                >
+                <span class="text-[11px] text-slate-500 mt-1 block">You can add additional values at any time later.</span>
+            </div>
+            {% else %}
+            <!-- Existing Values and Append (Edit mode) -->
+            <div class="md:col-span-2 pt-2 border-t border-slate-800 space-y-3">
+                <label class="block text-xs font-bold text-emerald-400">Configured Values for {{ attribute.name }}</label>
+                <div class="flex flex-wrap gap-2">
+                    {% for val in attribute.values.all %}
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-semibold text-slate-200">
+                        <span>{{ val.value }}</span>
+                    </span>
+                    {% empty %}
+                    <span class="text-xs text-slate-500">No values configured yet.</span>
+                    {% endfor %}
+                </div>
+
+                <div class="pt-3">
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">Add New Value</label>
+                    <div class="flex gap-2">
+                        <input 
+                            type="text" 
+                            name="new_value" 
+                            placeholder="e.g. Titanium Gray"
+                            class="flex-1 px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-emerald-500"
+                        >
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+            <a href="{% url 'catalog:attribute_list' %}" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-colors">
+                Cancel
+            </a>
+            <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors shadow-xs shadow-emerald-500/20">
+                {% if is_edit %}Update Attribute{% else %}Create Attribute{% endif %}
+            </button>
+        </div>
+    </form>
+
+</div>
+{% endblock %}

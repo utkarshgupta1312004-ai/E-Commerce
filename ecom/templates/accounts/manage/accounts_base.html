@@ -1,0 +1,370 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-[#0b0f19] text-slate-100 antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Accounts &amp; Identity Management{% endblock %} | Cartivo Operations</title>
+
+    <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Pre-compiled Tailwind CSS -->
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+
+    <!-- Lucide Icons -->
+    <script src="{% static 'js/lucide.min.js' %}"></script>
+    <script>
+        if (typeof lucide === 'undefined') {
+            document.write('<script src="https://unpkg.com/lucide@latest"><\/script>');
+        }
+    </script>
+
+    <!-- Tab & Browser Close Session Termination Guard -->
+    <script>
+        (function() {
+            try {
+                if (typeof window !== 'undefined' && window.sessionStorage) {
+                    const ref = document.referrer || '';
+                    if (ref || sessionStorage.getItem('cartivo_tab_authenticated')) {
+                        sessionStorage.setItem('cartivo_tab_authenticated', '1');
+                    } else {
+                        // Reopened with empty tab session and no referrer (new tab/reopened browser)
+                        window.location.replace("{% url 'management:dept_logout' %}");
+                    }
+                }
+            } catch (e) {}
+        })();
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            letter-spacing: -0.015em;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0b0f19; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Pulse live indicator */
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.2); }
+        }
+        .live-dot { animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+        /* Sidebar transitions */
+        @media (min-width: 1024px) {
+            #sidebar {
+                position: static !important;
+                transform: none !important;
+                transition: width 0.25s ease-in-out !important;
+            }
+            #sidebar.collapsed {
+                width: 5rem !important;
+            }
+            #sidebar.collapsed .sidebar-text,
+            #sidebar.collapsed .sidebar-section-title,
+            #sidebar.collapsed .sidebar-badge,
+            #sidebar.collapsed .sidebar-header-text,
+            #sidebar.collapsed .sidebar-arrow {
+                display: none !important;
+            }
+            #sidebar.collapsed .sidebar-item {
+                justify-content: center !important;
+                padding-left: 0.75rem !important;
+                padding-right: 0.75rem !important;
+            }
+            #sidebar.collapsed .sidebar-brand-wrapper {
+                justify-content: center !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+        }
+
+        @media (max-width: 1023px) {
+            #sidebar {
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                transform: translateX(-100%);
+                transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            #sidebar.sidebar-open {
+                transform: translateX(0);
+            }
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="h-full bg-[#0b0f19] text-slate-200 overflow-hidden flex flex-col font-sans select-text">
+
+<div class="flex flex-1 h-screen overflow-hidden">
+
+    <!-- Mobile Backdrop -->
+    <div id="sidebar-backdrop" onclick="toggleSidebar()" class="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden hidden"></div>
+
+    <!-- =============================================================== -->
+    <!-- SIDEBAR NAVIGATION                                              -->
+    <!-- =============================================================== -->
+    <aside id="sidebar" class="z-50 w-64 shrink-0 bg-[#0d1424] border-r border-[#1e293b] flex flex-col h-full overflow-hidden shadow-2xl">
+        
+        <!-- Sidebar Brand Header -->
+        <div class="h-16 flex items-center justify-between px-4 border-b border-[#1e293b] bg-[#0d1424]/80 backdrop-blur-md shrink-0 sidebar-brand-wrapper">
+            <div class="flex items-center gap-3 overflow-hidden">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/25 shrink-0">
+                    <i data-lucide="shield-check" class="w-5 h-5"></i>
+                </div>
+                <div class="flex flex-col leading-tight overflow-hidden sidebar-header-text">
+                    <span class="text-sm font-extrabold tracking-tight text-white flex items-center gap-1.5 truncate">
+                        Accounts Studio
+                        <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 live-dot"></span>
+                    </span>
+                    <span class="text-[11px] font-medium text-slate-400 truncate">Identity &amp; Governance</span>
+                </div>
+            </div>
+            <button onclick="toggleSidebar()" class="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition-colors lg:hidden">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Scrollable Navigation Items -->
+        <div class="flex-1 overflow-y-auto px-3 py-4 space-y-6 no-scrollbar">
+            
+            <!-- Section: Core User Governance -->
+            <div class="space-y-1">
+                <div class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 sidebar-section-title">User Directory</div>
+
+                <a href="{% url 'accounts:dashboard' %}" class="sidebar-item flex items-center justify-between px-3 py-2.5 text-sm font-semibold rounded-xl transition-all {% if request.resolver_match.url_name == 'dashboard' or request.resolver_match.url_name == 'user_detail' %}bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-600/20{% else %}text-slate-300 hover:text-white hover:bg-slate-800/60{% endif %}">
+                    <div class="flex items-center gap-3 truncate">
+                        <i data-lucide="users" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                        <span class="sidebar-text truncate">Users &amp; Profiles</span>
+                    </div>
+                    <span class="sidebar-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Dir</span>
+                </a>
+
+                <a href="{% url 'accounts:user_add' %}" class="sidebar-item flex items-center justify-between px-3 py-2.5 text-sm font-semibold rounded-xl transition-all {% if request.resolver_match.url_name == 'user_add' %}bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-600/20{% else %}text-slate-300 hover:text-white hover:bg-slate-800/60{% endif %}">
+                    <div class="flex items-center gap-3 truncate">
+                        <i data-lucide="user-plus" class="w-4 h-4 text-teal-400 shrink-0"></i>
+                        <span class="sidebar-text truncate">Provision Account</span>
+                    </div>
+                    <i data-lucide="plus" class="w-3.5 h-3.5 text-slate-400 sidebar-arrow"></i>
+                </a>
+
+                <a href="{% url 'accounts:roles' %}" class="sidebar-item flex items-center justify-between px-3 py-2.5 text-sm font-semibold rounded-xl transition-all {% if request.resolver_match.url_name == 'roles' %}bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-600/20{% else %}text-slate-300 hover:text-white hover:bg-slate-800/60{% endif %}">
+                    <div class="flex items-center gap-3 truncate">
+                        <i data-lucide="key-round" class="w-4 h-4 text-cyan-400 shrink-0"></i>
+                        <span class="sidebar-text truncate">Roles &amp; Access</span>
+                    </div>
+                    <span class="sidebar-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">ACL</span>
+                </a>
+            </div>
+
+            <!-- Section: System & Integration Links -->
+            <div class="space-y-1">
+                <div class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 sidebar-section-title">Navigation</div>
+
+                <a href="/" target="_blank" class="sidebar-item flex items-center justify-between px-3 py-2 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-xl transition-colors">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="shopping-bag" class="w-4 h-4 text-slate-400 shrink-0"></i>
+                        <span class="sidebar-text">Customer Store</span>
+                    </div>
+                    <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-500 sidebar-arrow"></i>
+                </a>
+
+                <a href="{% url 'management:portal' %}" class="sidebar-item flex items-center justify-between px-3 py-2 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-xl transition-colors">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="grid" class="w-4 h-4 text-blue-400 shrink-0"></i>
+                        <span class="sidebar-text">Management Portal</span>
+                    </div>
+                    <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-slate-500 sidebar-arrow"></i>
+                </a>
+
+                {% if dept_info.is_superuser %}
+                <a href="/admin/accounts/" target="_blank" class="sidebar-item flex items-center justify-between px-3 py-2 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-xl transition-colors">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="database" class="w-4 h-4 text-amber-400 shrink-0"></i>
+                        <span class="sidebar-text">Django Accounts Admin</span>
+                    </div>
+                    <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-500 sidebar-arrow"></i>
+                </a>
+
+                <a href="{% url 'management:dashboard' %}" class="sidebar-item flex items-center justify-between px-3 py-2 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-xl transition-colors">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="crown" class="w-4 h-4 text-amber-400 shrink-0"></i>
+                        <span class="sidebar-text">Superadmin Control</span>
+                    </div>
+                    <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-slate-500 sidebar-arrow"></i>
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Section: SIGN OUT / LOGOUT -->
+            <div class="pt-3 border-t border-[#1e293b]">
+                <a href="{% if request.user.is_superuser and not request.session.department_slug %}{% url 'management:logout' %}{% else %}{% url 'management:dept_logout' %}{% endif %}" class="sidebar-item flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-xs font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 transition-colors shadow-sm" title="Sign Out">
+                    <i data-lucide="log-out" class="w-4 h-4 shrink-0"></i>
+                    <span class="sidebar-text">{% if request.user.is_superuser and not request.session.department_slug %}Exit Superadmin{% else %}Sign Out of Accounts{% endif %}</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Sidebar User Footer -->
+        <div class="p-3 border-t border-[#1e293b] bg-[#0d1424]/90 shrink-0">
+            <div class="flex items-center justify-between gap-2.5 p-2 rounded-xl bg-[#131c2e] border border-[#1e293b]">
+                <div class="flex items-center gap-2.5 overflow-hidden min-w-0">
+                    <div class="w-8 h-8 rounded-lg {% if dept_info.is_superuser or request.user.is_superuser %}bg-amber-500/20 text-amber-400 border-amber-500/30{% else %}bg-emerald-600/30 text-emerald-400 border-emerald-500/30{% endif %} flex items-center justify-center font-bold text-xs shrink-0 border">
+                        {% if dept_info.login_id %}
+                            {{ dept_info.login_id|slice:":2"|upper }}
+                        {% elif request.user.first_name and request.user.last_name %}
+                            {{ request.user.first_name|slice:":1"|upper }}{{ request.user.last_name|slice:":1"|upper }}
+                        {% elif request.user.username %}
+                            {{ request.user.username|slice:":2"|upper }}
+                        {% else %}
+                            AC
+                        {% endif %}
+                    </div>
+                    <div class="overflow-hidden leading-tight sidebar-text min-w-0 flex-1">
+                        <p class="text-xs font-bold text-white truncate">
+                            {% if dept_info.operator_name %}
+                                {{ dept_info.operator_name }}
+                            {% elif dept_info.login_id %}
+                                {{ dept_info.login_id }}
+                            {% elif request.user.get_full_name %}
+                                {{ request.user.get_full_name }}
+                            {% elif request.user.username %}
+                                {{ request.user.username }}
+                            {% else %}
+                                Accounts Staff
+                            {% endif %}
+                        </p>
+                        <p class="text-[10px] {% if dept_info.is_superuser or request.user.is_superuser %}text-amber-400{% else %}text-emerald-400{% endif %} truncate font-medium">
+                            {% if dept_info.dept_name %}
+                                {{ dept_info.dept_name }}
+                            {% elif request.user.is_superuser %}
+                                Super Administrator
+                            {% elif request.user.is_staff %}
+                                Accounts Staff
+                            {% else %}
+                                Department Active
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <a href="{% if request.user.is_superuser and not request.session.department_slug %}{% url 'management:logout' %}{% else %}{% url 'management:dept_logout' %}{% endif %}" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/15 border border-transparent hover:border-rose-500/20 transition-colors shrink-0" title="Sign Out">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- =============================================================== -->
+    <!-- MAIN CONTENT CONTAINER                                          -->
+    <!-- =============================================================== -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-[#0b0f19]">
+
+        <!-- Top Header Bar -->
+        <header class="h-16 border-b border-[#1e293b] bg-[#0d1424]/80 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between gap-4 shrink-0 z-20">
+            <div class="flex items-center gap-3">
+                <button onclick="toggleSidebar()" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors lg:hidden">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+                <div class="flex items-center gap-2 text-xs text-slate-400">
+                    <span class="font-bold text-slate-200">{% block page_title %}Accounts Management{% endblock %}</span>
+                    <span class="text-slate-600 hidden sm:inline">/</span>
+                    <span class="hidden sm:inline text-slate-400">{% block page_breadcrumb %}Directory{% endblock %}</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <div class="hidden md:flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span>
+                    <span>Department Active</span>
+                </div>
+
+                {% block page_actions %}{% endblock %}
+
+                <a href="{% if request.user.is_superuser and not request.session.department_slug %}{% url 'management:logout' %}{% else %}{% url 'management:dept_logout' %}{% endif %}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-rose-500/15 text-slate-300 hover:text-rose-300 border border-slate-700/80 hover:border-rose-500/30 text-xs font-semibold transition-all shadow-sm" title="Sign Out">
+                    <i data-lucide="log-out" class="w-3.5 h-3.5 text-rose-400"></i>
+                    <span class="hidden sm:inline">Logout</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- Message Alerts -->
+        {% if messages %}
+        <div id="accounts-messages-container" class="px-6 pt-4 space-y-2 shrink-0">
+            {% for message in messages %}
+            <div class="message-alert p-3.5 rounded-xl border flex items-center justify-between text-xs font-medium {% if message.tags == 'error' %}bg-rose-950/40 border-rose-800/50 text-rose-300{% elif message.tags == 'success' %}bg-emerald-950/40 border-emerald-800/50 text-emerald-300{% else %}bg-blue-950/40 border-blue-800/50 text-blue-300{% endif %} transition-all duration-500">
+                <div class="flex items-center gap-2.5">
+                    {% if message.tags == 'error' %}
+                    <i data-lucide="alert-circle" class="w-4 h-4 text-rose-400"></i>
+                    {% elif message.tags == 'success' %}
+                    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+                    {% else %}
+                    <i data-lucide="info" class="w-4 h-4 text-blue-400"></i>
+                    {% endif %}
+                    <span>{{ message }}</span>
+                </div>
+                <button type="button" onclick="dismissAccountsMessage(this.closest('.message-alert'))" class="text-slate-400 hover:text-white cursor-pointer">
+                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        <script>
+            function dismissAccountsMessage(el) {
+                if (!el) return;
+                el.style.transition = 'opacity 0.4s ease, transform 0.4s ease, max-height 0.4s ease';
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(-6px)';
+                setTimeout(() => { if (el.parentNode) el.remove(); }, 400);
+            }
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelectorAll('#accounts-messages-container .message-alert').forEach((el) => {
+                    setTimeout(() => {
+                        dismissAccountsMessage(el);
+                    }, 3000);
+                });
+            });
+        </script>
+        {% endif %}
+
+        <!-- Main Page Content Body -->
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</div>
+
+<script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('sidebar-backdrop');
+        if (window.innerWidth >= 1024) {
+            sidebar.classList.toggle('collapsed');
+        } else {
+            sidebar.classList.toggle('sidebar-open');
+            backdrop.classList.toggle('hidden');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    });
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

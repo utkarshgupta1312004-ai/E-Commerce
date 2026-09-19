@@ -1,0 +1,165 @@
+{% extends 'orders/manage/orders_base.html' %}
+
+{% block title %}Order #{{ order.order_number }} Details{% endblock %}
+
+{% block content %}
+<div class="space-y-6 max-w-7xl mx-auto">
+
+    <!-- Header Breadcrumb & Actions -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-2 text-xs text-slate-400 mb-1">
+                <a href="{% url 'orders:manage_list' %}" class="hover:text-white transition-colors">&larr; Back to Orders</a>
+                <span>&bull;</span>
+                <span class="text-blue-400 font-mono">{{ order.order_number }}</span>
+            </div>
+            <h1 class="text-2xl font-black text-white tracking-tight font-mono">{{ order.order_number }}</h1>
+        </div>
+
+        <div class="flex items-center gap-2.5">
+            <a href="{% url 'orders:order_receipt' order.order_number %}" target="_blank" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 transition-all shadow-xs">
+                <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                <span>Print Official Receipt</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Status Transition Control Card -->
+    <div class="p-5 rounded-2xl bg-[#0e1424] border border-slate-800/80">
+        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Order State Transitions & COD Status</h2>
+        
+        <form method="POST" action="{% url 'orders:manage_status_update' order.order_number %}" class="flex flex-wrap items-center gap-4">
+            {% csrf_token %}
+            
+            <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-300 font-medium">Order Status:</span>
+                <select name="status" class="px-3 py-1.5 rounded-xl text-xs bg-slate-900 border border-slate-700 text-white focus:outline-hidden focus:border-blue-500">
+                    <option value="CONFIRMED" {% if order.status == 'CONFIRMED' %}selected{% endif %}>Confirmed</option>
+                    <option value="PROCESSING" {% if order.status == 'PROCESSING' %}selected{% endif %}>Processing</option>
+                    <option value="SHIPPED" {% if order.status == 'SHIPPED' %}selected{% endif %}>Shipped</option>
+                    <option value="DELIVERED" {% if order.status == 'DELIVERED' %}selected{% endif %}>Delivered</option>
+                    <option value="CANCELLED" {% if order.status == 'CANCELLED' %}selected{% endif %}>Cancelled</option>
+                </select>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-300 font-medium">COD Payment:</span>
+                <select name="payment_status" class="px-3 py-1.5 rounded-xl text-xs bg-slate-900 border border-slate-700 text-white focus:outline-hidden focus:border-blue-500">
+                    <option value="PENDING" {% if order.payment_status == 'PENDING' %}selected{% endif %}>Pending Cash Receipt</option>
+                    <option value="PAID" {% if order.payment_status == 'PAID' %}selected{% endif %}>Cash Received (PAID)</option>
+                    <option value="FAILED" {% if order.payment_status == 'FAILED' %}selected{% endif %}>Payment Failed</option>
+                </select>
+            </div>
+
+            <button type="submit" class="px-4 py-1.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white transition-all shadow-xs cursor-pointer">
+                Update Status
+            </button>
+        </form>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Left: Items & Details (8 cols) -->
+        <div class="lg:col-span-8 space-y-6">
+            
+            <!-- Items Table -->
+            <div class="rounded-2xl bg-[#0e1424] border border-slate-800/80 overflow-hidden">
+                <div class="p-4 border-b border-slate-800">
+                    <h2 class="text-sm font-bold text-white tracking-tight">Purchased Items Snapshot</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="border-b border-slate-800 text-slate-400 font-bold uppercase tracking-wider text-[10px] bg-slate-900/60">
+                                <th class="py-3 px-4">Item & SKU</th>
+                                <th class="py-3 px-4 text-center">Quantity</th>
+                                <th class="py-3 px-4 text-right">Unit Price</th>
+                                <th class="py-3 px-4 text-right">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/60 font-medium">
+                            {% for item in items %}
+                            <tr>
+                                <td class="py-3.5 px-4">
+                                    <span class="font-bold text-white block">{{ item.product_title }}</span>
+                                    {% if item.variant_name %}
+                                    <span class="text-slate-400 text-[11px] block">{{ item.variant_name }}</span>
+                                    {% endif %}
+                                    <span class="text-slate-500 font-mono text-[10px]">SKU: {{ item.sku }}</span>
+                                </td>
+                                <td class="py-3.5 px-4 text-center font-bold text-white">
+                                    {{ item.quantity }}
+                                </td>
+                                <td class="py-3.5 px-4 text-right text-slate-300">
+                                    ₹{{ item.unit_price }}
+                                </td>
+                                <td class="py-3.5 px-4 text-right font-extrabold text-white">
+                                    ₹{{ item.subtotal }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Customer Delivery Notes -->
+            {% if order.customer_notes %}
+            <div class="p-4 rounded-2xl bg-[#0e1424] border border-slate-800/80 text-xs">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Customer Delivery Notes</span>
+                <p class="text-slate-200">{{ order.customer_notes }}</p>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <!-- Right: Address & Financial Ledger (4 cols) -->
+        <div class="lg:col-span-4 space-y-6">
+            
+            <!-- Financial Breakdown -->
+            <div class="p-5 rounded-2xl bg-[#0e1424] border border-slate-800/80 space-y-3 text-xs text-slate-400">
+                <h3 class="text-sm font-bold text-white pb-2 border-b border-slate-800">Financial Ledger</h3>
+                
+                <div class="flex items-center justify-between">
+                    <span>Subtotal:</span>
+                    <span class="font-bold text-white">₹{{ order.subtotal }}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span>Shipping Fee:</span>
+                    <span class="text-emerald-400 font-semibold">₹{{ order.shipping_amount }}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span>Discount:</span>
+                    <span class="font-bold text-white">₹{{ order.discount_amount }}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span>Tax:</span>
+                    <span class="font-bold text-white">₹{{ order.tax_amount }}</span>
+                </div>
+                <div class="pt-2 border-t border-slate-800 flex items-baseline justify-between text-base">
+                    <span class="font-black text-white">Total Order Value:</span>
+                    <span class="font-black text-white">₹{{ order.total_amount }}</span>
+                </div>
+            </div>
+
+            <!-- Customer & Shipping Address Snapshot -->
+            <div class="p-5 rounded-2xl bg-[#0e1424] border border-slate-800/80 space-y-2 text-xs text-slate-400">
+                <h3 class="text-sm font-bold text-white pb-2 border-b border-slate-800">Delivery Address Snapshot</h3>
+                
+                <p class="font-bold text-white text-sm">{{ order.shipping_name }}</p>
+                {% if order.shipping_phone %}
+                <p class="text-slate-300">Phone: {{ order.shipping_phone }}</p>
+                {% endif %}
+                <p class="text-slate-300 leading-relaxed">{{ order.formatted_shipping_address }}</p>
+                <div class="pt-2 border-t border-slate-800/60 text-[11px]">
+                    <span class="text-slate-500">Customer Username:</span> {{ order.user.username }}<br>
+                    <span class="text-slate-500">Email:</span> {{ order.user.email }}
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

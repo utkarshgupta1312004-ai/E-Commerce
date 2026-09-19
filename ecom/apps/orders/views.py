@@ -3,16 +3,18 @@ from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect
+from django.utils import timezone
 from .models import Order, DeliveryCheckpoint
 
 
-def _can_access_order(request, order) -> bool:
+def _can_access_order(request, order, allow_session: bool = False) -> bool:
     """
+    Requirement 62: Customer Data Access Security.
     Evaluates whether the requesting user or session is authorized to view the order:
-    1. Order customer owner (authenticated)
+    1. Order customer owner (authenticated: order.user_id == request.user.id)
     2. Superuser or Django staff (admin audit)
-    3. Department staff (orders, checkout, inventory)
-    4. Browser session that just placed this checkout (last_order_number)
+    3. Department staff (orders, checkout, inventory, shipping)
+    4. Browser session that just placed this checkout (allow_session=True only for success view)
     """
     if not order:
         return False
@@ -23,12 +25,12 @@ def _can_access_order(request, order) -> bool:
             return True
         if hasattr(request.user, 'department_account'):
             dept_slug = getattr(request.user.department_account.department, 'slug', '')
-            if dept_slug in ('orders', 'checkout', 'inventory'):
+            if dept_slug in ('orders', 'checkout', 'inventory', 'shipping'):
                 return True
     session_dept = request.session.get('department_slug')
-    if session_dept in ('orders', 'checkout', 'inventory'):
+    if session_dept in ('orders', 'checkout', 'inventory', 'shipping'):
         return True
-    if request.session.get('last_order_number') == order.order_number:
+    if allow_session and request.session.get('last_order_number') == order.order_number:
         return True
     return False
 
@@ -39,13 +41,13 @@ def order_success_view(request, order_number):
     Authorizes customer owner, session order creator, and staff members.
     """
     order = Order.objects.filter(order_number__iexact=order_number).prefetch_related('items', 'checkpoints').first()
-    if not order or not _can_access_order(request, order):
+    if not order or not _can_access_order(request, order, allow_session=True):
         raise Http404(f"Order #{order_number} not found.")
 
     context = {
         'order': order,
         'items': order.items.all(),
-        'checkpoints': order.checkpoints.all(),
+        'checkpoints': order.checkpoints.filter(is_customer_visible=True),
     }
     return render(request, 'orders/order_success.html', context)
 
@@ -53,10 +55,10 @@ def order_success_view(request, order_number):
 @login_required(login_url='accounts:login')
 def order_list_view(request):
     """
-    Customer portal 'My Orders' history screen.
+    Customer portal 'My Orders' history screen (Requirements 50 & 62).
     Lists all orders placed by the current authenticated user in reverse chronological order.
     """
-    orders = Order.objects.filter(user=request.user).prefetch_related('items').order_by('-created_at')
+    orders = Order.objects.filter(user=request.user).prefetch_related('items', 'checkpoints').order_by('-created_at')
     context = {
         'orders': orders,
         'total_orders': orders.count(),
@@ -66,17 +68,17 @@ def order_list_view(request):
 
 def order_detail_view(request, order_number):
     """
-    Customer detailed breakdown and live delivery tracking for a specific order.
-    Authorizes customer owner, session order creator, and management staff.
+    Customer detailed breakdown and live delivery tracking for a specific order (Requirements 50-66).
+    Enforces strict ownership access control (Requirement 62).
     """
     order = Order.objects.filter(order_number__iexact=order_number).prefetch_related('items', 'checkpoints').first()
-    if not order or not _can_access_order(request, order):
+    if not order or not _can_access_order(request, order, allow_session=False):
         raise Http404(f"Order #{order_number} not found.")
 
     context = {
         'order': order,
         'items': order.items.all(),
-        'checkpoints': order.checkpoints.all(),
+        'checkpoints': order.checkpoints.filter(is_customer_visible=True).order_by('-timestamp'),
     }
     return render(request, 'orders/order_detail.html', context)
 
@@ -85,18 +87,85 @@ def order_receipt_view(request, order_number):
     """
     Clean, printable HTML receipt generated permanently from Order and OrderItem records.
     Contains print CSS rules (@media print) and window.print() trigger.
-    Authorizes customer owner, session order creator, and management staff.
+    Supports official Payment Receipt format (Requirement 60) via ?type=payment or when order is delivered & paid.
+    Enforces strict ownership access control (Requirement 62).
     """
     order = Order.objects.filter(order_number__iexact=order_number).prefetch_related('items', 'checkpoints').first()
-    if not order or not _can_access_order(request, order):
+    if not order or not _can_access_order(request, order, allow_session=False):
         raise Http404(f"Order #{order_number} not found.")
+
+    req_type = request.GET.get('type', '').strip().lower()
+    is_payment_receipt = (req_type == 'payment') or (
+        order.status == 'DELIVERED' and order.payment_status == 'PAID' and req_type != 'standard'
+    )
 
     context = {
         'order': order,
         'items': order.items.all(),
-        'checkpoints': order.checkpoints.all(),
+        'checkpoints': order.checkpoints.filter(is_customer_visible=True),
+        'is_payment_receipt': is_payment_receipt,
     }
     return render(request, 'orders/receipt.html', context)
+
+
+@login_required(login_url='accounts:login')
+def order_cancel_view(request, order_number):
+    """
+    Requirement 61: Customer Order Cancellation.
+    Only allows cancellation according to valid order/shipping status (CONFIRMED / PENDING).
+    Enforces strict ownership verification (Requirement 62).
+    """
+    order = get_object_or_404(Order, order_number__iexact=order_number)
+
+    if order.user_id != request.user.id and not request.user.is_superuser:
+        raise PermissionDenied("You can only cancel your own orders.")
+
+    if request.method != 'POST':
+        # Render cancellation confirmation warning
+        return render(request, 'orders/order_cancel_confirm.html', {'order': order})
+
+    if not order.can_cancel:
+        messages.error(
+            request,
+            f"Order #{order.order_number} cannot be cancelled because it is already {order.customer_status_label.lower()}."
+        )
+        return redirect('orders:order_detail', order_number=order.order_number)
+
+    order.status = 'CANCELLED'
+    order.save(update_fields=['status', 'updated_at'])
+
+    # Restore inventory stock if product is linked
+    for item in order.items.all():
+        if item.product:
+            try:
+                from apps.inventory.services import InventoryService
+                from apps.inventory.models import Warehouse
+                wh = Warehouse.objects.filter(is_primary=True).first() or Warehouse.objects.first()
+                if wh:
+                    stk = InventoryService.get_or_create_stock(item.product, wh, variant=item.variant)
+                    stk.on_hand_quantity += item.quantity
+                    stk.save(update_fields=['on_hand_quantity'])
+            except Exception:
+                pass
+
+    # Log customer-visible DeliveryCheckpoint
+    DeliveryCheckpoint.objects.create(
+        order=order,
+        status='CANCELLED',
+        location=order.active_location_display,
+        notes="Order cancelled by customer.",
+        is_customer_visible=True
+    )
+
+    # Dispatch customer notification
+    try:
+        from apps.notifications.services import notify_order_event
+        notify_order_event(order, 'ORDER_CANCELLED')
+    except Exception:
+        pass
+
+    messages.success(request, f"Order #{order.order_number} has been cancelled successfully.")
+    return redirect('orders:order_detail', order_number=order.order_number)
 
 
 # ==============================================================================
@@ -270,16 +339,59 @@ def orders_management_status_update_view(request, order_number):
     valid_payments = dict(Order.PAYMENT_STATUS_CHOICES)
 
     updated = False
+    status_changed = False
+    payment_paid_now = False
+
     if new_status in valid_statuses and new_status != order.status:
         order.status = new_status
+        status_changed = True
         updated = True
+        if new_status == 'DELIVERED' and not order.delivered_at:
+            order.delivered_at = timezone.now()
 
     if new_payment_status in valid_payments and new_payment_status != order.payment_status:
+        if new_payment_status == 'PAID' and order.payment_status != 'PAID':
+            payment_paid_now = True
         order.payment_status = new_payment_status
         updated = True
 
     if updated:
         order.save()
+
+        if status_changed:
+            DeliveryCheckpoint.objects.create(
+                order=order,
+                status=order.status,
+                location=order.active_location_display,
+                notes=f"Order status updated to {order.get_status_display()}",
+                is_customer_visible=True
+            )
+            event_map = {
+                'READY_TO_PACK': 'ORDER_PACKED',
+                'PACKED': 'ORDER_PACKED',
+                'READY_TO_SHIP': 'ORDER_PACKED',
+                'SHIPPED': 'ORDER_SHIPPED',
+                'OUT_FOR_DELIVERY': 'OUT_FOR_DELIVERY',
+                'DELIVERED': 'ORDER_DELIVERED',
+                'FAILED': 'DELIVERY_FAILED',
+                'RETURNED': 'ORDER_RETURNED',
+                'CANCELLED': 'ORDER_CANCELLED',
+            }
+            event = event_map.get(order.status)
+            if event:
+                try:
+                    from apps.notifications.services import notify_order_event
+                    notify_order_event(order, event)
+                except Exception:
+                    pass
+
+        if payment_paid_now:
+            try:
+                from apps.notifications.services import notify_order_event
+                notify_order_event(order, 'COD_PAYMENT_RECEIVED')
+            except Exception:
+                pass
+
         messages.success(request, f"Order {order.order_number} status updated successfully ({order.status} / {order.payment_status}).")
     else:
         messages.info(request, "No changes were made to order status.")

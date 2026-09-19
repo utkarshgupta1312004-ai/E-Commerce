@@ -7,16 +7,18 @@
 <div class="bg-slate-50/60 min-h-screen py-8 sm:py-12">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <!-- Breadcrumbs -->
+        <!-- Breadcrumbs (Requirement 50) -->
         <nav class="flex items-center gap-2 text-xs font-medium text-slate-400 mb-6">
             <a href="/" class="hover:text-slate-800 transition-colors">Home</a>
+            <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+            <a href="{% url 'accounts:profile' %}" class="hover:text-slate-800 transition-colors">My Account</a>
             <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
             <a href="{% url 'orders:order_list' %}" class="hover:text-slate-800 transition-colors">My Orders</a>
             <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
             <span class="text-slate-800 font-semibold">{{ order.order_number }}</span>
         </nav>
 
-        <!-- Top Header Card -->
+        <!-- Top Header & Actions Bar (Requirement 60) -->
         <div class="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs mb-8">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
                 <div>
@@ -29,41 +31,112 @@
                     </p>
                 </div>
 
-                <div class="flex items-center gap-3">
+                <!-- Contextual Action Buttons (Requirement 60) -->
+                <div class="flex flex-wrap items-center gap-2.5">
+                    {% if order.is_shipped_or_transit %}
+                        {% if order.tracking_url %}
+                        <a 
+                            href="{{ order.tracking_url }}" 
+                            target="_blank"
+                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-xs"
+                        >
+                            <i data-lucide="external-link" class="w-4 h-4"></i>
+                            <span>Track Shipment</span>
+                        </a>
+                        {% else %}
+                        <a 
+                            href="#shipment-tracking-section"
+                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-xs"
+                        >
+                            <i data-lucide="truck" class="w-4 h-4"></i>
+                            <span>Track Shipment</span>
+                        </a>
+                        {% endif %}
+                    {% endif %}
+
                     <a 
                         href="{% url 'orders:order_receipt' order.order_number %}" 
                         target="_blank"
-                        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all shadow-xs cursor-pointer"
+                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all shadow-xs"
                     >
                         <i data-lucide="printer" class="w-4 h-4"></i>
                         <span>View / Print Receipt</span>
                     </a>
+
+                    {% if order.status == 'DELIVERED' and order.payment_status == 'PAID' %}
+                    <a 
+                        href="{% url 'orders:order_receipt' order.order_number %}?type=payment" 
+                        target="_blank"
+                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 text-emerald-800 text-xs font-bold transition-all shadow-xs"
+                    >
+                        <i data-lucide="file-check" class="w-4 h-4 text-emerald-600"></i>
+                        <span>View Payment Receipt</span>
+                    </a>
+                    {% endif %}
+
+                    {% if order.can_cancel %}
+                    <a 
+                        href="{% url 'orders:order_cancel' order.order_number %}"
+                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-rose-200 bg-rose-50/60 hover:bg-rose-100 text-rose-700 text-xs font-bold transition-all shadow-xs"
+                    >
+                        <i data-lucide="x-circle" class="w-4 h-4"></i>
+                        <span>Cancel Order</span>
+                    </a>
+                    {% endif %}
                 </div>
             </div>
 
-            <!-- Status Badges Bar -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 text-xs sm:text-sm">
-                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                    <span class="text-slate-400 block text-[11px] font-medium mb-1">Order & Delivery Status</span>
-                    <div class="flex items-center gap-1.5 font-bold {% if order.status == 'DELIVERED' %}text-emerald-700{% elif order.status == 'OUT_FOR_DELIVERY' %}text-amber-700{% else %}text-blue-700{% endif %}">
-                        <i data-lucide="{% if order.status == 'DELIVERED' %}check-circle{% elif order.status == 'OUT_FOR_DELIVERY' %}truck{% else %}package{% endif %}" class="w-4 h-4"></i>
-                        <span>{{ order.get_status_display }}</span>
+            <!-- Customer Order Status Card (Requirements 52, 53, 54, 57) -->
+            <div class="mt-6 p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 text-white shadow-md">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+                    <div>
+                        <span class="text-[10px] uppercase font-mono font-bold tracking-widest text-slate-400">Order Overview</span>
+                        <h2 class="text-base sm:text-lg font-bold font-mono text-white mt-0.5">{{ order.order_number }}</h2>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-3 py-1 rounded-full text-xs font-extrabold {% if order.status == 'DELIVERED' %}bg-emerald-500/20 text-emerald-300 border border-emerald-500/30{% elif order.status == 'OUT_FOR_DELIVERY' %}bg-amber-500/20 text-amber-300 border border-amber-500/30{% elif order.status == 'CANCELLED' or order.status == 'FAILED' %}bg-rose-500/20 text-rose-300 border border-rose-500/30{% else %}bg-blue-500/20 text-blue-300 border border-blue-500/30{% endif %}">
+                            {{ order.customer_status_label }}
+                        </span>
                     </div>
                 </div>
 
-                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                    <span class="text-slate-400 block text-[11px] font-medium mb-1">Payment Method</span>
-                    <div class="flex items-center gap-1.5 font-bold text-slate-900">
-                        <i data-lucide="banknote" class="w-4 h-4 text-emerald-600"></i>
-                        <span>{{ order.get_payment_method_display }}</span>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 text-xs">
+                    <!-- Status & Customer-Friendly Message (Requirement 52) -->
+                    <div class="space-y-1">
+                        <span class="text-[11px] text-slate-400 block font-medium">Status</span>
+                        <p class="font-bold text-white text-sm">{{ order.customer_status_label }}</p>
+                        <p class="text-slate-300 text-[11px] leading-relaxed">{{ order.customer_friendly_status }}</p>
                     </div>
-                </div>
 
-                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                    <span class="text-slate-400 block text-[11px] font-medium mb-1">COD Collection Status</span>
-                    <div class="flex items-center gap-1.5 font-bold {% if order.payment_status == 'PAID' %}text-emerald-700{% else %}text-amber-700{% endif %}">
-                        <i data-lucide="{% if order.payment_status == 'PAID' %}check{% else %}clock{% endif %}" class="w-4 h-4"></i>
-                        <span>{{ order.get_payment_status_display }}</span>
+                    <!-- Expected / Delivered Date (Requirement 50 & 55) -->
+                    <div class="space-y-1">
+                        {% if order.delivered_at %}
+                        <span class="text-[11px] text-slate-400 block font-medium">Delivered On</span>
+                        <p class="font-bold text-emerald-400 text-sm">{{ order.delivered_at|date:"d M Y, h:i A" }}</p>
+                        <p class="text-slate-400 text-[11px]">Successfully handed over</p>
+                        {% else %}
+                        <span class="text-[11px] text-slate-400 block font-medium">Expected Delivery</span>
+                        <p class="font-bold text-white text-sm">{{ order.estimated_delivery_date|default:"3-5 Business Days" }}</p>
+                        <p class="text-slate-400 text-[11px]">Target delivery window</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Payment Method (Requirement 53) -->
+                    <div class="space-y-1">
+                        <span class="text-[11px] text-slate-400 block font-medium">Payment Method</span>
+                        <p class="font-bold text-white text-sm">{{ order.get_payment_method_display }}</p>
+                        <p class="text-slate-400 text-[11px]">Total: ₹{{ order.total_amount }}</p>
+                    </div>
+
+                    <!-- Payment Status & COD Message (Requirement 53 & 54) -->
+                    <div class="space-y-1">
+                        <span class="text-[11px] text-slate-400 block font-medium">Payment Status</span>
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-bold text-sm {% if order.payment_status == 'PAID' %}text-emerald-400{% else %}text-amber-300{% endif %}">
+                                {{ order.customer_payment_display }}
+                            </span>
+                        </div>
+                        <p class="text-slate-300 text-[11px] leading-relaxed">{{ order.customer_payment_note }}</p>
                     </div>
                 </div>
             </div>
@@ -82,48 +155,67 @@
                     <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                         <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-500" style="width: {{ order.delivery_progress_percent }}%"></div>
                     </div>
+                </div>
 
-                    <div class="grid grid-cols-5 mt-3 text-center">
-                        <div class="space-y-0.5">
-                            <span class="text-[11px] font-bold block {% if order.delivery_step_index >= 1 %}text-slate-900{% else %}text-slate-400{% endif %}">Placed</span>
-                            <span class="text-[10px] text-slate-400 block">Confirmed</span>
+                <!-- Customer Shipping Timeline (Requirement 51) -->
+                <div class="pt-4">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-1.5">
+                        <i data-lucide="calendar" class="w-3.5 h-3.5 text-blue-600"></i>
+                        <span>Shipping Timeline</span>
+                    </h3>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-5 gap-3">
+                        {% for step in order.customer_timeline %}
+                        <div class="p-3.5 rounded-2xl border transition-all {% if step.completed %}bg-emerald-50/50 border-emerald-200{% else %}bg-slate-50/60 border-slate-100 text-slate-400{% endif %}">
+                            <div class="flex items-center gap-2 mb-1.5">
+                                {% if step.completed %}
+                                <div class="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                                    <i data-lucide="check" class="w-3 h-3 stroke-[3]"></i>
+                                </div>
+                                {% else %}
+                                <div class="w-5 h-5 rounded-full border-2 border-slate-300 text-slate-300 flex items-center justify-center shrink-0 text-[10px]">
+                                    &cir;
+                                </div>
+                                {% endif %}
+                                <span class="text-xs font-bold {% if step.completed %}text-slate-900{% else %}text-slate-400{% endif %}">
+                                    {{ step.title }}
+                                </span>
+                            </div>
+                            <p class="text-[11px] font-mono {% if step.completed %}text-emerald-800 font-semibold{% else %}text-slate-400{% endif %} pl-7">
+                                {{ step.display_time }}
+                            </p>
                         </div>
-                        <div class="space-y-0.5">
-                            <span class="text-[11px] font-bold block {% if order.delivery_step_index >= 2 %}text-slate-900{% else %}text-slate-400{% endif %}">Packed</span>
-                            <span class="text-[10px] text-slate-400 block">At Warehouse</span>
-                        </div>
-                        <div class="space-y-0.5">
-                            <span class="text-[11px] font-bold block {% if order.delivery_step_index >= 3 %}text-slate-900{% else %}text-slate-400{% endif %}">In Transit</span>
-                            <span class="text-[10px] text-slate-400 block">Between Hubs</span>
-                        </div>
-                        <div class="space-y-0.5">
-                            <span class="text-[11px] font-bold block {% if order.delivery_step_index >= 4 %}text-amber-700 font-extrabold{% else %}text-slate-400{% endif %}">Out for Delivery</span>
-                            <span class="text-[10px] text-slate-400 block">With Courier</span>
-                        </div>
-                        <div class="space-y-0.5">
-                            <span class="text-[11px] font-bold block {% if order.delivery_step_index >= 5 %}text-emerald-700 font-extrabold{% else %}text-slate-400{% endif %}">Delivered</span>
-                            <span class="text-[10px] text-slate-400 block">Completed</span>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
 
-                <!-- Courier, Tracking Code & Live Location Banner -->
-                <div class="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                    <div class="space-y-1">
-                        <div class="flex items-center gap-2">
-                            <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-emerald-600 text-white uppercase tracking-wider">
+                <!-- Courier, Tracking Code & Live Location Banner (Requirement 55) -->
+                <div id="shipment-tracking-section" class="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                    <div class="space-y-1.5">
+                        <div class="flex items-center flex-wrap gap-2">
+                            <span class="px-2.5 py-0.5 rounded-md text-[10px] font-extrabold bg-emerald-600 text-white uppercase tracking-wider">
                                 {{ order.delivery_partner|default:"Cartivo Express Delivery" }}
                             </span>
-                            <span class="font-mono font-bold text-slate-900">AWB: {{ order.tracking_code }}</span>
+                            <span class="font-mono font-bold text-slate-900">Tracking ID: {{ order.tracking_code }}</span>
+                            {% if order.tracking_url %}
+                            <a 
+                                href="{{ order.tracking_url }}" 
+                                target="_blank"
+                                class="inline-flex items-center gap-1 text-[11px] font-bold text-blue-600 hover:underline"
+                            >
+                                <span>Track on Carrier Website</span>
+                                <i data-lucide="external-link" class="w-3 h-3"></i>
+                            </a>
+                            {% endif %}
                         </div>
-                        <div class="flex items-center gap-1.5 text-slate-700 pt-0.5 font-medium">
+                        <div class="flex items-center gap-1.5 text-slate-700 font-medium">
                             <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i>
-                            <span><strong>Current Location Checkpoint:</strong> {{ order.active_location_display }}</span>
+                            <span><strong>Current Checkpoint:</strong> {{ order.active_location_display }}</span>
                         </div>
                     </div>
                     <div class="sm:text-right shrink-0">
                         <span class="text-[11px] text-slate-500 block">Expected Arrival:</span>
-                        <span class="font-bold text-slate-900 block">{{ order.estimated_delivery_date|default:"3-5 Business Days" }}</span>
+                        <span class="font-bold text-slate-900 block text-xs sm:text-sm">{{ order.estimated_delivery_date|default:"3-5 Business Days" }}</span>
                     </div>
                 </div>
             </div>
@@ -167,12 +259,12 @@
                     </div>
                 </div>
 
-                <!-- Logistics Checkpoints Timeline -->
+                <!-- Customer-Safe Logistics Checkpoints Timeline (Requirement 51 & 63) -->
                 {% if checkpoints %}
                 <div class="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs">
                     <h3 class="text-sm sm:text-base font-bold text-slate-950 mb-4 pb-3 border-b border-slate-100 flex items-center gap-2">
                         <i data-lucide="clock" class="w-4 h-4 text-emerald-600"></i>
-                        <span>Tracking & Checkpoint History</span>
+                        <span>Detailed Checkpoint Journey</span>
                     </h3>
                     <div class="relative pl-6 space-y-4 before:content-[''] before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
                         {% for cp in checkpoints %}
@@ -213,7 +305,7 @@
             <!-- Side Financial & Address Column (4 cols) -->
             <div class="lg:col-span-4 space-y-6">
                 
-                <!-- Financial Breakdown -->
+                <!-- Financial Breakdown (Requirement 50) -->
                 <div class="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs space-y-3 text-xs sm:text-sm text-slate-600">
                     <h3 class="text-sm font-bold text-slate-950 pb-2 border-b border-slate-100">Payment Ledger</h3>
                     
@@ -237,17 +329,38 @@
                         <span class="text-base font-extrabold text-slate-950">Payable Total</span>
                         <span class="text-2xl font-black text-slate-950">₹{{ order.total_amount }}</span>
                     </div>
+
+                    <div class="mt-3 pt-3 border-t border-slate-100 p-3 rounded-xl bg-slate-50 text-xs">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-slate-500 font-medium">Payment Method:</span>
+                            <span class="font-bold text-slate-900">{{ order.get_payment_method_display }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-500 font-medium">Status:</span>
+                            <span class="font-bold {% if order.payment_status == 'PAID' %}text-emerald-700{% else %}text-amber-700{% endif %}">
+                                {{ order.customer_payment_display }}
+                            </span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-1 pt-1 border-t border-slate-200/60 leading-snug">
+                            {{ order.customer_payment_note }}
+                        </p>
+                    </div>
                 </div>
 
-                <!-- Delivery Address Snapshot -->
+                <!-- Delivery Address Snapshot (Requirement 56) -->
                 <div class="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Delivery Address</h3>
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1.5">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600"></i>
+                        <span>Delivering To</span>
+                    </h3>
                     <div class="text-xs sm:text-sm text-slate-700 leading-relaxed space-y-1">
-                        <p class="font-bold text-slate-900">{{ order.shipping_name }}</p>
+                        <p class="font-bold text-slate-950 text-sm">{{ order.shipping_name }}</p>
+                        <p class="text-slate-800">{{ order.shipping_street_address }}{% if order.shipping_apartment %}, {{ order.shipping_apartment }}{% endif %}</p>
+                        <p class="text-slate-700">{{ order.shipping_city }}, {{ order.shipping_state }} {{ order.shipping_postal_code }}</p>
+                        <p class="text-slate-600">{{ order.shipping_country }}</p>
                         {% if order.shipping_phone %}
-                        <p class="text-slate-500">Phone: {{ order.shipping_phone }}</p>
+                        <p class="text-slate-500 pt-2 border-t border-slate-100 font-mono text-xs">Phone: {{ order.shipping_phone }}</p>
                         {% endif %}
-                        <p class="text-slate-600 pt-1">{{ order.formatted_shipping_address }}</p>
                     </div>
                 </div>
 

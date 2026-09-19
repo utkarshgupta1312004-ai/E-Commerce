@@ -9,6 +9,7 @@ urlpatterns = [
     path('success/<str:order_number>/', views.order_success_view, name='order_success'),
     path('<str:order_number>/', views.order_detail_view, name='order_detail'),
     path('<str:order_number>/receipt/', views.order_receipt_view, name='order_receipt'),
+    path('<str:order_number>/cancel/', views.order_cancel_view, name='order_cancel'),
 
     # Enterprise Order Management Console (matching inventory management)
     path('manage/dashboard/', views.orders_management_dashboard_view, name='manage_dashboard'),

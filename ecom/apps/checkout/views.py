@@ -2,12 +2,14 @@ from decimal import Decimal
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
 from django.views.decorators.http import require_POST
 from apps.accounts.models import Address
 from apps.cart.models import Cart
 from apps.cart.services import CartService
 from apps.orders.services import OrderService
 from apps.inventory.services import InsufficientStockError
+from apps.notifications.services import notify_order_event
 
 
 @login_required(login_url='accounts:login')
@@ -396,7 +398,8 @@ def checkout_delivery_detail_view(request, order_number):
 def checkout_delivery_update_view(request, order_number):
     """
     Updates delivery progress, courier partner, tracking number,
-    physical checkpoint location, and logs a timestamped DeliveryCheckpoint.
+    physical checkpoint location, internal notes, and logs a timestamped DeliveryCheckpoint.
+    Dispatches customer notifications via notify_order_event (Requirements 49, 58, 63, 64).
     """
     if not _check_checkout_access(request):
         messages.error(request, "Unauthorized.")
@@ -407,26 +410,41 @@ def checkout_delivery_update_view(request, order_number):
     new_status = request.POST.get('status', '').strip()
     new_carrier = request.POST.get('delivery_partner', '').strip()
     new_tracking = request.POST.get('tracking_number', '').strip()
+    new_tracking_url = request.POST.get('tracking_url', '').strip()
     new_location = request.POST.get('current_location', '').strip()
     new_eta = request.POST.get('estimated_delivery_date', '').strip()
     new_payment = request.POST.get('payment_status', '').strip()
     checkpoint_notes = request.POST.get('checkpoint_notes', '').strip()
+
+    # Internal operational fields (Requirement 63)
+    cod_collected_by = request.POST.get('cod_collected_by', '').strip()
+    cod_received_amount = request.POST.get('cod_received_amount', '').strip()
+    delivery_failure_reason = request.POST.get('delivery_failure_reason', '').strip()
+    internal_notes = request.POST.get('internal_notes', '').strip()
+    delivery_attempts = request.POST.get('delivery_attempts', '').strip()
 
     valid_statuses = dict(Order.STATUS_CHOICES)
     valid_payments = dict(Order.PAYMENT_STATUS_CHOICES)
 
     status_changed = False
     location_changed = False
+    payment_paid_now = False
 
     if new_status in valid_statuses and new_status != order.status:
+        old_status = order.status
         order.status = new_status
         status_changed = True
+        if new_status == 'DELIVERED' and not order.delivered_at:
+            order.delivered_at = timezone.now()
 
     if new_carrier:
         order.delivery_partner = new_carrier
 
     if new_tracking:
         order.tracking_number = new_tracking
+
+    if new_tracking_url is not None:
+        order.tracking_url = new_tracking_url
 
     if new_location and new_location != order.current_location:
         order.current_location = new_location
@@ -436,7 +454,30 @@ def checkout_delivery_update_view(request, order_number):
         order.estimated_delivery_date = new_eta
 
     if new_payment in valid_payments:
+        if new_payment == 'PAID' and order.payment_status != 'PAID':
+            payment_paid_now = True
         order.payment_status = new_payment
+
+    if cod_collected_by:
+        order.cod_collected_by = cod_collected_by
+
+    if cod_received_amount:
+        try:
+            order.cod_received_amount = Decimal(cod_received_amount)
+        except Exception:
+            pass
+
+    if delivery_failure_reason:
+        order.delivery_failure_reason = delivery_failure_reason
+
+    if internal_notes:
+        order.internal_notes = internal_notes
+
+    if delivery_attempts:
+        try:
+            order.delivery_attempts = int(delivery_attempts)
+        except (ValueError, TypeError):
+            pass
 
     order.save()
 
@@ -448,8 +489,29 @@ def checkout_delivery_update_view(request, order_number):
             order=order,
             status=order.status,
             location=loc,
-            notes=note
+            notes=note,
+            is_customer_visible=True
         )
+
+    # Trigger Customer Notifications (Requirement 58)
+    if status_changed:
+        event_map = {
+            'READY_TO_PACK': 'ORDER_PACKED',
+            'PACKED': 'ORDER_PACKED',
+            'READY_TO_SHIP': 'ORDER_PACKED',
+            'SHIPPED': 'ORDER_SHIPPED',
+            'OUT_FOR_DELIVERY': 'OUT_FOR_DELIVERY',
+            'DELIVERED': 'ORDER_DELIVERED',
+            'FAILED': 'DELIVERY_FAILED',
+            'RETURNED': 'ORDER_RETURNED',
+            'CANCELLED': 'ORDER_CANCELLED',
+        }
+        event = event_map.get(order.status)
+        if event:
+            notify_order_event(order, event)
+
+    if payment_paid_now:
+        notify_order_event(order, 'COD_PAYMENT_RECEIVED')
 
     messages.success(
         request,

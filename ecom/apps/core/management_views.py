@@ -9,6 +9,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
 from .models import ManagementDepartment, DepartmentAccount
+from .services.dashboard_metrics import get_superadmin_dashboard_metrics, format_currency_inr, format_currency_short
 
 
 # Domain metadata enrichment for the Cartivo 20-app modular platform
@@ -238,9 +239,8 @@ def management_page_view(request):
 def superadmin_dashboard_view(request):
     """
     Dedicated Super Administrator Control Dashboard (/management/dashboard/).
-    High-fidelity executive management dashboard matching modern dark-mode admin UI.
-    Features persistent collapsible left sidebar, sparkline metrics, dual bar charts,
-    donut analytics, and full 20-domain operations matrix.
+    High-fidelity executive management dashboard computing real-time business intelligence
+    across all 20 Cartivo domain services (sales, profit, COGS, inventory, carts, accounts).
     """
     if not (request.user.is_authenticated and request.user.is_superuser):
         messages.error(
@@ -248,26 +248,6 @@ def superadmin_dashboard_view(request):
             "Access restricted. You must be authenticated as a Super Administrator to access the executive control dashboard."
         )
         return redirect(f"{reverse('management:login')}?next={reverse('management:dashboard')}")
-
-    from django.contrib.auth import get_user_model
-    User = get_user_model()
-    
-    total_users = User.objects.count()
-    staff_count = User.objects.filter(is_staff=True).count()
-    superuser_count = User.objects.filter(is_superuser=True).count()
-    customer_count = max(0, total_users - staff_count)
-
-    # Product Catalog Metrics
-    total_products = 0
-    total_categories = 0
-    recent_products = []
-    try:
-        from apps.catalog.models import Product, Category
-        total_products = Product.objects.filter(is_active=True).count()
-        total_categories = Category.objects.filter(is_active=True).count()
-        recent_products = list(Product.objects.filter(is_active=True).select_related('category')[:4])
-    except Exception:
-        pass
 
     # Enriched Department Registry (All 20 Domains)
     departments_qs = list(ManagementDepartment.objects.filter(is_active=True).order_by('display_order', 'name'))
@@ -302,45 +282,28 @@ def superadmin_dashboard_view(request):
     except Exception:
         recent_audit_logs = []
 
-    # Monthly Bar Chart Dataset (Jan to Sep matching reference)
-    monthly_analytics = [
-        {'month': 'Jan', 'sales': 18, 'views': 15, 'sales_h': 36, 'views_h': 30},
-        {'month': 'Feb', 'sales': 6, 'views': 11, 'sales_h': 12, 'views_h': 22},
-        {'month': 'Mar', 'sales': 62, 'views': 44, 'sales_h': 124, 'views_h': 88},
-        {'month': 'Apr', 'sales': 10, 'views': 16, 'sales_h': 20, 'views_h': 32},
-        {'month': 'May', 'sales': 29, 'views': 24, 'sales_h': 58, 'views_h': 48},
-        {'month': 'Jun', 'sales': 19, 'views': 16, 'sales_h': 38, 'views_h': 32},
-        {'month': 'Jul', 'sales': 25, 'views': 39, 'sales_h': 50, 'views_h': 78},
-        {'month': 'Aug', 'sales': 14, 'views': 10, 'sales_h': 28, 'views_h': 20},
-        {'month': 'Sep', 'sales': 38, 'views': 46, 'sales_h': 76, 'views_h': 92},
-    ]
+    # Comprehensive live multi-app business intelligence
+    metrics = get_superadmin_dashboard_metrics()
 
     context = {
         'departments': enriched_departments,
         'total_departments': len(enriched_departments),
-        'total_users': total_users,
-        'staff_count': staff_count,
-        'superuser_count': superuser_count,
-        'customer_count': customer_count,
-        'total_products': total_products or 4,
-        'total_categories': total_categories or 4,
-        'recent_products': recent_products,
         'recent_audit_logs': recent_audit_logs,
-        'monthly_analytics': monthly_analytics,
-        # Executive Reference KPIs
-        'gross_target_val': '₹168.5K',
-        'target_percent': '58%',
-        'total_orders_val': '248k',
-        'total_orders_change': '+24%',
-        'total_sales_val': '₹47.6k',
-        'total_sales_change': '+14%',
-        'total_visits_val': '189K',
-        'total_visits_change': '-35%',
-        'bounce_rate_val': '24.6%',
-        'bounce_rate_change': '+18%',
-        'monthly_revenue_kpi': '65,127',
-        'yearly_revenue_kpi': '984,246',
         'active_tab': 'dashboard',
+        **metrics,
+        # Executive Reference KPIs (dynamically bound to live metrics)
+        'gross_target_val': metrics['gross_profit_display'],
+        'target_percent': f"{metrics['profit_margin_pct']}%",
+        'total_orders_val': str(metrics['total_orders_count']),
+        'total_orders_change': f"{metrics['completed_orders_count']} delivered",
+        'total_sales_val': metrics['gross_revenue_display'],
+        'total_sales_change': f"{metrics['total_units_sold']} units sold",
+        'total_visits_val': str(metrics['total_carts']),
+        'total_visits_change': f"{metrics['cart_conversion_rate']}% conv",
+        'bounce_rate_val': f"{metrics['cart_abandonment_rate']}%",
+        'bounce_rate_change': 'abandoned',
+        'monthly_revenue_kpi': metrics['monthly_run_rate_display'].replace('₹', ''),
+        'yearly_revenue_kpi': metrics['yearly_run_rate_display'].replace('₹', ''),
     }
     return render(request, 'management/superadmin_dashboard.html', context)
 
@@ -349,20 +312,24 @@ def superadmin_sales_view(request):
     """
     Dedicated Superadmin Sales & Financial KPIs Console (/management/sales/).
     Real-time revenue metrics, financial KPIs, sales area trend curves, payment gateway routing,
-    and filterable transactions ledger.
+    and filterable transactions ledger derived from live order & catalog data.
     """
     if not (request.user.is_authenticated and request.user.is_superuser):
         messages.error(request, "Access restricted to Super Administrators.")
         return redirect(f"{reverse('management:login')}?next={reverse('management:sales')}")
 
+    metrics = get_superadmin_dashboard_metrics()
     context = {
         'active_tab': 'sales',
-        'gross_revenue': '₹486,240',
-        'net_revenue': '₹412,850',
-        'aov_val': '₹148.50',
-        'completed_orders_val': '3,280',
-        'conversion_rate_val': '3.84%',
-        'refund_rate_val': '0.82%',
+        **metrics,
+        'gross_revenue': metrics['gross_revenue_display'],
+        'net_revenue': metrics['net_revenue_display'],
+        'gross_profit': metrics['gross_profit_display'],
+        'profit_margin': metrics['profit_margin_display'],
+        'aov_val': metrics['aov_display'],
+        'completed_orders_val': str(metrics['completed_orders_count']),
+        'conversion_rate_val': metrics['cart_conversion_rate_display'],
+        'refund_rate_val': f"{(metrics['cancelled_orders_count'] / metrics['total_orders_count'] * 100) if metrics['total_orders_count'] > 0 else 0.0:.1f}%",
     }
     return render(request, 'management/superadmin_sales.html', context)
 
@@ -377,23 +344,13 @@ def superadmin_analytics_view(request):
         messages.error(request, "Access restricted to Super Administrators.")
         return redirect(f"{reverse('management:login')}?next={reverse('management:analytics')}")
 
-    monthly_analytics = [
-        {'month': 'Jan', 'sales': 18, 'views': 15, 'sales_h': 36, 'views_h': 30},
-        {'month': 'Feb', 'sales': 6, 'views': 11, 'sales_h': 12, 'views_h': 22},
-        {'month': 'Mar', 'sales': 62, 'views': 44, 'sales_h': 124, 'views_h': 88},
-        {'month': 'Apr', 'sales': 10, 'views': 16, 'sales_h': 20, 'views_h': 32},
-        {'month': 'May', 'sales': 29, 'views': 24, 'sales_h': 58, 'views_h': 48},
-        {'month': 'Jun', 'sales': 19, 'views': 16, 'sales_h': 38, 'views_h': 32},
-        {'month': 'Jul', 'sales': 25, 'views': 39, 'sales_h': 50, 'views_h': 78},
-        {'month': 'Aug', 'sales': 14, 'views': 10, 'sales_h': 28, 'views_h': 20},
-        {'month': 'Sep', 'sales': 38, 'views': 46, 'sales_h': 76, 'views_h': 92},
-    ]
-
+    metrics = get_superadmin_dashboard_metrics()
     context = {
         'active_tab': 'analytics',
-        'monthly_analytics': monthly_analytics,
-        'monthly_revenue_kpi': '65,127',
-        'yearly_revenue_kpi': '984,246',
+        **metrics,
+        'monthly_analytics': metrics['monthly_analytics'],
+        'monthly_revenue_kpi': metrics['monthly_run_rate_display'].replace('₹', ''),
+        'yearly_revenue_kpi': metrics['yearly_run_rate_display'].replace('₹', ''),
     }
     return render(request, 'management/superadmin_analytics.html', context)
 

@@ -5,8 +5,9 @@ from apps.accounts.models import Address
 from apps.catalog.models import Category, Brand, Product, ProductVariant
 from apps.inventory.models import Warehouse, Stock, StockMovement
 from apps.inventory.services import InventoryService
+from django.utils import timezone
 from apps.cart.models import Cart, CartItem
-from apps.orders.models import Order, OrderItem
+from apps.orders.models import Order, OrderItem, DeliveryCheckpoint
 from apps.orders.services import OrderService
 
 
@@ -295,3 +296,294 @@ class OrderCODIntegrationTests(TestCase):
         self.assertContains(response, order.order_number)
         self.assertContains(response, 'Cash on Delivery')
         self.assertContains(response, 'window.print()')
+
+
+class CustomerShippingAndTrackingTests(TestCase):
+    """
+    Validation test suite for Requirements 49 to 66:
+    Customer-Facing Shipping Information, Tracking, Timeline, Friendly Statuses,
+    COD Payment Flow, Address Snapshot, Contextual Actions, Cancellation, and Security.
+    """
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username='alex@cartivo.com',
+            email='alex@cartivo.com',
+            password='Password@123',
+            first_name='Alex',
+            last_name='Gupta'
+        )
+        self.other_user = User.objects.create_user(
+            username='stranger@cartivo.com',
+            email='stranger@cartivo.com',
+            password='Password@123',
+            first_name='Bob',
+            last_name='Smith'
+        )
+
+        self.address = Address.objects.create(
+            user=self.user,
+            full_name='Alex Gupta',
+            phone='9876543210',
+            street_address='123 Hazratganj',
+            apartment='Flat 4B',
+            city='Lucknow',
+            state='Uttar Pradesh',
+            postal_code='226001',
+            country='India',
+            address_type='shipping',
+            is_default=True
+        )
+
+        self.category = Category.objects.create(name='Electronics', slug='electronics')
+        self.brand = Brand.objects.create(name='BrandX', slug='brandx')
+        self.warehouse = Warehouse.objects.create(name='Lucknow Hub', code='WH-LKO', is_primary=True)
+
+        self.product = Product.objects.create(
+            title='Wireless Noise Cancelling Headphones',
+            slug='wireless-headphones',
+            category=self.category,
+            brand=self.brand,
+            base_price=Decimal('1499.00'),
+            sku='HD-WRLS-01',
+            status='ACTIVE',
+            visibility='PUBLIC',
+            is_active=True
+        )
+        stk = InventoryService.get_or_create_stock(self.product, self.warehouse)
+        stk.on_hand_quantity = 25
+        stk.status = 'IN_STOCK'
+        stk.save()
+
+    def _create_test_order(self):
+        cart = Cart.objects.create(user=self.user, status='ACTIVE')
+        CartItem.objects.create(cart=cart, product=self.product, quantity=1)
+        return OrderService.create_cod_order(user=self.user, address=self.address)
+
+    def test_customer_friendly_status_mapping(self):
+        """Requirement 52: Technical shipping statuses mapped to customer-friendly labels & sentences."""
+        order = self._create_test_order()
+
+        expected_mappings = {
+            'READY_TO_PACK': ("Your order is being prepared", "Preparing"),
+            'PACKED': ("Your order has been packed", "Packed"),
+            'READY_TO_SHIP': ("Your order is ready for dispatch", "Ready for Dispatch"),
+            'SHIPPED': ("Your order has been shipped", "Shipped"),
+            'OUT_FOR_DELIVERY': ("Your order is out for delivery", "Out for Delivery"),
+            'DELIVERED': ("Your order has been delivered", "Delivered"),
+            'FAILED': ("Delivery attempt was unsuccessful", "Delivery Failed"),
+            'RETURNED': ("Your order has been returned", "Returned"),
+            'CONFIRMED': ("Your order has been confirmed", "Confirmed"),
+            'CANCELLED': ("Your order has been cancelled", "Cancelled"),
+        }
+
+        for status_code, (expected_sentence, expected_label) in expected_mappings.items():
+            order.status = status_code
+            self.assertEqual(order.customer_friendly_status, expected_sentence)
+            self.assertEqual(order.customer_status_label, expected_label)
+            # Ensure technical internal uppercase code is never exposed as friendly status
+            self.assertNotEqual(order.customer_friendly_status, status_code)
+
+    def test_cod_customer_payment_flow(self):
+        """Requirements 53 & 54: Cash on Delivery payment flow transitions."""
+        order = self._create_test_order()
+        self.assertEqual(order.payment_method, 'COD')
+
+        # 1. Order placed
+        order.status = 'CONFIRMED'
+        order.payment_status = 'PENDING'
+        self.assertEqual(order.customer_payment_display, "Payment Pending")
+        self.assertEqual(order.customer_payment_note, "Cash on Delivery — Payment pending")
+
+        # 2. Delivered, but cash collection confirmation pending
+        order.status = 'DELIVERED'
+        order.payment_status = 'PENDING'
+        self.assertEqual(order.customer_payment_display, "Payment Pending")
+        self.assertEqual(order.customer_payment_note, "Order delivered. Payment confirmation pending.")
+
+        # 3. Cash collection confirmed by Shipping Department
+        order.status = 'DELIVERED'
+        order.payment_status = 'PAID'
+        self.assertEqual(order.customer_payment_display, "Payment Received")
+        self.assertEqual(order.customer_payment_note, "Payment received")
+
+    def test_customer_shipping_timeline(self):
+        """Requirement 51: Dynamic timeline generated from actual checkpoints."""
+        order = self._create_test_order()
+
+        # Initially CONFIRMED
+        timeline = order.customer_timeline
+        self.assertEqual(len(timeline), 5)
+        self.assertTrue(timeline[0]['completed'])
+        self.assertEqual(timeline[0]['title'], 'Order Confirmed')
+        self.assertFalse(timeline[1]['completed'])
+        self.assertEqual(timeline[1]['display_time'], 'Pending')
+
+        # Add packed checkpoint
+        DeliveryCheckpoint.objects.create(
+            order=order,
+            status='PACKED',
+            location='Warehouse Dispatch Bay',
+            notes='Packed securely',
+            is_customer_visible=True
+        )
+        order.status = 'PACKED'
+        timeline = order.customer_timeline
+        self.assertTrue(timeline[0]['completed'])
+        self.assertTrue(timeline[1]['completed'])
+        self.assertNotEqual(timeline[1]['display_time'], 'Pending')
+        self.assertFalse(timeline[2]['completed'])
+
+        # Advance to DELIVERED
+        order.status = 'DELIVERED'
+        order.delivered_at = timezone.now()
+        timeline = order.customer_timeline
+        self.assertTrue(timeline[4]['completed'])
+        self.assertFalse(timeline[4]['is_pending'])
+
+    def test_delivery_address_snapshot_immutability(self):
+        """Requirement 56: Delivery address is an immutable snapshot; changing profile address does not affect old orders."""
+        order = self._create_test_order()
+        self.assertEqual(order.shipping_city, 'Lucknow')
+        self.assertEqual(order.shipping_street_address, '123 Hazratganj')
+
+        # Customer later updates profile address to Bengaluru
+        self.address.street_address = '99 Indiranagar'
+        self.address.city = 'Bengaluru'
+        self.address.state = 'Karnataka'
+        self.address.postal_code = '560038'
+        self.address.save()
+
+        # Order must still display original Lucknow address
+        order.refresh_from_db()
+        self.assertEqual(order.shipping_city, 'Lucknow')
+        self.assertEqual(order.shipping_street_address, '123 Hazratganj')
+        self.assertIn('Lucknow', order.formatted_shipping_address)
+        self.assertNotIn('Bengaluru', order.formatted_shipping_address)
+
+        # In template rendering
+        self.client.login(username='alex@cartivo.com', password='Password@123')
+        res = self.client.get(f"/orders/{order.order_number}/")
+        self.assertContains(res, '123 Hazratganj')
+        self.assertContains(res, 'Lucknow')
+        self.assertNotContains(res, 'Indiranagar')
+
+    def test_customer_data_access_security(self):
+        """Requirement 62: Customer can access ONLY their own orders. User B cannot view User A's order."""
+        order = self._create_test_order()
+
+        # Stranger attempts to view User A's order detail -> 404
+        self.client.login(username='stranger@cartivo.com', password='Password@123')
+        res = self.client.get(f"/orders/{order.order_number}/")
+        self.assertEqual(res.status_code, 404)
+
+        # Stranger attempts to view User A's receipt -> 404
+        res = self.client.get(f"/orders/{order.order_number}/receipt/")
+        self.assertEqual(res.status_code, 404)
+
+        # Stranger attempts to cancel User A's order -> 403 Forbidden
+        res = self.client.post(f"/orders/{order.order_number}/cancel/")
+        self.assertEqual(res.status_code, 403)
+
+    def test_customer_order_cancellation_rules(self):
+        """Requirement 61: Order cancellation allowed on CONFIRMED, but restricted on PACKED, SHIPPED, DELIVERED."""
+        order = self._create_test_order()
+        self.client.login(username='alex@cartivo.com', password='Password@123')
+
+        # When CONFIRMED: Cancellation allowed
+        self.assertTrue(order.can_cancel)
+        initial_stock = Stock.objects.get(product=self.product, warehouse=self.warehouse).on_hand_quantity
+        res = self.client.post(f"/orders/{order.order_number}/cancel/")
+        self.assertEqual(res.status_code, 302)
+
+        order.refresh_from_db()
+        self.assertEqual(order.status, 'CANCELLED')
+        # Check stock restored
+        new_stock = Stock.objects.get(product=self.product, warehouse=self.warehouse).on_hand_quantity
+        self.assertEqual(new_stock, initial_stock + 1)
+        # Check checkpoint created
+        self.assertTrue(order.checkpoints.filter(status='CANCELLED').exists())
+
+        # Test restriction when order is PACKED or SHIPPED
+        order2 = self._create_test_order()
+        order2.status = 'SHIPPED'
+        order2.save()
+        self.assertFalse(order2.can_cancel)
+
+        res = self.client.post(f"/orders/{order2.order_number}/cancel/")
+        order2.refresh_from_db()
+        self.assertEqual(order2.status, 'SHIPPED')  # Not cancelled!
+
+    def test_contextual_actions_display(self):
+        """Requirement 60: Dynamic actions based on order status."""
+        order = self._create_test_order()
+        self.client.login(username='alex@cartivo.com', password='Password@123')
+
+        # 1. When CONFIRMED
+        res = self.client.get(f"/orders/{order.order_number}/")
+        self.assertContains(res, "View / Print Receipt")
+        self.assertContains(res, "Cancel Order")
+        self.assertNotContains(res, "View Payment Receipt")
+
+        # 2. When SHIPPED with tracking URL
+        order.status = 'SHIPPED'
+        order.tracking_number = 'DLV123456'
+        order.tracking_url = 'https://delhivery.com/track/DLV123456'
+        order.save()
+
+        res = self.client.get(f"/orders/{order.order_number}/")
+        self.assertContains(res, "Track Shipment")
+        self.assertContains(res, "https://delhivery.com/track/DLV123456")
+        self.assertNotContains(res, "Cancel Order")
+
+        # 3. When DELIVERED and COD payment received (PAID)
+        order.status = 'DELIVERED'
+        order.payment_status = 'PAID'
+        order.save()
+
+        res = self.client.get(f"/orders/{order.order_number}/")
+        self.assertContains(res, "View Payment Receipt")
+
+    def test_no_internal_operational_data_leakage(self):
+        """Requirement 63: Internal operational data is NEVER exposed to customer."""
+        order = self._create_test_order()
+        order.cod_collected_by = "EMP-SECRET-884"
+        order.cod_received_amount = Decimal('1499.00')
+        order.delivery_failure_reason = "INTERNAL_GATE_SECURITY_REJECTED"
+        order.internal_notes = "Customer phone was switched off at 4 PM"
+        order.save()
+
+        self.client.login(username='alex@cartivo.com', password='Password@123')
+        res = self.client.get(f"/orders/{order.order_number}/")
+        self.assertNotContains(res, "EMP-SECRET-884")
+        self.assertNotContains(res, "INTERNAL_GATE_SECURITY_REJECTED")
+        self.assertNotContains(res, "Customer phone was switched off at 4 PM")
+
+        res_receipt = self.client.get(f"/orders/{order.order_number}/receipt/")
+        self.assertNotContains(res_receipt, "EMP-SECRET-884")
+        self.assertNotContains(res_receipt, "INTERNAL_GATE_SECURITY_REJECTED")
+
+    def test_customer_notifications_dispatch_and_inbox(self):
+        """Requirements 58 & 59: Shipping events trigger customer notifications; strictly scoped to order owner."""
+        order = self._create_test_order()
+
+        # Trigger shipping notification
+        from apps.notifications.services import notify_order_event
+        from apps.notifications.models import Notification
+
+        notify_order_event(order, 'ORDER_SHIPPED')
+        notify_order_event(order, 'COD_PAYMENT_RECEIVED')
+
+        # Owner has notifications
+        self.client.login(username='alex@cartivo.com', password='Password@123')
+        res = self.client.get('/notifications/')
+        self.assertEqual(res.status_code, 200)
+        self.assertContains(res, f"Your order {order.order_number} has been shipped.")
+        self.assertContains(res, f"COD payment of ₹{order.total_amount} has been received.")
+
+        # Stranger has zero notifications
+        self.client.login(username='stranger@cartivo.com', password='Password@123')
+        res_stranger = self.client.get('/notifications/')
+        self.assertNotContains(res_stranger, order.order_number)
+        self.assertEqual(Notification.objects.filter(user=self.other_user).count(), 0)
+

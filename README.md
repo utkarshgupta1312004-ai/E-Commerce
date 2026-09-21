@@ -130,6 +130,39 @@ Open your browser to:
 
 ---
 
+## Deploying to Vercel (Live Cloud Deployment)
+
+Cartivo is configured for automated, serverless deployment on **Vercel** with `@vercel/python`, `@vercel/static-build`, and **WhiteNoise** static asset delivery.
+
+### 1. One-Click Import from GitHub
+1. Log in to [Vercel](https://vercel.com/) and click **"Add New..." > "Project"**.
+2. Select and import your GitHub repository: `utkarshgupta1312004-ai/E-Commerce`.
+3. **Framework Preset**: Select **Other**.
+4. **Root Directory**: Leave as `./` (the root directory contains `vercel.json` and `api/index.py`).
+
+### 2. Configure Environment Variables in Vercel
+In your Vercel Project Settings under **Environment Variables**, add:
+
+| Variable Name | Recommended Value / Description | Required |
+| :--- | :--- | :--- |
+| `SECRET_KEY` | Generate a strong random key (e.g. 50+ characters) | **Yes** |
+| `DEBUG` | `False` | **Yes** |
+| `ALLOWED_HOSTS` | `*` or `.vercel.app,yourcustomdomain.com` | **Yes** |
+| `DATABASE_URL` | PostgreSQL connection URL (e.g. from [Neon.tech](https://neon.tech), [Supabase](https://supabase.com), or Vercel Postgres) | Recommended for Production |
+| `GEMINI_API_KEY` | Your Google Gemini API Key for the AI shopping concierge widget | Optional |
+
+> **Note on Database Storage**:
+> - **Instant Preview Mode**: If `DATABASE_URL` is omitted, Cartivo runs using SQLite in `/tmp/db.sqlite3` with fallback seeding.
+> - **Production Persistence**: For persistent customer accounts, carts, orders, and reviews, create a free database at [Neon.tech](https://neon.tech) and paste the connection string into `DATABASE_URL`. The automated build script (`build_files.sh`) will automatically run all migrations and populate the store catalog with all products (`fixtures/seed_data.json`) on deploy!
+
+### 3. Deploy
+Click **"Deploy"**. Vercel will:
+1. Run `build_files.sh` to install requirements, collect and compress static files (`staticfiles/`), and migrate/seed database tables.
+2. Spin up the serverless Python WSGI handler via `api/index.py`.
+3. Provide an instant live SSL domain: `https://<your-project>.vercel.app`.
+
+---
+
 ## Project Structure
 
 ```

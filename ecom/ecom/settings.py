@@ -159,11 +159,21 @@ else:
     if is_vercel:
         import shutil
         tmp_db = Path('/tmp/db.sqlite3')
-        if not tmp_db.exists() and db_path.exists():
-            try:
-                shutil.copy2(db_path, tmp_db)
-            except Exception:
-                pass
+        if not tmp_db.exists():
+            candidates = [
+                BASE_DIR / 'db.sqlite3',
+                BASE_DIR.parent / 'ecom' / 'db.sqlite3',
+                BASE_DIR.parent / 'db.sqlite3',
+                Path('/var/task/ecom/db.sqlite3'),
+                Path('/var/task/db.sqlite3'),
+            ]
+            for src in candidates:
+                if src.exists() and src.stat().st_size > 0:
+                    try:
+                        shutil.copy2(src, tmp_db)
+                        break
+                    except Exception:
+                        pass
         db_path = tmp_db
 
     DATABASES = {

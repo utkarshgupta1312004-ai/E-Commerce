@@ -213,6 +213,7 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 STATIC_ROOT = BASE_DIR.parent / 'staticfiles'
+WHITENOISE_USE_FINDERS = True
 
 STORAGES = {
     "default": {

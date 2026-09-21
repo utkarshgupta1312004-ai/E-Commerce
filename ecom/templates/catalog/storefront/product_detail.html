@@ -153,7 +153,9 @@
                             <span class="text-sm font-bold text-slate-900 ml-1">{{ product.rating|floatformat:1 }}</span>
                         </div>
                         <span class="text-slate-300">&bull;</span>
-                        <span class="text-xs text-slate-500">{{ product.review_count|default:12 }} customer reviews</span>
+                        <a href="#reviews" class="text-xs text-slate-500 hover:text-blue-600 font-medium transition-colors">
+                            {{ product.review_count }} customer review{{ product.review_count|pluralize }}
+                        </a>
                         <span class="text-slate-300">&bull;</span>
                         <div id="stock-indicator-wrapper">
                         {% if product.is_in_stock %}
@@ -298,11 +300,13 @@
 
                             <!-- Wishlist Action -->
                             <button 
+                                id="btn-toggle-wishlist"
                                 type="button" 
-                                title="Add to Wishlist"
-                                class="w-12 h-12 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-500 hover:text-rose-600 transition-colors shrink-0 cursor-pointer"
+                                onclick="handleToggleWishlist()"
+                                title="{% if is_in_wishlist %}Remove from Wishlist{% else %}Add to Wishlist{% endif %}"
+                                class="w-12 h-12 rounded-2xl border flex items-center justify-center transition-all shrink-0 cursor-pointer {% if is_in_wishlist %}border-rose-300 bg-rose-50 text-rose-600 shadow-xs hover:bg-rose-100{% else %}border-slate-200 bg-white hover:bg-slate-50 text-slate-500 hover:text-rose-600{% endif %}"
                             >
-                                <i data-lucide="heart" class="w-5 h-5"></i>
+                                <i id="wishlist-icon" data-lucide="heart" class="w-5 h-5 {% if is_in_wishlist %}fill-rose-500 text-rose-500{% endif %}"></i>
                             </button>
                         </div>
                     </form>
@@ -366,6 +370,13 @@
                 >
                     Shipping & Care
                 </button>
+                <a 
+                    href="#reviews"
+                    class="tab-link text-sm font-semibold text-slate-500 hover:text-blue-600 pb-4 -mb-4.5 transition-colors cursor-pointer inline-flex items-center gap-1.5"
+                >
+                    <span>Reviews & Ratings</span>
+                    <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-700">{{ product.review_count }}</span>
+                </a>
             </div>
 
             <!-- Tab Content: Description -->
@@ -427,6 +438,464 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- Customer Ratings & Reviews Section (Integrated Reviews Module) -->
+        <!-- ============================================================== -->
+        <div id="reviews" class="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-6 lg:p-10 mb-12 scroll-mt-20">
+            <!-- Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-8 border-b border-slate-100">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-blue-600">Feedback & Ratings</span>
+                    <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight mt-0.5">Customer Reviews</h2>
+                    <p class="text-xs text-slate-500 mt-1">Authentic experiences and ratings shared by Cartivo buyers</p>
+                </div>
+                <div>
+                    {% if user.is_authenticated %}
+                        {% if user_review %}
+                        <button type="button" onclick="toggleReviewForm()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-sm hover:shadow-md transition-all cursor-pointer">
+                            <i data-lucide="edit-2" class="w-4 h-4"></i>
+                            <span>Edit Your Review</span>
+                        </button>
+                        {% else %}
+                        <button type="button" onclick="toggleReviewForm()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm hover:shadow-md transition-all cursor-pointer">
+                            <i data-lucide="pen-tool" class="w-4 h-4"></i>
+                            <span>Write a Review</span>
+                        </button>
+                        {% endif %}
+                    {% else %}
+                    <a href="/accounts/login/?next={{ request.path }}#reviews" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-slate-900 hover:bg-blue-600 text-white font-bold text-xs shadow-sm hover:shadow-md transition-all">
+                        <i data-lucide="log-in" class="w-4 h-4"></i>
+                        <span>Sign In to Review</span>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Rating Summary Dashboard -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 py-8 border-b border-slate-100 items-center">
+                <!-- Left: Big Rating Score -->
+                <div class="lg:col-span-4 flex flex-col items-center sm:items-start text-center sm:text-left bg-slate-50/70 p-6 rounded-2xl border border-slate-100">
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-5xl font-extrabold text-slate-950 tracking-tight">{{ review_summary.average_rating|floatformat:1 }}</span>
+                        <span class="text-slate-400 font-bold text-lg">/ 5</span>
+                    </div>
+                    <div class="flex items-center gap-1 text-amber-400 mt-2 mb-2">
+                        {% for _ in review_summary.full_stars %}
+                        <i data-lucide="star" class="w-5 h-5 fill-amber-400 text-amber-400"></i>
+                        {% endfor %}
+                        {% if review_summary.has_half %}
+                        <i data-lucide="star-half" class="w-5 h-5 fill-amber-400 text-amber-400"></i>
+                        {% endif %}
+                        {% for _ in review_summary.empty_stars %}
+                        <i data-lucide="star" class="w-5 h-5 text-slate-200"></i>
+                        {% endfor %}
+                    </div>
+                    <span class="text-xs font-semibold text-slate-600">
+                        Based on {{ review_summary.total_reviews }} customer review{{ review_summary.total_reviews|pluralize }}
+                    </span>
+                    {% if is_verified_buyer %}
+                    <div class="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <i data-lucide="badge-check" class="w-3.5 h-3.5 text-emerald-600"></i>
+                        <span>Verified Buyer on this Item</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Middle: Star Rating Distribution Progress Bars -->
+                <div class="lg:col-span-5 space-y-2.5 px-0 sm:px-4">
+                    {% for row in review_summary.distribution %}
+                    <div class="flex items-center gap-3 text-xs">
+                        <div class="flex items-center gap-1 w-12 text-slate-700 font-bold shrink-0">
+                            <span>{{ row.star }}</span>
+                            <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400 text-amber-400"></i>
+                        </div>
+                        <div class="flex-1 h-3 rounded-full bg-slate-100 overflow-hidden relative">
+                            <div class="h-full bg-amber-400 rounded-full transition-all duration-700" style="width: {{ row.percentage }}%;"></div>
+                        </div>
+                        <span class="w-10 text-right font-medium text-slate-500 shrink-0">{{ row.count }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Right: Recommendation Highlight / Trust Indicator -->
+                <div class="lg:col-span-3 flex flex-col justify-center items-center text-center p-6 rounded-2xl bg-blue-50/50 border border-blue-100 text-slate-800">
+                    <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center mb-2 shadow-xs">
+                        <i data-lucide="shield-check" class="w-5 h-5"></i>
+                    </div>
+                    <h4 class="font-bold text-sm text-slate-900">100% Authentic</h4>
+                    <p class="text-xs text-slate-500 mt-1">All reviews are verified for legitimate community feedback and moderated for quality.</p>
+                </div>
+            </div>
+
+            <!-- Existing Customer Review Banner (if customer already reviewed) -->
+            {% if user_review %}
+            <div id="user-review-summary" class="my-6 p-5 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-slate-900">Your Current Review</span>
+                        <div class="flex items-center text-amber-400">
+                            {% for filled in user_review.get_rating_stars %}
+                                {% if filled %}
+                                <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+                                {% else %}
+                                <i data-lucide="star" class="w-3.5 h-3.5 text-slate-300"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        {% if user_review.is_verified_purchase %}
+                        <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                            <i data-lucide="check-circle" class="w-3 h-3"></i> Verified
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% if user_review.title %}
+                    <h4 class="text-xs font-bold text-slate-900">{{ user_review.title }}</h4>
+                    {% endif %}
+                    <p class="text-xs text-slate-600 line-clamp-2">{{ user_review.comment }}</p>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <button type="button" onclick="toggleReviewForm()" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-xs font-semibold text-slate-700 transition-colors cursor-pointer">
+                        Edit Review
+                    </button>
+                    <form method="POST" action="{% url 'reviews:delete_review' user_review.id %}" onsubmit="return confirm('Are you sure you want to remove your review?');">
+                        {% csrf_token %}
+                        <button type="submit" class="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-xs font-semibold text-rose-700 transition-colors cursor-pointer">
+                            Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Interactive Review Form (Collapsible) -->
+            <div id="review-form-card" class="{% if not user_review and request.GET.write_review != '1' %}hidden{% elif user_review %}hidden{% endif %} my-6 p-6 sm:p-8 rounded-3xl bg-slate-50/80 border border-slate-200 transition-all">
+                <div class="flex items-center justify-between pb-4 mb-6 border-b border-slate-200">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900">
+                            {% if user_review %}Edit Your Review{% else %}Write Your Review for {{ product.title }}{% endif %}
+                        </h3>
+                        <p class="text-xs text-slate-500">Your feedback helps fellow shoppers make informed decisions.</p>
+                    </div>
+                    <button type="button" onclick="toggleReviewForm()" class="text-slate-400 hover:text-slate-700 p-1 rounded-lg cursor-pointer">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <form method="POST" action="{% url 'reviews:submit_review' product.slug %}" enctype="multipart/form-data" class="space-y-6">
+                    {% csrf_token %}
+
+                    <!-- Interactive Star Rating Input -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                            Overall Rating <span class="text-rose-500">*</span>
+                        </label>
+                        <div class="flex items-center gap-2" id="star-rating-selector">
+                            <input type="hidden" name="rating" id="selected-rating-value" value="{{ user_review.rating|default:'5' }}">
+                            {% for num in "12345" %}
+                            <button 
+                                type="button" 
+                                data-rating="{{ num }}" 
+                                onclick="setRating({{ num }})" 
+                                onmouseenter="hoverRating({{ num }})" 
+                                onmouseleave="resetRatingHover()"
+                                class="star-btn p-1 text-slate-300 hover:scale-110 transition-transform cursor-pointer"
+                            >
+                                <i data-lucide="star" class="w-7 h-7 star-icon transition-colors"></i>
+                            </button>
+                            {% endfor %}
+                            <span id="rating-label" class="ml-2 text-xs font-bold text-slate-700">5 Stars - Excellent</span>
+                        </div>
+                    </div>
+
+                    <!-- Variant Selection (if product has variants) -->
+                    {% if variants %}
+                    <div>
+                        <label for="review-variant-select" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                            Purchased Variant (Optional)
+                        </label>
+                        <select name="variant_id" id="review-variant-select" class="w-full sm:w-80 px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs text-slate-800 focus:outline-hidden focus:border-blue-500">
+                            <option value="">General Product Review</option>
+                            {% for v in variants %}
+                            <option value="{{ v.id }}" {% if user_review.variant_id == v.id %}selected{% endif %}>
+                                {{ v.name|default:v.sku }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+
+                    <!-- Review Headline Title -->
+                    <div>
+                        <label for="review-title" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                            Headline / Review Title
+                        </label>
+                        <input 
+                            type="text" 
+                            name="title" 
+                            id="review-title" 
+                            value="{{ user_review.title|default:'' }}" 
+                            placeholder="e.g. Exceptional craftsmanship and high durability" 
+                            maxlength="200"
+                            class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-hidden focus:border-blue-500 transition-colors"
+                        >
+                    </div>
+
+                    <!-- Detailed Comment -->
+                    <div>
+                        <label for="review-comment" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                            Review Commentary <span class="text-rose-500">*</span>
+                        </label>
+                        <textarea 
+                            name="comment" 
+                            id="review-comment" 
+                            rows="4" 
+                            required 
+                            placeholder="What did you like or dislike? How was the performance, material, or delivery experience?"
+                            class="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-hidden focus:border-blue-500 transition-colors"
+                        >{{ user_review.comment|default:'' }}</textarea>
+                    </div>
+
+                    <!-- Optional Media Photo Upload -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                            Upload Photos (Optional)
+                        </label>
+                        <input 
+                            type="file" 
+                            name="images" 
+                            id="review-images-input" 
+                            multiple 
+                            accept="image/png, image/jpeg, image/webp" 
+                            class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-200 file:text-slate-800 hover:file:bg-slate-300 cursor-pointer"
+                        >
+                        <p class="text-[11px] text-slate-400 mt-1">JPEG, PNG, or WEBP up to 5MB each.</p>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex items-center gap-3 pt-2">
+                        <button type="submit" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-all cursor-pointer">
+                            {% if user_review %}Save Changes{% else %}Submit Review{% endif %}
+                        </button>
+                        <button type="button" onclick="toggleReviewForm()" class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-xs font-semibold text-slate-700 transition-colors cursor-pointer">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Review Sorting & Filter Bar -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-5 border-b border-slate-100">
+                <span class="text-xs font-semibold text-slate-600">
+                    Showing {{ reviews|length }} of {{ review_summary.total_reviews }} review{{ review_summary.total_reviews|pluralize }}
+                </span>
+
+                <div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
+                    <span class="text-xs text-slate-400 font-medium shrink-0">Sort by:</span>
+                    <a href="?review_sort=recent#reviews" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all {% if review_sort == 'recent' %}bg-slate-900 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+                        Most Recent
+                    </a>
+                    <a href="?review_sort=highest#reviews" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all {% if review_sort == 'highest' %}bg-slate-900 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+                        Highest Rating
+                    </a>
+                    <a href="?review_sort=lowest#reviews" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all {% if review_sort == 'lowest' %}bg-slate-900 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+                        Lowest Rating
+                    </a>
+                    <a href="?review_sort=helpful#reviews" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all {% if review_sort == 'helpful' %}bg-slate-900 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+                        Most Helpful
+                    </a>
+                </div>
+            </div>
+
+            <!-- Customer Reviews List -->
+            <div class="divide-y divide-slate-100">
+                {% for rev in reviews %}
+                <div class="py-8 first:pt-6 last:pb-0 space-y-4" id="review-item-{{ rev.id }}">
+                    <!-- Author & Rating Row -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center justify-center shadow-xs">
+                                {{ rev.author_display_name|slice:":1"|upper }}
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <h4 class="text-xs sm:text-sm font-bold text-slate-900">{{ rev.author_display_name }}</h4>
+                                    {% if rev.is_verified_purchase %}
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                        <i data-lucide="badge-check" class="w-3 h-3 text-emerald-600"></i>
+                                        Verified Purchase
+                                    </span>
+                                    {% endif %}
+                                    {% if rev.variant %}
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-100 text-slate-600">
+                                        {{ rev.variant.name|default:rev.variant.sku }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                                <span class="text-[11px] text-slate-400">{{ rev.created_at|date:"F d, Y" }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Star Rating Score -->
+                        <div class="flex items-center gap-1 text-amber-400">
+                            {% for filled in rev.get_rating_stars %}
+                                {% if filled %}
+                                <i data-lucide="star" class="w-4 h-4 fill-amber-400 text-amber-400"></i>
+                                {% else %}
+                                <i data-lucide="star" class="w-4 h-4 text-slate-200"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Review Title & Body -->
+                    <div class="space-y-1.5 pl-0 sm:pl-12">
+                        {% if rev.title %}
+                        <h5 class="text-sm font-bold text-slate-900 leading-snug">{{ rev.title }}</h5>
+                        {% endif %}
+                        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed whitespace-pre-line">{{ rev.comment }}</p>
+                    </div>
+
+                    <!-- Customer Uploaded Media Thumbnails -->
+                    {% if rev.media.all %}
+                    <div class="flex items-center gap-3 pl-0 sm:pl-12 overflow-x-auto py-2">
+                        {% for m in rev.media.all %}
+                        {% if m.effective_image_url %}
+                        <a href="{{ m.effective_image_url }}" target="_blank" class="w-16 h-16 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 hover:scale-105 transition-transform shrink-0">
+                            <img src="{{ m.effective_image_url }}" alt="Review photo" class="w-full h-full object-cover">
+                        </a>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Official Seller / Admin Reply (Requirement 11 & 12) -->
+                    {% if rev.official_reply %}
+                    <div class="mt-4 ml-0 sm:ml-12 p-4 sm:p-5 rounded-2xl bg-slate-50 border-l-4 border-blue-600 border-t border-r border-b border-slate-200/80 space-y-2">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center">
+                                    <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                                </span>
+                                <span class="text-xs font-bold text-slate-900">{{ rev.official_reply.responder_name }}</span>
+                                <span class="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-blue-100 text-blue-700">Official</span>
+                            </div>
+                            <span class="text-[11px] text-slate-400 font-mono">{{ rev.official_reply.created_at|date:"M d, Y" }}</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed pl-8">
+                            {{ rev.official_reply.reply_text }}
+                        </p>
+                    </div>
+                    {% endif %}
+
+                    <!-- Review Actions: Helpful voting & Staff replies -->
+                    <div class="flex items-center justify-between pt-2 pl-0 sm:pl-12 text-xs">
+                        <div class="flex items-center gap-3">
+                            <form method="POST" action="{% url 'reviews:vote_helpful' rev.id %}" class="inline-flex items-center">
+                                {% csrf_token %}
+                                <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-600 font-medium transition-colors cursor-pointer text-xs">
+                                    <i data-lucide="thumbs-up" class="w-3.5 h-3.5 text-slate-500"></i>
+                                    <span>Helpful</span>
+                                    <span class="font-bold text-slate-900">({{ rev.helpful_count }})</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Staff / Admin Controls -->
+                        {% if can_manage_reviews %}
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="document.getElementById('staff-reply-box-{{ rev.id }}').classList.toggle('hidden')" class="text-blue-600 hover:text-blue-800 font-semibold text-xs cursor-pointer">
+                                Reply as Staff
+                            </button>
+                            <span class="text-slate-300">&bull;</span>
+                            <form method="POST" action="{% url 'reviews:moderate_review' rev.id %}" class="inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="status" value="{% if rev.status == 'APPROVED' %}REJECTED{% else %}APPROVED{% endif %}">
+                                <button type="submit" class="{% if rev.status == 'APPROVED' %}text-rose-600 hover:text-rose-800{% else %}text-emerald-600 hover:text-emerald-800{% endif %} font-semibold text-xs cursor-pointer">
+                                    {% if rev.status == 'APPROVED' %}Reject{% else %}Approve{% endif %}
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Staff Inline Reply Box -->
+                    {% if can_manage_reviews %}
+                    <div id="staff-reply-box-{{ rev.id }}" class="hidden mt-3 pl-0 sm:pl-12">
+                        <form method="POST" action="{% url 'reviews:reply_review' rev.id %}" class="p-4 rounded-2xl bg-slate-900 text-white space-y-3">
+                            {% csrf_token %}
+                            <div class="text-xs font-bold text-slate-300">Post Official Staff / Seller Reply</div>
+                            <textarea name="reply_text" rows="2" required placeholder="Write a response to this customer's feedback..." class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 placeholder-slate-500 focus:outline-hidden focus:border-blue-500"></textarea>
+                            <div class="flex items-center gap-2">
+                                <button type="submit" class="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-colors cursor-pointer">
+                                    Publish Reply
+                                </button>
+                                <button type="button" onclick="document.getElementById('staff-reply-box-{{ rev.id }}').classList.add('hidden')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white text-xs transition-colors cursor-pointer">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <!-- Empty State (Requirement 34) -->
+                <div class="py-16 text-center space-y-4">
+                    <div class="w-16 h-16 mx-auto rounded-3xl bg-slate-100 flex items-center justify-center text-slate-400">
+                        <i data-lucide="message-square-plus" class="w-8 h-8"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <h3 class="text-base font-bold text-slate-900">No reviews yet</h3>
+                        <p class="text-xs text-slate-500 max-w-sm mx-auto">Be the first to review {{ product.title }} and share your impressions with the Cartivo community.</p>
+                    </div>
+                    {% if user.is_authenticated %}
+                    <button type="button" onclick="toggleReviewForm()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-all cursor-pointer">
+                        <i data-lucide="pen-tool" class="w-4 h-4"></i>
+                        <span>Write the First Review</span>
+                    </button>
+                    {% else %}
+                    <a href="/accounts/login/?next={{ request.path }}#reviews" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-slate-900 hover:bg-blue-600 text-white font-bold text-xs shadow-md transition-all">
+                        <i data-lucide="log-in" class="w-4 h-4"></i>
+                        <span>Sign In to Review</span>
+                    </a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Review Pagination (Requirement 28) -->
+            {% if reviews_page_obj.paginator.num_pages > 1 %}
+            <div class="flex items-center justify-between pt-8 mt-8 border-t border-slate-100 text-xs">
+                {% if reviews_page_obj.has_previous %}
+                <a href="?review_page={{ reviews_page_obj.previous_page_number }}&review_sort={{ review_sort }}#reviews" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition-colors">
+                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                    <span>Previous</span>
+                </a>
+                {% else %}
+                <span class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-50 text-slate-300 font-semibold cursor-not-allowed">
+                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                    <span>Previous</span>
+                </span>
+                {% endif %}
+
+                <span class="text-slate-500 font-medium">
+                    Page {{ reviews_page_obj.number }} of {{ reviews_page_obj.paginator.num_pages }}
+                </span>
+
+                {% if reviews_page_obj.has_next %}
+                <a href="?review_page={{ reviews_page_obj.next_page_number }}&review_sort={{ review_sort }}#reviews" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition-colors">
+                    <span>Next</span>
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </a>
+                {% else %}
+                <span class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-50 text-slate-300 font-semibold cursor-not-allowed">
+                    <span>Next</span>
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </span>
+                {% endif %}
+            </div>
+            {% endif %}
         </div>
 
         <!-- Related Products Section -->
@@ -792,5 +1261,137 @@
             document.getElementById('product-purchase-form').submit();
         });
     }
+
+    function handleToggleWishlist() {
+        const productId = "{{ product.id }}";
+        const variantInput = document.getElementById('selected-variant-id');
+        const variantId = variantInput ? variantInput.value : '';
+        const btn = document.getElementById('btn-toggle-wishlist');
+        const icon = document.getElementById('wishlist-icon');
+
+        fetch("{% url 'wishlist:toggle_wishlist' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                variant_id: variantId || null
+            })
+        })
+        .then(res => {
+            if (res.status === 401) {
+                return res.json().then(data => {
+                    window.location.href = data.login_url || "{% url 'accounts:login' %}?next={{ request.path }}";
+                });
+            }
+            return res.json();
+        })
+        .then(data => {
+            if (!data) return;
+            if (data.success) {
+                if (data.in_wishlist) {
+                    btn.classList.remove('border-slate-200', 'bg-white', 'text-slate-500', 'hover:bg-slate-50', 'hover:text-rose-600');
+                    btn.classList.add('border-rose-300', 'bg-rose-50', 'text-rose-600', 'hover:bg-rose-100', 'shadow-xs');
+                    icon.classList.add('fill-rose-500', 'text-rose-500');
+                    btn.title = "Remove from Wishlist";
+                    if (window.showToast) window.showToast(data.message, 'success');
+                } else {
+                    btn.classList.remove('border-rose-300', 'bg-rose-50', 'text-rose-600', 'hover:bg-rose-100', 'shadow-xs');
+                    btn.classList.add('border-slate-200', 'bg-white', 'text-slate-500', 'hover:bg-slate-50', 'hover:text-rose-600');
+                    icon.classList.remove('fill-rose-500', 'text-rose-500');
+                    btn.title = "Add to Wishlist";
+                    if (window.showToast) window.showToast(data.message, 'info');
+                }
+
+                document.querySelectorAll('.wishlist-badge-count').forEach(badge => {
+                    badge.textContent = data.total_items;
+                    if (data.total_items > 0) {
+                        badge.classList.remove('hidden');
+                    } else {
+                        badge.classList.add('hidden');
+                    }
+                });
+            } else if (data.message) {
+                alert(data.message);
+            }
+        })
+        .catch(err => {
+            console.error('Wishlist toggle error:', err);
+        });
+    }
+
+    // ==============================================================================
+    // Reviews Interactive Logic: Form Toggling, Star Rating, Hover & Sync
+    // ==============================================================================
+    function toggleReviewForm() {
+        const formCard = document.getElementById('review-form-card');
+        if (formCard) {
+            formCard.classList.toggle('hidden');
+            if (!formCard.classList.contains('hidden')) {
+                formCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    }
+
+    const reviewRatingLabels = {
+        1: "1 Star - Poor",
+        2: "2 Stars - Fair",
+        3: "3 Stars - Good",
+        4: "4 Stars - Very Good",
+        5: "5 Stars - Excellent"
+    };
+
+    function setRating(val) {
+        const input = document.getElementById('selected-rating-value');
+        if (input) input.value = val;
+        updateStarIcons(val);
+        const label = document.getElementById('rating-label');
+        if (label) label.textContent = reviewRatingLabels[val] || `${val} Stars`;
+    }
+
+    function hoverRating(val) {
+        updateStarIcons(val);
+        const label = document.getElementById('rating-label');
+        if (label) label.textContent = reviewRatingLabels[val] || `${val} Stars`;
+    }
+
+    function resetRatingHover() {
+        const input = document.getElementById('selected-rating-value');
+        const current = parseInt(input ? input.value : '5') || 5;
+        updateStarIcons(current);
+        const label = document.getElementById('rating-label');
+        if (label) label.textContent = reviewRatingLabels[current] || `${current} Stars`;
+    }
+
+    function updateStarIcons(score) {
+        document.querySelectorAll('#star-rating-selector .star-btn').forEach(btn => {
+            const r = parseInt(btn.dataset.rating);
+            const icon = btn.querySelector('.star-icon');
+            if (icon) {
+                if (r <= score) {
+                    icon.classList.remove('text-slate-300', 'text-slate-200');
+                    icon.classList.add('fill-amber-400', 'text-amber-400');
+                } else {
+                    icon.classList.remove('fill-amber-400', 'text-amber-400');
+                    icon.classList.add('text-slate-300');
+                }
+            }
+        });
+    }
+
+    // Initialize stars on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        const input = document.getElementById('selected-rating-value');
+        if (input) {
+            const initialRating = parseInt(input.value) || 5;
+            setRating(initialRating);
+        }
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    });
 </script>
 {% endblock %}

@@ -67,8 +67,13 @@
                     </span>
                     {% endif %}
                     <!-- Wishlist Toggle -->
-                    <button class="absolute top-2 sm:top-3 right-2 sm:right-3 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 backdrop-blur-sm text-slate-600 hover:text-rose-500 hover:bg-white flex items-center justify-center shadow-sm transition-colors cursor-pointer z-20" title="Save to Wishlist">
-                        <i data-lucide="heart" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                    <button 
+                        type="button"
+                        onclick="toggleWishlistCard('{{ prod.id }}', this)"
+                        class="absolute top-2 sm:top-3 right-2 sm:right-3 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors cursor-pointer z-20 {% if prod.id in user_wishlist_product_ids %}text-rose-600 bg-rose-50/90{% else %}text-slate-600 hover:text-rose-500 hover:bg-white{% endif %}" 
+                        title="{% if prod.id in user_wishlist_product_ids %}Remove from Wishlist{% else %}Save to Wishlist{% endif %}"
+                    >
+                        <i data-lucide="heart" class="w-3.5 h-3.5 sm:w-4 sm:h-4 {% if prod.id in user_wishlist_product_ids %}fill-rose-500 text-rose-500{% endif %}"></i>
                     </button>
                 </div>
 

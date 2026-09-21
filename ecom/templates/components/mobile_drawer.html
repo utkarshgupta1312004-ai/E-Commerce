@@ -86,9 +86,16 @@
                 <i data-lucide="package" class="w-4 h-4 text-slate-400"></i>
                 <span>My Orders</span>
             </a>
-            <a href="/wishlist/" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-slate-950">
-                <i data-lucide="heart" class="w-4 h-4 text-rose-500"></i>
-                <span>Wishlist</span>
+            <a href="{% url 'wishlist:wishlist_view' %}" class="flex items-center justify-between px-3 py-2 text-sm text-slate-600 hover:text-slate-950">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="heart" class="w-4 h-4 text-rose-500"></i>
+                    <span>Wishlist</span>
+                </div>
+                {% if wishlist_item_count %}
+                <span class="wishlist-badge-count px-2 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-600">
+                    {{ wishlist_item_count }}
+                </span>
+                {% endif %}
             </a>
             <a href="/notifications/" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 hover:text-slate-950">
                 <i data-lucide="bell" class="w-4 h-4 text-amber-500"></i>

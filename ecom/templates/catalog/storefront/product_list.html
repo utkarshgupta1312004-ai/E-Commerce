@@ -466,10 +466,11 @@
                             <div class="absolute top-3 right-3 z-20">
                                 <button 
                                     type="button" 
-                                    class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/95 backdrop-blur-md text-slate-600 hover:text-rose-600 hover:bg-white flex items-center justify-center shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer active:scale-95 group/btn" 
-                                    title="Save to Wishlist"
+                                    onclick="toggleWishlistCard('{{ prod.id }}', this)"
+                                    class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer active:scale-95 group/btn {% if prod.id in user_wishlist_product_ids %}text-rose-600 bg-rose-50/90{% else %}text-slate-600 hover:text-rose-600 hover:bg-white{% endif %}" 
+                                    title="{% if prod.id in user_wishlist_product_ids %}Remove from Wishlist{% else %}Save to Wishlist{% endif %}"
                                 >
-                                    <i data-lucide="heart" class="w-4 h-4 stroke-[2] group-hover/btn:scale-110 transition-transform"></i>
+                                    <i data-lucide="heart" class="w-4 h-4 stroke-[2] group-hover/btn:scale-110 transition-transform {% if prod.id in user_wishlist_product_ids %}fill-rose-500 text-rose-500{% endif %}"></i>
                                 </button>
                             </div>
                         </div>

@@ -123,6 +123,67 @@
                 }
             });
         }
+
+        // Global Wishlist Card Toggle
+        window.toggleWishlistCard = function(productId, btn) {
+            if (!productId) return;
+            const icon = btn.querySelector('svg, i');
+            
+            fetch("{% url 'wishlist:toggle_wishlist' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ product_id: productId })
+            })
+            .then(res => {
+                if (res.status === 401) {
+                    return res.json().then(data => {
+                        window.location.href = data.login_url || "{% url 'accounts:login' %}?next=" + encodeURIComponent(window.location.pathname);
+                    });
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (!data) return;
+                if (data.success) {
+                    if (data.in_wishlist) {
+                        btn.classList.add('text-rose-600', 'bg-rose-50/90');
+                        btn.classList.remove('text-slate-600', 'hover:bg-white');
+                        if (icon) {
+                            icon.classList.add('fill-rose-500', 'text-rose-500');
+                        }
+                        btn.title = "Remove from Wishlist";
+                        if (window.showToast) window.showToast(data.message, 'success');
+                    } else {
+                        btn.classList.remove('text-rose-600', 'bg-rose-50/90');
+                        btn.classList.add('text-slate-600');
+                        if (icon) {
+                            icon.classList.remove('fill-rose-500', 'text-rose-500');
+                        }
+                        btn.title = "Save to Wishlist";
+                        if (window.showToast) window.showToast(data.message, 'info');
+                    }
+
+                    // Update all wishlist badge counters in the DOM
+                    document.querySelectorAll('.wishlist-badge-count').forEach(badge => {
+                        badge.textContent = data.total_items;
+                        if (data.total_items > 0) {
+                            badge.classList.remove('hidden');
+                        } else {
+                            badge.classList.add('hidden');
+                        }
+                    });
+                } else if (data.message) {
+                    alert(data.message);
+                }
+            })
+            .catch(err => {
+                console.error('Wishlist card toggle error:', err);
+            });
+        };
     </script>
 
     {% block extra_js %}{% endblock %}

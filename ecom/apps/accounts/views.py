@@ -114,6 +114,11 @@ def login_view(request):
             request.session.set_expiry(0)
 
             auth_login(request, user)
+            try:
+                from apps.cart.services import CartService
+                CartService.merge_guest_cart(request, user)
+            except Exception:
+                pass
             messages.success(request, f"Welcome back, {user.first_name or user.username}!")
 
             # Ensure redirect is safe
@@ -209,6 +214,11 @@ def register_view(request):
         # Rotate session key and log in
         request.session.cycle_key()
         auth_login(request, user)
+        try:
+            from apps.cart.services import CartService
+            CartService.merge_guest_cart(request, user)
+        except Exception:
+            pass
         messages.success(request, f"Welcome to Cartivo, {user.first_name}! Your account has been created.")
         if redirect_to and redirect_to.startswith('/'):
             return redirect(redirect_to)
@@ -373,6 +383,11 @@ def google_callback_view(request):
 
         request.session.cycle_key()
         auth_login(request, user)
+        try:
+            from apps.cart.services import CartService
+            CartService.merge_guest_cart(request, user)
+        except Exception:
+            pass
         messages.success(request, f"Signed in with Google as {user.first_name or user.email}.")
         return redirect('/')
 

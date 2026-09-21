@@ -121,10 +121,9 @@ def place_order_view(request):
             postal_code=postal_code,
             country=country,
             address_type='shipping',
-            is_default=not Address.objects.filter(user=request.user, address_type='shipping').exists()
+            is_default=save_address and not Address.objects.filter(user=request.user, address_type='shipping').exists()
         )
-        if save_address:
-            address.save()
+        address.save()
 
     payment_method = request.POST.get('payment_method', 'COD').upper()
     if payment_method != 'COD':

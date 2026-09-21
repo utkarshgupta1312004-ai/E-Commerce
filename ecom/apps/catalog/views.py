@@ -219,10 +219,16 @@ def product_list_view(request, category_slug=None):
         1 if q else 0,
     ])
 
+    user_wishlist_product_ids = set()
+    if request.user.is_authenticated:
+        from apps.wishlist.services import WishlistService
+        user_wishlist_product_ids = WishlistService.get_user_wishlist_product_ids(request.user)
+
     context = {
         'page_obj': page_obj,
         'products': page_obj.object_list,
         'total_count': total_count,
+        'user_wishlist_product_ids': user_wishlist_product_ids,
         'root_categories': root_categories,
         'available_brands': available_brands,
         'popular_tags': popular_tags,
@@ -303,6 +309,42 @@ def product_detail_view(request, slug):
         is_active=True
     ).exclude(id=product.id).select_related('category').prefetch_related('images')[:4]
 
+    # Integrated Reviews & Ratings
+    from apps.reviews.services import ReviewService
+    from apps.reviews.models import Review
+
+    review_sort = request.GET.get('review_sort', 'recent')
+    reviews_qs = product.reviews.filter(status=Review.STATUS_APPROVED).select_related(
+        'user', 'variant'
+    ).prefetch_related('replies__user', 'media')
+
+    if review_sort == 'highest':
+        reviews_qs = reviews_qs.order_by('-rating', '-created_at')
+    elif review_sort == 'lowest':
+        reviews_qs = reviews_qs.order_by('rating', '-created_at')
+    elif review_sort == 'helpful':
+        reviews_qs = reviews_qs.order_by('-helpful_count', '-created_at')
+    else:  # recent
+        reviews_qs = reviews_qs.order_by('-created_at')
+
+    reviews_paginator = Paginator(reviews_qs, 6)
+    reviews_page_number = request.GET.get('review_page', 1)
+    reviews_page_obj = reviews_paginator.get_page(reviews_page_number)
+
+    review_summary = ReviewService.get_product_review_summary(product)
+
+    # Check if authenticated customer has already reviewed this product
+    user_review = None
+    is_verified_buyer = False
+    can_manage_reviews = ReviewService.can_manage_reviews(request.user, request)
+    is_in_wishlist = False
+
+    if request.user.is_authenticated:
+        user_review = product.reviews.filter(user=request.user).first()
+        is_verified_buyer, _ = ReviewService.check_verified_purchase(request.user, product)
+        from apps.wishlist.services import WishlistService
+        is_in_wishlist = WishlistService.is_in_wishlist(request.user, product)
+
     context = {
         'product': product,
         'images': list(product.images.all()),
@@ -311,6 +353,14 @@ def product_detail_view(request, slug):
         'attributes_map': attributes_map,
         'related_products': related_products,
         'is_staff_view': is_staff,
+        'is_in_wishlist': is_in_wishlist,
+        'reviews': reviews_page_obj.object_list,
+        'reviews_page_obj': reviews_page_obj,
+        'review_summary': review_summary,
+        'review_sort': review_sort,
+        'user_review': user_review,
+        'is_verified_buyer': is_verified_buyer,
+        'can_manage_reviews': can_manage_reviews,
     }
     return render(request, 'catalog/storefront/product_detail.html', context)
 

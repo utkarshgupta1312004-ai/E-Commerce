@@ -85,11 +85,14 @@ cd d:/django_project/E-Commerce/E-Commerce
 # Activate virtual environment (Windows PowerShell)
 .\venv\Scripts\Activate.ps1
 
+# Configure environment variables (.env)
+cp .env.example .env
+
+# Install Python dependencies
+pip install -r requirements.txt
+
 # Navigate to Django application directory
 cd ecom
-
-# Install Python dependencies (if needed)
-pip install -r requirements.txt
 ```
 
 ### 3. Database Migrations
@@ -97,7 +100,12 @@ pip install -r requirements.txt
 python manage.py migrate
 ```
 
-### 4. Compiling Tailwind CSS
+### 4. Running the Test Suite
+```bash
+python manage.py test apps.catalog apps.cart apps.inventory apps.orders apps.wishlist apps.reviews apps.accounts apps.checkout apps.cms apps.core
+```
+
+### 5. Compiling Tailwind CSS
 ```bash
 # Compile minified production stylesheets
 npm run build
@@ -106,7 +114,7 @@ npm run build
 npm run dev
 ```
 
-### 5. Running the Local Development Server
+### 6. Running the Local Development Server
 ```bash
 python manage.py runserver
 ```
@@ -118,12 +126,15 @@ Open your browser to:
 - **Superadmin Executive Console:** [http://127.0.0.1:8000/management/dashboard/](http://127.0.0.1:8000/management/dashboard/)
 - **Django Administration:** [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/)
 
+> **Development Superuser:** Exactly one primary development superuser exists with username `admin`. Management logins are secured via `UniversalSessionSecurityMiddleware`.
+
 ---
 
 ## Project Structure
 
 ```
 E-Commerce/
+├── .env.example                # Safe environment variable configuration template
 ├── architecture.md             # System architecture, ERD, and technical flow
 ├── design.md                   # UI styleguide, design tokens, and print standards
 ├── memory.md                   # Session history, decisions, and active file index

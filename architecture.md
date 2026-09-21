@@ -483,3 +483,28 @@ The administrative layer is decoupled from customer storefront views and provide
 ### 7.3. Client-Side Table Engine & Print Pipeline (`table-paginator.js`)
 - **`TablePaginator` Class:** Provides zero-dependency pagination, search filtering, category filtering, and rows-per-page selection across all tabular views.
 - **Native Print Pipeline:** Intercepts `window.beforeprint` and `window.afterprint` to un-paginate the table into a clean multi-page document with repeating headers and print metadata, while hiding UI chrome via `@media print`.
+
+---
+
+## 8. Project Audit, Environment Configuration & Governance
+
+### 8.1. Verified Model Source of Truth (Zero Duplication)
+All 46 database tables and models adhere to strict domain boundaries:
+- `django.contrib.auth.models.User` (extended via `apps.accounts.models.UserProfile`).
+- `apps.catalog.models`: `Product`, `Category`, `Brand`, `ProductVariant`, `ProductImage`.
+- `apps.inventory.models`: `Stock`, `Warehouse`, `StockMovement`.
+- `apps.cart.models`: `Cart`, `CartItem`.
+- `apps.wishlist.models`: `Wishlist`, `WishlistItem`.
+- `apps.orders.models`: `Order`, `OrderItem`, `DeliveryCheckpoint`.
+- `apps.reviews.models`: `Review`, `ReviewReply`.
+- `apps.accounts.models`: `Address`.
+
+### 8.2. Environment & Secret Isolation
+- Configuration template stored safely in `.env.example`.
+- Local secrets stored in `.env` and strictly ignored by Git (`.gitignore`).
+- `ecom/settings.py` reads `SECRET_KEY`, `DEBUG`, and `ALLOWED_HOSTS` dynamically from `os.environ` with safe development fallbacks.
+
+### 8.3. Unified Development Superuser
+- Single development superuser established with username `admin` (`admin@cartivo.local`).
+- Historical ledger integrity preserved: all 81 stock movements and 29 audit logs linked to superuser account (ID 1).
+- Unused duplicate test accounts purged from database.

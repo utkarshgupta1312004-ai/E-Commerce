@@ -35,12 +35,12 @@ sys.path.insert(0, str(BASE_DIR / 'apps'))
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-*_5j)@e$pk-67i8v)@n)f3rtlxeb7*u$++^(y30*78y^#vv)+i'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-*_5j)@e$pk-67i8v)@n)f3rtlxeb7*u$++^(y30*78y^#vv)+i')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', '*').split(',') if h.strip()]
 
 
 # Application definition
@@ -110,6 +110,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'apps.cms.context_processors.cms_context',
                 'apps.cart.context_processors.cart_context',
+                'apps.wishlist.context_processors.wishlist_context',
             ],
         },
     },

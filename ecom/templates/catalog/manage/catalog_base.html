@@ -188,6 +188,14 @@
                     </div>
                     <i data-lucide="plus" class="w-3.5 h-3.5 text-slate-400 sidebar-arrow"></i>
                 </a>
+
+                <a href="{% url 'reviews:manage_all_reviews' %}" class="sidebar-item flex items-center justify-between px-3 py-2.5 text-sm font-semibold rounded-xl transition-all {% if active_tab == 'reviews' %}bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-600/20{% else %}text-slate-300 hover:text-white hover:bg-slate-800/60{% endif %}">
+                    <div class="flex items-center gap-3 truncate">
+                        <i data-lucide="star" class="w-4 h-4 text-amber-400 shrink-0"></i>
+                        <span class="sidebar-text truncate">Customer Reviews</span>
+                    </div>
+                    <span class="sidebar-badge text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">Feedback</span>
+                </a>
             </div>
 
             <!-- Section: Taxonomy & Classification -->

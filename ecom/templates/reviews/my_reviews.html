@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Reviews &bull; Cartivo{% endblock %}
+
+{% block content %}
+<div class="min-h-[calc(100vh-140px)] bg-slate-50/70 py-10 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-5xl mx-auto space-y-8">
+
+        <!-- Header / Breadcrumb -->
+        <div>
+            <div class="flex items-center gap-2 text-xs font-semibold text-slate-400 mb-2">
+                <a href="/" class="hover:text-blue-600">Home</a>
+                <span>/</span>
+                <a href="{% url 'accounts:profile' %}" class="hover:text-blue-600">My Account</a>
+                <span>/</span>
+                <span class="text-blue-600">My Reviews</span>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">My Product Reviews</h1>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1">Manage and view the feedback you've shared with the Cartivo community.</p>
+                </div>
+                <a href="{% url 'accounts:profile' %}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 transition-colors shadow-xs">
+                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                    <span>Back to Profile</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Django Messages -->
+        {% if messages %}
+        <div class="space-y-2">
+            {% for message in messages %}
+            <div class="p-3.5 rounded-2xl text-xs font-medium flex items-center gap-2.5 {% if message.tags == 'error' %}bg-rose-50 text-rose-700 border border-rose-200{% elif message.tags == 'success' %}bg-emerald-50 text-emerald-700 border border-emerald-200{% else %}bg-blue-50 text-blue-700 border border-blue-200{% endif %}">
+                <i data-lucide="info" class="w-4 h-4 shrink-0"></i>
+                <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Reviews List -->
+        <div class="space-y-4">
+            {% for rev in reviews %}
+            <div class="bg-white p-6 sm:p-7 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+                <!-- Product Line & Date -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                    <div class="flex items-center gap-4">
+                        <img src="{{ rev.product.primary_image_url }}" alt="" class="w-14 h-14 rounded-2xl object-cover bg-slate-100 shrink-0 border border-slate-200">
+                        <div>
+                            <h3 class="text-sm sm:text-base font-bold text-slate-900 hover:text-blue-600 transition-colors">
+                                <a href="{{ rev.product.get_absolute_url }}">{{ rev.product.title }}</a>
+                            </h3>
+                            <div class="flex items-center gap-2 mt-1 flex-wrap">
+                                {% if rev.variant %}
+                                <span class="text-[11px] font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">
+                                    {{ rev.variant.name|default:rev.variant.sku }}
+                                </span>
+                                {% endif %}
+                                {% if rev.is_verified_purchase %}
+                                <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                                    <i data-lucide="badge-check" class="w-3.5 h-3.5 text-emerald-600"></i> Verified Purchase
+                                </span>
+                                {% endif %}
+                                <span class="text-xs text-slate-400 font-mono">{{ rev.created_at|date:"M d, Y" }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Star Rating Score -->
+                    <div class="flex items-center gap-1 text-amber-400 shrink-0">
+                        {% for filled in rev.get_rating_stars %}
+                            {% if filled %}
+                            <i data-lucide="star" class="w-4 h-4 fill-amber-400 text-amber-400"></i>
+                            {% else %}
+                            <i data-lucide="star" class="w-4 h-4 text-slate-200"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Review Content -->
+                <div class="space-y-1.5 text-xs sm:text-sm">
+                    {% if rev.title %}
+                    <h4 class="font-bold text-slate-900">{{ rev.title }}</h4>
+                    {% endif %}
+                    <p class="text-slate-600 leading-relaxed whitespace-pre-line">{{ rev.comment }}</p>
+                </div>
+
+                <!-- Review Media Photos -->
+                {% if rev.media.all %}
+                <div class="flex items-center gap-2 overflow-x-auto py-1">
+                    {% for m in rev.media.all %}
+                    {% if m.effective_image_url %}
+                    <a href="{{ m.effective_image_url }}" target="_blank" class="w-16 h-16 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 hover:scale-105 transition-transform shrink-0">
+                        <img src="{{ m.effective_image_url }}" alt="" class="w-full h-full object-cover">
+                    </a>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Official Seller Reply -->
+                {% if rev.official_reply %}
+                <div class="p-4 rounded-2xl bg-slate-50 border-l-4 border-blue-600 border-t border-r border-b border-slate-200/80 space-y-1 text-xs">
+                    <div class="flex items-center justify-between text-blue-600 font-bold text-xs">
+                        <span class="flex items-center gap-1.5">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                            <span>{{ rev.official_reply.responder_name }}</span>
+                        </span>
+                        <span class="text-slate-400 font-mono text-[10px]">{{ rev.official_reply.created_at|date:"M d, Y" }}</span>
+                    </div>
+                    <p class="text-slate-700 leading-relaxed pl-5">{{ rev.official_reply.reply_text }}</p>
+                </div>
+                {% endif %}
+
+                <!-- Actions -->
+                <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+                    <a href="{{ rev.product.get_absolute_url }}#reviews" class="inline-flex items-center gap-1.5 text-blue-600 hover:text-blue-800 font-semibold transition-colors">
+                        <span>View on Product Page</span>
+                        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                    </a>
+
+                    <form method="POST" action="{% url 'reviews:delete_review' rev.id %}" onsubmit="return confirm('Remove your review for this product?');">
+                        {% csrf_token %}
+                        <button type="submit" class="text-rose-600 hover:text-rose-800 font-semibold cursor-pointer">
+                            Delete Review
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% empty %}
+            <div class="bg-white p-12 text-center rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+                <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-500 mx-auto flex items-center justify-center">
+                    <i data-lucide="star" class="w-7 h-7"></i>
+                </div>
+                <div class="space-y-1">
+                    <h3 class="text-base font-bold text-slate-900">No Reviews Written Yet</h3>
+                    <p class="text-xs text-slate-500 max-w-sm mx-auto">You haven't reviewed any items yet. When you receive your orders, share your experience to help other shoppers!</p>
+                </div>
+                <a href="{% url 'orders:order_list' %}" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition-all">
+                    <i data-lucide="package" class="w-4 h-4"></i>
+                    <span>View Delivered Orders</span>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.paginator.num_pages > 1 %}
+        <div class="flex items-center justify-between pt-4 text-xs">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold shadow-xs">
+                Previous
+            </a>
+            {% else %}
+            <span class="px-3.5 py-2 rounded-xl bg-slate-100 text-slate-400 font-semibold cursor-not-allowed">Previous</span>
+            {% endif %}
+
+            <span class="text-slate-500 font-medium">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold shadow-xs">
+                Next
+            </a>
+            {% else %}
+            <span class="px-3.5 py-2 rounded-xl bg-slate-100 text-slate-400 font-semibold cursor-not-allowed">Next</span>
+            {% endif %}
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

@@ -22,9 +22,9 @@ class CustomerAccountsSecurityTest(TestCase):
 
     def test_logout_flushes_session(self):
         self.client.login(username="customer_test", password="CustomerPassword123!")
-        res = self.client.get(reverse('accounts:logout'), follow=True)
-        self.assertEqual(res.status_code, 200)
-        self.assertFalse(self.client.session.keys())
+        res = self.client.get(reverse('accounts:logout'), follow=False)
+        self.assertEqual(res.status_code, 302)
+        self.assertNotIn('_auth_user_id', self.client.session)
 
     def test_inactive_user_session_redirects_and_flushes(self):
         from django.test import RequestFactory

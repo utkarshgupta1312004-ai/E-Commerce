@@ -78,7 +78,8 @@
                         <th class="py-3.5 px-4">Taxonomy</th>
                         <th class="py-3.5 px-4">Master Pricing</th>
                         <th class="py-3.5 px-4">Variants</th>
-                        <th class="py-3.5 px-4">Status & Visibility</th>
+                        <th class="py-3.5 px-4">Reviews &amp; Rating</th>
+                        <th class="py-3.5 px-4">Status &amp; Visibility</th>
                         <th class="py-3.5 px-4 text-right">Actions</th>
                     </tr>
                 </thead>
@@ -128,6 +129,20 @@
                             {% endwith %}
                         </td>
 
+                        <!-- Ratings & Reviews -->
+                        <td class="py-3.5 px-4">
+                            <a href="{% url 'reviews:manage_product_reviews' p.id %}" class="group/rev block hover:opacity-80 transition-opacity">
+                                <div class="flex items-center gap-1 text-amber-400">
+                                    <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+                                    <span class="font-bold text-slate-100 text-xs">{{ p.rating|floatformat:1 }}</span>
+                                </div>
+                                <div class="text-[10px] text-slate-400 group-hover/rev:text-blue-400 flex items-center gap-1 mt-0.5">
+                                    <span>{{ p.review_count }} review{{ p.review_count|pluralize }}</span>
+                                    <i data-lucide="external-link" class="w-2.5 h-2.5"></i>
+                                </div>
+                            </a>
+                        </td>
+
                         <!-- Status & Visibility -->
                         <td class="py-3.5 px-4">
                             <div class="flex flex-col gap-1 items-start">
@@ -143,6 +158,11 @@
                         <!-- Actions -->
                         <td class="py-3.5 px-4 text-right">
                             <div class="inline-flex items-center gap-1.5">
+                                <!-- View / Moderate Reviews -->
+                                <a href="{% url 'reviews:manage_product_reviews' p.id %}" title="Manage Customer Reviews" class="p-1.5 rounded-lg text-slate-400 hover:text-amber-400 hover:bg-slate-800 transition-colors">
+                                    <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+                                </a>
+
                                 <!-- Toggle Status -->
                                 <a href="{% url 'catalog:product_toggle_status' p.id %}" title="Toggle Active/Draft" class="p-1.5 rounded-lg text-slate-400 hover:text-amber-400 hover:bg-slate-800 transition-colors">
                                     <i data-lucide="power" class="w-3.5 h-3.5"></i>

@@ -1,9 +1,9 @@
 # Project Context & Session Memory
 
 ## Project: Next-Generation Modern E-Commerce Platform
-**Last Updated:** September 4, 2026  
-**Current Phase:** Phase 1 (Foundation & Architecture Setup)  
-**Current Status:** Documentation & Architecture Suite Established; Ready for Code Implementation
+**Last Updated:** September 21, 2026  
+**Current Phase:** Complete Project Audit, Integration & Production-Ready Hardening Passed  
+**Current Status:** All 20 modules audited; zero duplicate models; single superuser `admin` established; all 134 automated unit/integration tests green.
 
 ---
 
@@ -11,59 +11,44 @@
 
 | File Path | Role / Content | Current Status |
 | :--- | :--- | :--- |
+| [.env.example](file:///d:/django_project/E-Commerce/E-Commerce/.env.example) | Environment variable template with safe placeholders | Complete & Tested |
+| [.env](file:///d:/django_project/E-Commerce/E-Commerce/.env) | Local environment configuration (gitignored) | Sanitized & Protected |
 | [prd.md](file:///d:/django_project/E-Commerce/E-Commerce/prd.md) | Product Requirements Document: Features, Personas, NFRs, KPIs | Complete & Approved |
 | [architecture.md](file:///d:/django_project/E-Commerce/E-Commerce/architecture.md) | System Architecture: High-level flow, ERD, sequence diagrams, state machines | Complete & Approved |
 | [rules.md](file:///d:/django_project/E-Commerce/E-Commerce/rules.md) | Tech stack, approved libraries, coding conventions, zero N+1 rules, security | Complete & Approved |
-| [phases.md](file:///d:/django_project/E-Commerce/E-Commerce/phases.md) | 10-Phase chronological implementation roadmap and task checklists | Complete & Approved |
-| [design.md](file:///d:/django_project/E-Commerce/E-Commerce/design.md) | Design system: Poppins Google Font, Tailwind CSS v4 design tokens, UI specs | Updated |
-| [rules.md](file:///d:/django_project/E-Commerce/E-Commerce/rules.md) | Tech stack: Tailwind CSS v4, Poppins font, zero-inline-CSS directives | Updated |
+| [phases.md](file:///d:/django_project/E-Commerce/E-Commerce/phases.md) | 10-Phase chronological implementation roadmap and task checklists | All Phases Completed |
+| [design.md](file:///d:/django_project/E-Commerce/E-Commerce/design.md) | Design system: Poppins Google Font, Tailwind CSS v4 design tokens, UI specs | Complete & Verified |
+| [README.md](file:///d:/django_project/E-Commerce/E-Commerce/README.md) | Project overview, environment setup, testing, and operational manual | Complete & Updated |
 | [memory.md](file:///d:/django_project/E-Commerce/E-Commerce/memory.md) | Current working file index, session state, decisions, and immediate next steps | Active |
-| [ecom/templates/base.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/templates/base.html) | Global master skeleton template with meta, fonts, icons, drawer, toast, and slots | Active |
-| [ecom/templates/components/](file:///d:/django_project/E-Commerce/E-Commerce/ecom/templates/components/) | Reusable partials: `header`, `footer`, `announcement_bar`, `category_nav`, `promo_banners`, `mobile_drawer`, `newsletter`, `mobile_bottom_nav`, `toast`, `ai_agent_widget` | Active |
-| [ecom/templates/accounts/login.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/templates/accounts/login.html) | Customer login template with 1-click Google OAuth and email/password form | Active |
-| [ecom/apps/accounts/urls.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/apps/accounts/urls.py) | Accounts app URLs (`/accounts/login/`) | Active |
-| [ecom/apps/accounts/views.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/apps/accounts/views.py) | Customer authentication view (`login_view`) | Active |
-| [ecom/templates/homepage.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/templates/homepage.html) | Modern luxury storefront homepage extending `base.html` and including modular components | Implemented |
-| [ecom/static/images/cartivo-horizontal.png](file:///d:/django_project/E-Commerce/E-Commerce/ecom/static/images/cartivo-horizontal.png) | Horizontal header brand logo (Cartivo emblem + wordmark) | Active |
-| [ecom/static/images/cartivo-logo.png](file:///d:/django_project/E-Commerce/E-Commerce/ecom/static/images/cartivo-logo.png) | Master full brand logo with tagline ("Shop Smarter. Live Better.") | Active |
-| [ecom/static/images/cartivo-icon.png](file:///d:/django_project/E-Commerce/E-Commerce/ecom/static/images/cartivo-icon.png) | Standalone speed cart emblem | Active |
-| [ecom/static/images/favicon.png](file:///d:/django_project/E-Commerce/E-Commerce/ecom/static/images/favicon.png) | 192x192 high-resolution PNG favicon | Active |
-| [ecom/static/images/favicon.ico](file:///d:/django_project/E-Commerce/E-Commerce/ecom/static/images/favicon.ico) | Multi-size browser favicon ICO (16px, 32px, 48px, 64px) | Active |
-| [ecom/static/src/input.css](file:///d:/django_project/E-Commerce/E-Commerce/ecom/static/src/input.css) | Tailwind CSS v4 input file with `@theme` config (Poppins & brand tokens) | Configured |
-| [ecom/static/src/output.css](file:///d:/django_project/E-Commerce/E-Commerce/ecom/static/src/output.css) | Compiled Tailwind CSS production output stylesheet | Built (56KB) |
-| [ecom/apps/cms/urls.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/apps/cms/urls.py) | CMS routes (Home root path routed to `home_view`) | Active |
-| [ecom/apps/cms/views.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/apps/cms/views.py) | `home_view` rendering `homepage.html` | Active |
-| [ecom/ecom/urls.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/ecom/urls.py) | Root URL routing including `apps.cms.urls` | Active |
-| [ecom/ecom/settings.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/ecom/settings.py) | Project settings with 20 modular apps registered in `INSTALLED_APPS` | Active |
-| [ecom/package.json](file:///d:/django_project/E-Commerce/E-Commerce/ecom/package.json) | Node package config with `@tailwindcss/cli` build & dev watch scripts | Active |
-| [ecom/apps/core/management_urls.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/apps/core/management_urls.py) | Management URL routing (`/management/` -> single management page) | Active |
-| [ecom/apps/core/management_views.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/apps/core/management_views.py) | `management_page_view` serving the unified Cartivo 20-domain management console | Active |
-| [ecom/templates/management/portal.html](file:///d:/django_project/E-Commerce/E-Commerce/ecom/templates/management/portal.html) | Standalone management page with real-time domain search and category filtering | Active |
+| [ecom/apps/wishlist/](file:///d:/django_project/E-Commerce/E-Commerce/ecom/apps/wishlist/) | Complete Wishlist module (`models`, `services`, `views`, `context_processors`, `tests`) | 100% Tested (20 tests) |
+| [ecom/apps/reviews/](file:///d:/django_project/E-Commerce/E-Commerce/ecom/apps/reviews/) | Verified-buyer reviews module integrated into product detail (`models`, `services`, `views`, `forms`, `tests`) | 100% Tested |
+| [ecom/apps/checkout/views.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/apps/checkout/views.py) | Concurrency-safe checkout, address persistence, and COD order placement | 100% Tested |
+| [ecom/apps/accounts/views.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/apps/accounts/views.py) | User auth with automatic guest cart merge on login, register, and Google OAuth | 100% Tested |
+| [ecom/ecom/settings.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/ecom/settings.py) | Dynamic environment variable loading (`SECRET_KEY`, `DEBUG`, `ALLOWED_HOSTS`) | Verified (0 check issues) |
 
 ---
 
 ## 2. Core Architectural Decisions Locked In
 
-1. **20 Decoupled Modular Domain Apps (`apps/`):**
-   - The platform architecture is organized into 20 single-responsibility domain apps: `accounts`, `catalog`, `inventory`, `search`, `cart`, `wishlist`, `checkout`, `payments`, `orders`, `shipping`, `fulfillment`, `promotions`, `reviews`, `notifications`, `recommendations`, `cms`, `analytics`, `support`, `audit`, and `settings`.
-   - Templates for each app strictly follow the convention `templates/<app_name>/<template_name>.html`.
-2. **Custom User Model First:**
-   - Must implement `CustomUser` in `apps/accounts` before running the very first database migration to prevent Django auth migration conflicts.
-3. **Modular Service Layer Pattern:**
-   - Views will stay thin; business logic (checkout math, cart sync, payments) lives exclusively in `apps/<domain>/services.py`.
-   - Complex queries, filters, and aggregations live in `apps/<domain>/selectors.py`.
-4. **Dual Cart Architecture:**
-   - Guest cart stored in secure session.
-   - User cart stored in database (`Cart` & `CartItem` models in `apps/cart`).
-   - Unified `CartService.merge_session_cart_to_user()` automatically executed upon login.
-5. **Concurrency & Inventory Protection:**
-   - Database transactions wrapped in `transaction.atomic()`.
-   - Stock deduction protected by row-level locking (`select_for_update()`) in `apps/inventory`.
-6. **Design System & Styling:**
-   - **Framework:** Tailwind CSS v4 via `@tailwindcss/cli`.
-   - **Typography:** Google Fonts `'Poppins'` (`300, 400, 500, 600, 700, 800`).
-   - **Directives:** Strictly pure Tailwind utility classes; zero internal `<style>` or inline styling.
-   - **Iconography:** Lucide Icons via CDN (`unpkg.com/lucide@latest`).
+1. **Zero Model Duplication Verified:**
+   - Single sources of truth: `Product`, `ProductVariant`, `Stock`, `Cart`, `Wishlist`, `Order`, `Review`, `Address`. No redundant or conflicting models exist across all 46 tables.
+2. **Single Development Superuser:**
+   - Migrated primary superuser (ID 1) to `admin` (`admin@cartivo.local`), keeping all 81 stock movements and 29 audit logs intact. Purged unused duplicate superusers (`admin_test`, `root_admin`, `superadmin`).
+3. **Data Protection & Test Cleanup:**
+   - Real customers (`ug1312005@gmail.com`, `vishal@gmail.com`) and departmental operators (`ACC001` through `SHP001`) are protected. Test user accounts (`test_shopper`, `customer_jane`, `acc_staff_test`, `test_flexible_user`) purged cleanly.
+4. **Dual Cart & Seamless Merge:**
+   - Guests can browse, add to cart, and adjust quantities without authentication.
+   - `CartService.merge_guest_cart(request, user)` executes upon login, register, and checkout to ensure zero cart item loss.
+5. **Inventory Safety & Concurrency Locking:**
+   - Add to Cart / Wishlist **never** deducts stock.
+   - Deduction is atomic and concurrency-safe via `select_for_update()` in `OrderService.create_cod_order`.
+   - Shipping status progression (`CONFIRMED` → `PACKED` → `SHIPPED` → `DELIVERED`) **never** double-deducts stock.
+6. **Cash on Delivery (COD) as Sole Active Gateway:**
+   - Lifecycle: `payment_status='PENDING'` upon order placement, `payment_status='PAID'` upon delivery cash collection.
+7. **Customer Isolation & Privacy:**
+   - Customers only see customer-facing data (order number, tracking, address, printable receipts). No internal employee IDs, audit logs, or other customer records are exposed.
+8. **Universal Session Security:**
+   - `UniversalSessionSecurityMiddleware` enforces cache-control (`no-cache, no-store`) on authenticated routes, protecting against session replay.
 
 ### 2.1. Master Application & Domain Matrix
 

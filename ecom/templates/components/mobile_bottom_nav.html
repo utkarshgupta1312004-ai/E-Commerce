@@ -10,9 +10,9 @@
         <i data-lucide="grid" class="w-5 h-5"></i>
         <span>Shop</span>
     </a>
-    <a href="/wishlist/" class="relative flex flex-col items-center gap-1 text-slate-600 hover:text-slate-950 text-[10px] font-medium">
+    <a href="{% url 'wishlist:wishlist_view' %}" class="relative flex flex-col items-center gap-1 text-slate-600 hover:text-slate-950 text-[10px] font-medium">
         <i data-lucide="heart" class="w-5 h-5"></i>
-        <span class="absolute -top-1 right-1 w-3.5 h-3.5 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center">3</span>
+        <span class="wishlist-badge-count absolute -top-1 right-1 w-3.5 h-3.5 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center {% if not wishlist_item_count or wishlist_item_count == 0 %}hidden{% endif %}">{{ wishlist_item_count|default:0 }}</span>
         <span>Wishlist</span>
     </a>
     <a href="/cart/" class="relative flex flex-col items-center gap-1 text-slate-600 hover:text-slate-950 text-[10px] font-medium">

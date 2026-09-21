@@ -35,7 +35,7 @@ def _admindash_redirecting_admin_login(request, extra_context=None):
 admin.site.login = _admindash_redirecting_admin_login
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls,name="cartivo.src.admin"),
     path('accounts/', include('apps.accounts.urls')),
     path('management/', include('apps.core.management_urls', namespace='management')),
     path('inventory/', include('apps.inventory.urls', namespace='inventory')),

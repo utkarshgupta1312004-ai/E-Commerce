@@ -20,11 +20,16 @@ db.sqlite3-journal
 *.sqlite3
 media/
 staticfiles/
+ecom/media/
+ecom/staticfiles/
 
 # Environment files & Secrets
 .env
 .env.*
 !.env.example
+ecom/.env
+ecom/.env.*
+!ecom/.env.example
 
 # Testing & Coverage
 .cache
@@ -35,6 +40,7 @@ htmlcov/
 
 # Node & Frontend build tools
 node_modules/
+ecom/node_modules/
 package-lock.json
 npm-debug.log*
 yarn-debug.log*

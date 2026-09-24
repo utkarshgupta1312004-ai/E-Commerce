@@ -17,8 +17,17 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import path, include
+
+def health_check(request):
+    """Production health check endpoint for Render / monitoring services."""
+    return JsonResponse({
+        "status": "ok",
+        "service": "cartivo-ecommerce",
+        "environment": "production" if not settings.DEBUG else "development"
+    }, status=200)
 
 # Direct admin login redirect to Superadmin Dashboard (admindash)
 _original_admin_login = admin.site.login
@@ -35,7 +44,8 @@ def _admindash_redirecting_admin_login(request, extra_context=None):
 admin.site.login = _admindash_redirecting_admin_login
 
 urlpatterns = [
-    path('admin/', admin.site.urls,name="cartivo.src.admin"),
+    path('health/', health_check, name='health_check'),
+    path('admin/', admin.site.urls, name="cartivo.src.admin"),
     path('accounts/', include('apps.accounts.urls')),
     path('management/', include('apps.core.management_urls', namespace='management')),
     path('inventory/', include('apps.inventory.urls', namespace='inventory')),
@@ -52,4 +62,11 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+else:
+    from django.views.static import serve
+    from django.urls import re_path
+    urlpatterns += [
+        re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    ]
+
 

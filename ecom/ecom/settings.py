@@ -46,11 +46,12 @@ _allowed_env = (os.environ.get('ALLOWED_HOSTS') or '').strip()
 if _allowed_env:
     ALLOWED_HOSTS = [h.strip() for h in _allowed_env.split(',') if h.strip()]
 else:
-    ALLOWED_HOSTS = ['*']
+    ALLOWED_HOSTS = ['.onrender.com', '.vercel.app', 'localhost', '127.0.0.1']
 
-for _default_host in ['.vercel.app', '.onrender.com', 'localhost', '127.0.0.1', '*']:
-    if _default_host not in ALLOWED_HOSTS:
-        ALLOWED_HOSTS.append(_default_host)
+if 'testserver' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('testserver')
+
+
 
 _render_hostname = (os.environ.get('RENDER_EXTERNAL_HOSTNAME') or '').strip()
 if _render_hostname and _render_hostname not in ALLOWED_HOSTS:
@@ -77,6 +78,7 @@ if _render_hostname:
     _render_origin = f'https://{_render_hostname}'
     if _render_origin not in CSRF_TRUSTED_ORIGINS:
         CSRF_TRUSTED_ORIGINS.append(_render_origin)
+
 
 
 # Application definition
@@ -165,9 +167,10 @@ if DATABASE_URL:
                 default=DATABASE_URL,
                 conn_max_age=600,
                 conn_health_checks=True,
+                ssl_require=True if ('postgres' in DATABASE_URL or 'psql' in DATABASE_URL) else False,
             )
         }
-    except ImportError:
+    except Exception:
         DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.sqlite3',
@@ -244,7 +247,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
-STATIC_ROOT = BASE_DIR / 'staticfiles' if (BASE_DIR / 'staticfiles').exists() else (BASE_DIR.parent / 'staticfiles')
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 WHITENOISE_USE_FINDERS = True
 
 STORAGES = {
@@ -279,6 +282,30 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 
 # ==============================================================================
+# Production Security Hardening (Render / Cloud Deployment)
+# ==============================================================================
+if not DEBUG:
+    # Reverse proxy SSL header (Essential for Render load balancer HTTPS detection)
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+    # Redirect all HTTP requests to HTTPS
+    SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'True').lower() in ('true', '1', 'yes')
+
+    # Transmit session and CSRF cookies only over HTTPS
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+    # Modern browser security protections
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
+
+    # HTTP Strict Transport Security (HSTS)
+    SECURE_HSTS_SECONDS = int(os.environ.get('SECURE_HSTS_SECONDS', '31536000'))
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
+# ==============================================================================
 # Google Gemini AI Assistant Settings (Strictly from environment variables)
 # ==============================================================================
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
@@ -291,4 +318,5 @@ CACHES = {
         'LOCATION': 'cartivo-cache',
     }
 }
+
 

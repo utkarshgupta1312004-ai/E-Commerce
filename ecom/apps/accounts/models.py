@@ -143,11 +143,15 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
     Ensure every User has a linked UserProfile automatically.
     Superusers automatically have is_management_staff=True.
     """
+    if kwargs.get('raw', False):
+        return
+
     profile, _ = UserProfile.objects.get_or_create(user=instance)
     if instance.is_superuser and not profile.is_management_staff:
         profile.is_management_staff = True
         profile.job_title = "Super Administrator"
         profile.save()
+
 
 
 class Address(models.Model):

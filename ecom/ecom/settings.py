@@ -161,15 +161,7 @@ WSGI_APPLICATION = 'ecom.wsgi.application'
 DATABASE_URL = os.environ.get('DATABASE_URL')
 if DATABASE_URL:
     try:
-        import dj_database_url
-        DATABASES = {
-            'default': dj_database_url.config(
-                default=DATABASE_URL,
-                conn_max_age=600,
-                conn_health_checks=True,
-                ssl_require=True if ('postgres' in DATABASE_URL or 'psql' in DATABASE_URL) else False,
-            )
-        }
+       pass
     except Exception:
         DATABASES = {
             'default': {

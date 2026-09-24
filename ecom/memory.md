@@ -11,20 +11,23 @@
 
 | File Path | Role / Content | Current Status |
 | :--- | :--- | :--- |
-| [.env.example](file:///d:/django_project/E-Commerce/E-Commerce/.env.example) | Environment variable template with safe placeholders | Complete & Tested |
-| [.env](file:///d:/django_project/E-Commerce/E-Commerce/.env) | Local environment configuration (gitignored) | Sanitized & Protected |
-| [prd.md](file:///d:/django_project/E-Commerce/E-Commerce/prd.md) | Product Requirements Document: Features, Personas, NFRs, KPIs | Complete & Approved |
-| [architecture.md](file:///d:/django_project/E-Commerce/E-Commerce/architecture.md) | System Architecture: High-level flow, ERD, sequence diagrams, state machines | Complete & Approved |
-| [rules.md](file:///d:/django_project/E-Commerce/E-Commerce/rules.md) | Tech stack, approved libraries, coding conventions, zero N+1 rules, security | Complete & Approved |
-| [phases.md](file:///d:/django_project/E-Commerce/E-Commerce/phases.md) | 10-Phase chronological implementation roadmap and task checklists | All Phases Completed |
-| [design.md](file:///d:/django_project/E-Commerce/E-Commerce/design.md) | Design system: Poppins Google Font, Tailwind CSS v4 design tokens, UI specs | Complete & Verified |
-| [README.md](file:///d:/django_project/E-Commerce/E-Commerce/README.md) | Project overview, environment setup, testing, and operational manual | Complete & Updated |
-| [memory.md](file:///d:/django_project/E-Commerce/E-Commerce/memory.md) | Current working file index, session state, decisions, and immediate next steps | Active |
+| [.env.example](file:///d:/django_project/E-Commerce/E-Commerce/ecom/.env.example) | Environment variable template with safe placeholders | Complete & Updated |
+| [.env](file:///d:/django_project/E-Commerce/E-Commerce/ecom/.env) | Local environment configuration (gitignored) | Sanitized & Protected |
+| [prd.md](file:///d:/django_project/E-Commerce/E-Commerce/ecom/prd.md) | Product Requirements Document: Features, Personas, NFRs, KPIs | Complete & Approved |
+| [architecture.md](file:///d:/django_project/E-Commerce/E-Commerce/ecom/architecture.md) | System Architecture: High-level flow, ERD, sequence diagrams, state machines | Complete & Approved |
+| [rules.md](file:///d:/django_project/E-Commerce/E-Commerce/ecom/rules.md) | Tech stack, approved libraries, coding conventions, zero N+1 rules, security | Complete & Approved |
+| [phases.md](file:///d:/django_project/E-Commerce/E-Commerce/ecom/phases.md) | 10-Phase chronological implementation roadmap and task checklists | All Phases Completed |
+| [design.md](file:///d:/django_project/E-Commerce/E-Commerce/ecom/design.md) | Design system: Poppins Google Font, Tailwind CSS v4 design tokens, UI specs | Complete & Verified |
+| [README.md](file:///d:/django_project/E-Commerce/E-Commerce/ecom/README.md) | Project overview, environment setup, testing, and operational manual | Complete & Updated |
+| [memory.md](file:///d:/django_project/E-Commerce/E-Commerce/ecom/memory.md) | Current working file index, session state, decisions, and immediate next steps | Active |
 | [ecom/apps/wishlist/](file:///d:/django_project/E-Commerce/E-Commerce/ecom/apps/wishlist/) | Complete Wishlist module (`models`, `services`, `views`, `context_processors`, `tests`) | 100% Tested (20 tests) |
 | [ecom/apps/reviews/](file:///d:/django_project/E-Commerce/E-Commerce/ecom/apps/reviews/) | Verified-buyer reviews module integrated into product detail (`models`, `services`, `views`, `forms`, `tests`) | 100% Tested |
 | [ecom/apps/checkout/views.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/apps/checkout/views.py) | Concurrency-safe checkout, address persistence, and COD order placement | 100% Tested |
 | [ecom/apps/accounts/views.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/apps/accounts/views.py) | User auth with automatic guest cart merge on login, register, and Google OAuth | 100% Tested |
 | [ecom/ecom/settings.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/ecom/settings.py) | Dynamic environment variable loading (`SECRET_KEY`, `DEBUG`, `ALLOWED_HOSTS`) | Verified (0 check issues) |
+| [ecom/ecom/wsgi.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/ecom/wsgi.py) | WSGI configuration with Vercel serverless request path restoration | Verified |
+| [api/index.py](file:///d:/django_project/E-Commerce/E-Commerce/api/index.py) | Vercel serverless deployment entrypoint with auto-migration guard | Verified & Deployed |
+| [vercel.json](file:///d:/django_project/E-Commerce/E-Commerce/vercel.json) | Vercel production rewrites routing | Active (● Ready) |
 
 ---
 
@@ -82,11 +85,12 @@
 - Root folder: `d:\django_project\E-Commerce\E-Commerce\`
 - Django project folder: `d:\django_project\E-Commerce\E-Commerce\ecom\`
 - Domain Apps directory: `ecom/apps/`
-- Active Registered Apps (21): `userview`, `apps.accounts`, `apps.catalog`, `apps.inventory`, `apps.search`, `apps.cart`, `apps.wishlist`, `apps.checkout`, `apps.payments`, `apps.orders`, `apps.shipping`, `apps.fulfillment`, `apps.promotions`, `apps.reviews`, `apps.notifications`, `apps.recommendations`, `apps.cms`, `apps.analytics`, `apps.support`, `apps.audit`, `apps.settings`, `apps.core`.
+- Active Registered Apps (20 Domain Apps + 2 Core/Assistant): `apps.accounts`, `apps.catalog`, `apps.inventory`, `apps.search`, `apps.cart`, `apps.wishlist`, `apps.checkout`, `apps.payments`, `apps.orders`, `apps.shipping`, `apps.fulfillment`, `apps.promotions`, `apps.reviews`, `apps.notifications`, `apps.recommendations`, `apps.cms`, `apps.analytics`, `apps.support`, `apps.audit`, `apps.settings`, `apps.core`, `apps.assistant`.
 - Active Templates directory: `ecom/templates/` with subfolders for all 20 apps and `components/`.
-- Active Static & Media directories: `ecom/static/` (`css/`, `js/`, `images/`), `ecom/media/`.
+- Active Static & Media directories: `ecom/static/` (`css/`, `js/`, `images/`), `ecom/staticfiles/`, `ecom/media/`.
 - Active Storefront View: `home_view` rendering `homepage.html`.
 - Dev Server: Running on `ecom` (Django 5.2, zero check errors).
+- Live Vercel Production URL: `https://e-commerce-fawn-seven-34.vercel.app` (Status: ● Ready, HTTP 200)
 
 ---
 

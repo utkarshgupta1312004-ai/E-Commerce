@@ -234,7 +234,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
-STATIC_ROOT = BASE_DIR.parent / 'staticfiles'
+STATIC_ROOT = BASE_DIR / 'staticfiles' if (BASE_DIR / 'staticfiles').exists() else (BASE_DIR.parent / 'staticfiles')
 WHITENOISE_USE_FINDERS = True
 
 STORAGES = {

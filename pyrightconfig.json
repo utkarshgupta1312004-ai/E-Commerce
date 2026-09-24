@@ -3,11 +3,10 @@
   "venv": "venv",
   "extraPaths": [
     ".",
-    "./apps",
     "./ecom",
-    "..",
-    "../ecom",
-    "../ecom/apps"
+    "./ecom/apps",
+    "./ecom/ecom",
+    "./apps"
   ],
   "reportIncompatibleMethodOverride": "none",
   "reportIncompatibleVariableOverride": "none",

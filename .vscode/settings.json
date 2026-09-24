@@ -1,0 +1,11 @@
+{
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/ecom",
+    "${workspaceFolder}/ecom/apps"
+  ],
+  "python.autoComplete.extraPaths": [
+    "${workspaceFolder}/ecom",
+    "${workspaceFolder}/ecom/apps"
+  ],
+  "python.defaultInterpreterPath": "${workspaceFolder}/venv/Scripts/python.exe"
+}

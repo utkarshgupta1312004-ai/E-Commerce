@@ -28,6 +28,8 @@
 | [ecom/ecom/wsgi.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/ecom/wsgi.py) | WSGI configuration with Vercel serverless request path restoration | Verified |
 | [api/index.py](file:///d:/django_project/E-Commerce/E-Commerce/api/index.py) | Vercel serverless deployment entrypoint with auto-migration guard | Verified & Deployed |
 | [vercel.json](file:///d:/django_project/E-Commerce/E-Commerce/vercel.json) | Vercel production rewrites routing | Active (● Ready) |
+| [build.sh](file:///d:/django_project/E-Commerce/E-Commerce/build.sh) | Render automated build script (pip, collectstatic, migrate) | Complete & Configured |
+| [render.yaml](file:///d:/django_project/E-Commerce/E-Commerce/render.yaml) | Render Blueprint specification (Gunicorn, Python 3.12, auto-deploy) | Complete & Configured |
 
 ---
 

@@ -48,11 +48,15 @@ if _allowed_env:
 else:
     ALLOWED_HOSTS = ['*']
 
-for _default_host in ['.vercel.app', 'localhost', '127.0.0.1', '*']:
+for _default_host in ['.vercel.app', '.onrender.com', 'localhost', '127.0.0.1', '*']:
     if _default_host not in ALLOWED_HOSTS:
         ALLOWED_HOSTS.append(_default_host)
 
-# CSRF Trusted Origins for Vercel deployment
+_render_hostname = (os.environ.get('RENDER_EXTERNAL_HOSTNAME') or '').strip()
+if _render_hostname and _render_hostname not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(_render_hostname)
+
+# CSRF Trusted Origins for Vercel & Render deployment
 _csrf_env = (os.environ.get('CSRF_TRUSTED_ORIGINS') or '').strip()
 if _csrf_env:
     CSRF_TRUSTED_ORIGINS = [o.strip() for o in _csrf_env.split(',') if o.strip()]
@@ -62,11 +66,17 @@ else:
 for _default_origin in [
     'https://*.vercel.app',
     'https://*.now.sh',
+    'https://*.onrender.com',
     'http://127.0.0.1',
     'http://localhost',
 ]:
     if _default_origin not in CSRF_TRUSTED_ORIGINS:
         CSRF_TRUSTED_ORIGINS.append(_default_origin)
+
+if _render_hostname:
+    _render_origin = f'https://{_render_hostname}'
+    if _render_origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(_render_origin)
 
 
 # Application definition

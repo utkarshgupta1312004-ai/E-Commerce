@@ -33,7 +33,28 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ecom.settings')
 
 from django.core.wsgi import get_wsgi_application
 
-application = get_wsgi_application()
+_django_app = get_wsgi_application()
 
-# Vercel serverless function entrypoint alias
-app = application
+def app(environ, start_response):
+    path_info = environ.get('PATH_INFO', '')
+    real_path = (
+        environ.get('HTTP_X_MATCHED_PATH')
+        or environ.get('HTTP_X_FORWARDED_URI')
+        or environ.get('RAW_URI')
+        or environ.get('REQUEST_URI')
+    )
+    if real_path and real_path not in ('/api/index.py', '/api/index', '/api', '/ecom/ecom/wsgi.py', '/ecom/wsgi.py'):
+        if '?' in real_path:
+            real_path = real_path.split('?', 1)[0]
+        if not real_path.startswith('/'):
+            real_path = '/' + real_path
+        environ['PATH_INFO'] = real_path
+    elif path_info in ('/api/index.py', '/api/index', '/api', '/ecom/ecom/wsgi.py', '/ecom/wsgi.py'):
+        environ['PATH_INFO'] = '/'
+    elif path_info.startswith('/api/index.py/'):
+        environ['PATH_INFO'] = path_info[len('/api/index.py'):]
+    
+    return _django_app(environ, start_response)
+
+# Vercel and standard WSGI aliases
+application = app

@@ -35,26 +35,38 @@ sys.path.insert(0, str(BASE_DIR / 'apps'))
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-*_5j)@e$pk-67i8v)@n)f3rtlxeb7*u$++^(y30*78y^#vv)+i')
+_secret_key_env = (os.environ.get('SECRET_KEY') or '').strip()
+SECRET_KEY = _secret_key_env if _secret_key_env else 'django-insecure-*_5j)@e$pk-67i8v)@n)f3rtlxeb7*u$++^(y30*78y^#vv)+i'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 'yes')
+_debug_env = (os.environ.get('DEBUG') or '').strip()
+DEBUG = _debug_env.lower() in ('true', '1', 'yes') if _debug_env else False
 
-ALLOWED_HOSTS = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', '*').split(',') if h.strip()]
-if '.vercel.app' not in ALLOWED_HOSTS and '*' not in ALLOWED_HOSTS:
-    ALLOWED_HOSTS.extend(['.vercel.app', 'localhost', '127.0.0.1'])
+_allowed_env = (os.environ.get('ALLOWED_HOSTS') or '').strip()
+if _allowed_env:
+    ALLOWED_HOSTS = [h.strip() for h in _allowed_env.split(',') if h.strip()]
+else:
+    ALLOWED_HOSTS = ['*']
+
+for _default_host in ['.vercel.app', 'localhost', '127.0.0.1', '*']:
+    if _default_host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(_default_host)
 
 # CSRF Trusted Origins for Vercel deployment
-CSRF_TRUSTED_ORIGINS = [
-    o.strip() for o in os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',') if o.strip()
-]
-if not CSRF_TRUSTED_ORIGINS:
-    CSRF_TRUSTED_ORIGINS = [
-        'https://*.vercel.app',
-        'https://*.now.sh',
-        'http://127.0.0.1',
-        'http://localhost',
-    ]
+_csrf_env = (os.environ.get('CSRF_TRUSTED_ORIGINS') or '').strip()
+if _csrf_env:
+    CSRF_TRUSTED_ORIGINS = [o.strip() for o in _csrf_env.split(',') if o.strip()]
+else:
+    CSRF_TRUSTED_ORIGINS = []
+
+for _default_origin in [
+    'https://*.vercel.app',
+    'https://*.now.sh',
+    'http://127.0.0.1',
+    'http://localhost',
+]:
+    if _default_origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(_default_origin)
 
 
 # Application definition

@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-[#0b0f19] text-slate-100 antialiased dark">
+<html lang="en" class="h-full bg-slate-50 text-slate-900 antialiased scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
@@ -10,14 +10,14 @@
     <link rel="icon" type="image/png" sizes="192x192" href="{% static 'images/favicon.png' %}">
     <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
 
-    <!-- Premium Google Fonts: Plus Jakarta Sans, Inter & JetBrains Mono -->
+    <!-- Premium Google Fonts: Poppins, Plus Jakarta Sans & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <!-- Offline Compiled Tailwind CSS (Local Fast Load, Zero CDN Network Overhead) -->
-    <link rel="stylesheet" href="{% static 'src/output.css' %}">
-    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+    <!-- Offline Compiled Tailwind CSS -->
+    <link rel="stylesheet" href="{% static 'src/output.css' %}?v=3">
+    <link rel="stylesheet" href="{% static 'css/output.css' %}?v=3">
 
     <!-- Offline Lucide Icons (Local Bundle with fallback) -->
     <script src="{% static 'js/lucide.min.js' %}"></script>
@@ -47,73 +47,73 @@
         })();
     </script>
 
-    <!-- Executive Dark Theme Stylesheet -->
+    <!-- Executive Modern Light Theme Matching Cartivo Storefront -->
     <style>
-        /* Modern Premium Typography Settings */
         body {
-            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            letter-spacing: -0.015em;
+            font-family: 'Poppins', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            letter-spacing: -0.012em;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             text-rendering: optimizeLegibility;
         }
 
         :root {
-            --bg-canvas: #0b0f19;
-            --bg-sidebar: #0f172a;
-            --bg-header: #0f172a;
-            --bg-card: #131c2e;
-            --bg-card-hover: #172338;
-            --bg-surface: #162238;
-            --border-subtle: #1e293b;
-            --border-highlight: rgba(99, 102, 241, 0.25);
+            --bg-canvas: #f8fafc;
+            --bg-sidebar: #ffffff;
+            --bg-header: rgba(255, 255, 255, 0.95);
+            --bg-card: #ffffff;
+            --bg-card-hover: #ffffff;
+            --bg-surface: #f1f5f9;
+            --border-subtle: #e2e8f0;
+            --border-highlight: rgba(37, 99, 235, 0.25);
         }
 
         html, body {
-            background-color: var(--bg-canvas) !important;
-            color: #f8fafc !important;
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
             overflow: hidden;
             height: 100%;
         }
 
         #sidebar {
-            background-color: var(--bg-sidebar) !important;
-            border-right: 1px solid var(--border-subtle) !important;
+            background-color: #ffffff !important;
+            border-right: 1px solid #e2e8f0 !important;
         }
 
         #main-header {
-            background-color: var(--bg-header) !important;
-            border-bottom: 1px solid var(--border-subtle) !important;
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            border-bottom: 1px solid #e2e8f0 !important;
         }
 
         .dash-card {
-            background-color: var(--bg-card) !important;
-            border: 1px solid var(--border-subtle) !important;
+            background-color: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
             border-radius: 1.25rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
         }
 
         .dropdown-menu {
-            background-color: #0f172a !important;
-            border: 1px solid #1e293b !important;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.4) !important;
+            background-color: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04) !important;
             z-index: 50 !important;
+            color: #0f172a !important;
         }
 
-        /* Custom Scrollbars */
+        /* Subtle modern scrollbars */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #0b0f19;
+            background: #f1f5f9;
         }
         ::-webkit-scrollbar-thumb {
-            background: #1e293b;
+            background: #cbd5e1;
             border-radius: 9999px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #334155;
+            background: #94a3b8;
         }
         .no-scrollbar::-webkit-scrollbar {
             display: none;
@@ -125,11 +125,314 @@
 
         /* Pulse Animation */
         @keyframes subtlePulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.95); }
         }
         .live-dot {
             animation: subtlePulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        /* Universal Light Theme Styling Mappings for Child Dashboards */
+        .bg-\[\#0b0f19\], [class*="bg-[#0b0f19]"] {
+            background-color: #f8fafc !important;
+        }
+        .bg-\[\#0f172a\], [class*="bg-[#0f172a]"] {
+            background-color: #ffffff !important;
+        }
+        .bg-\[\#131c2e\], [class*="bg-[#131c2e]"],
+        .bg-\[\#14203a\], [class*="bg-[#14203a]"],
+        .bg-\[\#162238\], [class*="bg-[#162238]"],
+        .bg-\[\#172338\], [class*="bg-[#172338]"],
+        .bg-\[\#162746\], [class*="bg-[#162746]"] {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.03) !important;
+        }
+
+        /* Executive Banner in Dashboard 1 */
+        .bg-gradient-to-br[class*="from-[#131c35]"] {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%) !important;
+            border-color: rgba(59, 130, 246, 0.4) !important;
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.25) !important;
+        }
+        .bg-gradient-to-br[class*="from-[#131c35]"] * {
+            color: #ffffff !important;
+        }
+        .bg-gradient-to-br[class*="from-[#131c35]"] a {
+            color: #ffffff !important;
+        }
+
+        /* Modals and Dialog Overlays */
+        div[id$="-modal"] {
+            background-color: rgba(15, 23, 42, 0.5) !important;
+            backdrop-filter: blur(8px) !important;
+        }
+        div[id$="-modal"] > div {
+            background-color: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            color: #0f172a !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
+        }
+        div[id$="-modal"] h2, div[id$="-modal"] h3, div[id$="-modal"] label, div[id$="-modal"] span {
+            color: #0f172a !important;
+        }
+        div[id$="-modal"] p {
+            color: #64748b !important;
+        }
+        div[id$="-modal"] .bg-\[\#0b0f19\], div[id$="-modal"] [class*="bg-[#0b0f19]"] {
+            background-color: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+            color: #475569 !important;
+        }
+        div[id$="-modal"] .bg-\[\#0b0f19\] * {
+            color: #475569 !important;
+        }
+
+        /* Progress Bar Tracks and Mini Containers */
+        div[class*="rounded-full"][class*="bg-[#0f172a]"],
+        div[class*="rounded-full"][class*="bg-slate-800"],
+        div[class*="rounded-full"][class*="bg-slate-900"],
+        div[class*="h-2"][class*="bg-slate-800"],
+        div[class*="h-3"][class*="bg-[#0f172a]"],
+        div[class*="h-1.5"][class*="bg-slate-800"] {
+            background-color: #f1f5f9 !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        /* Sub-cards, Statistic Boxes & Metric Panels */
+        div[class*="p-3"][class*="rounded-2xl"][class*="bg-[#0f172a]"],
+        div[class*="p-2.5"][class*="rounded-xl"][class*="bg-[#0f172a]"],
+        .bg-slate-900\/60, [class*="bg-slate-900/60"] {
+            background-color: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+        }
+        .bg-slate-900\/60 *, [class*="bg-slate-900/60"] * {
+            color: #0f172a !important;
+        }
+        [class*="bg-slate-900/60"] .text-slate-300,
+        [class*="bg-slate-900/60"] .text-slate-400 {
+            color: #475569 !important;
+        }
+
+        /* Charts, Graphs, and SVG Overrides */
+        circle[stroke="#1e293b"] {
+            stroke: #f1f5f9 !important;
+        }
+        circle[stroke="#0f172a"] {
+            stroke: #ffffff !important;
+        }
+        .border-slate-800\/50, .border-slate-800\/40, [class*="border-slate-800"] {
+            border-color: #f1f5f9 !important;
+        }
+        svg text {
+            fill: #64748b !important;
+        }
+        defs linearGradient#priorSalesArea stop:first-child {
+            stop-color: #94a3b8 !important;
+            stop-opacity: 0.25 !important;
+        }
+        defs linearGradient#currentSalesArea stop:first-child {
+            stop-color: #2563eb !important;
+            stop-opacity: 0.35 !important;
+        }
+        path[stroke="#6366f1"] {
+            stroke: #2563eb !important;
+        }
+        circle[fill="#6366f1"] {
+            fill: #2563eb !important;
+        }
+
+        /* Universal Border Mapping */
+        .border-\[\#1e293b\], [class*="border-[#1e293b]"] {
+            border-color: #e2e8f0 !important;
+        }
+
+        /* Typography Mapping */
+        .text-white:not(.keep-white) {
+            color: #0f172a !important;
+        }
+        /* Elements on solid/gradient backgrounds retain crisp white text */
+        .bg-blue-600, .bg-blue-700, .bg-indigo-600, .bg-emerald-600,
+        .bg-gradient-to-r, .btn-primary, [class*="bg-blue-600"],
+        [class*="from-indigo-600"], [class*="from-emerald-600"], [class*="from-cyan-600"], [class*="from-rose-600"] {
+            color: #ffffff !important;
+        }
+        .bg-blue-600 *, .bg-blue-700 *, .bg-indigo-600 *, .bg-emerald-600 *,
+        [class*="from-indigo-600"] *, [class*="from-emerald-600"] *, [class*="from-cyan-600"] *, [class*="from-rose-600"] * {
+            color: #ffffff !important;
+        }
+
+        /* Readable Accents on Light Background */
+        .text-emerald-400 { color: #059669 !important; }
+        .text-cyan-400 { color: #0284c7 !important; }
+        .text-amber-400 { color: #d97706 !important; }
+        .text-rose-400 { color: #e11d48 !important; }
+        .text-blue-400 { color: #2563eb !important; }
+        .text-purple-400 { color: #7c3aed !important; }
+        .text-indigo-400 { color: #4f46e5 !important; }
+
+        /* Badges, Pills & Tags */
+        span[class*="bg-slate-950"], span[class*="bg-slate-900"], span[class*="bg-slate-800"],
+        span.bg-slate-950, span.bg-slate-900, span.bg-slate-800,
+        div.bg-slate-800:not(button):not(a), div.bg-slate-950:not(button):not(a) {
+            background-color: #f8fafc !important;
+            color: #1e293b !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+        }
+
+        .text-slate-100 {
+            color: #0f172a !important;
+        }
+        .text-slate-200 {
+            color: #1e293b !important;
+        }
+        .text-slate-300 {
+            color: #475569 !important;
+        }
+        .text-slate-400 {
+            color: #64748b !important;
+        }
+        .text-slate-500 {
+            color: #64748b !important;
+        }
+
+        /* Table Styling */
+        .overflow-x-auto[class*="bg-[#0f172a]"] {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+        }
+        table thead, table thead tr, table thead th {
+            background-color: #f8fafc !important;
+            color: #475569 !important;
+            font-weight: 600 !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+        }
+        table tbody, table tbody tr {
+            background-color: #ffffff !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+            color: #1e293b !important;
+        }
+        table tbody tr:hover {
+            background-color: #f8fafc !important;
+        }
+        table tbody td {
+            border-color: #f1f5f9 !important;
+        }
+        .divide-\[\#1e293b\], [class*="divide-[#1e293b]"] {
+            border-color: #f1f5f9 !important;
+        }
+
+        /* Inputs, Selects, and Textareas */
+        input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]), select, textarea {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border: 1px solid #e2e8f0 !important;
+        }
+        input::placeholder, textarea::placeholder {
+            color: #94a3b8 !important;
+        }
+        select option {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+        }
+        input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):focus, select:focus, textarea:focus {
+            background-color: #ffffff !important;
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12) !important;
+            outline: none !important;
+        }
+
+        /* Action Buttons and Toolbars */
+        button[class*="bg-[#131c2e]"], a[class*="bg-[#131c2e]"],
+        button[class*="bg-[#0f172a]"], a[class*="bg-[#0f172a]"],
+        button[class*="bg-slate-800"], a[class*="bg-slate-800"] {
+            background-color: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            color: #334155 !important;
+        }
+        button[class*="bg-[#131c2e]"]:hover, a[class*="bg-[#131c2e]"]:hover,
+        button[class*="bg-[#0f172a]"]:hover, a[class*="bg-[#0f172a]"]:hover,
+        button[class*="bg-slate-800"]:hover, a[class*="bg-slate-800"]:hover {
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        /* Interactive Filter Pills */
+        #time-filter-wrapper, div[class*="p-1"][class*="rounded-xl"][class*="bg-[#131c2e]"] {
+            background-color: #f1f5f9 !important;
+            border: 1px solid #e2e8f0 !important;
+        }
+        #time-filter-wrapper button:not(.bg-indigo-600):not(.bg-blue-600),
+        div[class*="p-1"][class*="rounded-xl"][class*="bg-[#131c2e]"] button:not(.bg-indigo-600):not(.bg-blue-600) {
+            color: #64748b !important;
+            background-color: transparent !important;
+        }
+        #time-filter-wrapper button:not(.bg-indigo-600):not(.bg-blue-600):hover,
+        div[class*="p-1"][class*="rounded-xl"][class*="bg-[#131c2e]"] button:not(.bg-indigo-600):not(.bg-blue-600):hover {
+            color: #0f172a !important;
+            background-color: #e2e8f0 !important;
+        }
+        #time-filter-wrapper button.bg-indigo-600,
+        #time-filter-wrapper button.bg-blue-600,
+        div[class*="p-1"][class*="rounded-xl"][class*="bg-[#131c2e]"] button.bg-indigo-600 {
+            background-color: #2563eb !important;
+            color: #ffffff !important;
+        }
+
+        .cat-pill:not(.active):not(.bg-indigo-600):not(.bg-blue-600),
+        .filter-pill:not(.active):not(.bg-indigo-600):not(.bg-blue-600) {
+            background-color: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            color: #475569 !important;
+        }
+        .cat-pill.active, .cat-pill.bg-indigo-600, .filter-pill.active {
+            background-color: #2563eb !important;
+            color: #ffffff !important;
+            border-color: #2563eb !important;
+        }
+        .cat-pill:hover:not(.active) {
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        /* Badges & Status Indicators */
+        span.bg-slate-800, div.bg-slate-800:not(button):not(a) {
+            background-color: #f1f5f9 !important;
+            color: #334155 !important;
+            border-color: #e2e8f0 !important;
+        }
+        .bg-emerald-500\/10, .bg-emerald-500\/15 {
+            background-color: #ecfdf5 !important;
+            color: #047857 !important;
+            border-color: #a7f3d0 !important;
+        }
+        .bg-blue-500\/10, .bg-blue-500\/15, .bg-indigo-500\/10, .bg-indigo-500\/15 {
+            background-color: #eff6ff !important;
+            color: #1d4ed8 !important;
+            border-color: #bfdbfe !important;
+        }
+        .bg-purple-500\/10, .bg-purple-500\/15 {
+            background-color: #faf5ff !important;
+            color: #7e22ce !important;
+            border-color: #e9d5ff !important;
+        }
+        .bg-amber-500\/10, .bg-amber-500\/15 {
+            background-color: #fffbeb !important;
+            color: #b45309 !important;
+            border-color: #fde68a !important;
+        }
+        .bg-rose-500\/10, .bg-rose-500\/15 {
+            background-color: #fff1f2 !important;
+            color: #be123c !important;
+            border-color: #fecdd3 !important;
+        }
+        .bg-cyan-500\/10, .bg-cyan-500\/15 {
+            background-color: #ecfeff !important;
+            color: #0e7490 !important;
+            border-color: #a5f3fc !important;
         }
 
         /* Mobile Drawer Transitions */
@@ -143,7 +446,7 @@
                 z-index: 50 !important;
                 transform: translateX(-100%) !important;
                 transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75) !important;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2) !important;
             }
             #sidebar.sidebar-open {
                 transform: translateX(0) !important;
@@ -241,7 +544,6 @@
             tr {
                 page-break-inside: avoid !important;
             }
-            /* Show all rows when printing regardless of current pagination page */
             .matrix-row,
             .sales-row,
             .user-row,
@@ -268,12 +570,12 @@
     </style>
     {% block extra_head %}{% endblock %}
 </head>
-<body class="h-full bg-[#0b0f19] text-slate-100 flex overflow-hidden selection:bg-indigo-600 selection:text-white">
+<body class="h-full bg-slate-50 text-slate-900 flex overflow-hidden selection:bg-blue-600 selection:text-white">
 
     <!-- Mobile Sidebar Backdrop Overlay -->
     <div 
         id="sidebar-backdrop" 
-        class="fixed inset-0 bg-[#030712]/80 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-opacity duration-300 lg:hidden"
+        class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-opacity duration-300 lg:hidden"
         aria-hidden="true"
     ></div>
 
@@ -282,7 +584,7 @@
     <!-- ======================================================================= -->
     <aside 
         id="sidebar" 
-        class="w-64 bg-[#0f172a] border-r border-[#1e293b] flex flex-col shrink-0 h-screen z-50 select-none shadow-2xl lg:shadow-none"
+        class="w-64 bg-white border-r border-slate-200 flex flex-col shrink-0 h-screen z-50 select-none shadow-xl lg:shadow-none"
     >
         <script>
             (function() {
@@ -293,20 +595,16 @@
                 } catch (e) {}
             })();
         </script>
-        <!-- Brand Header with Logo & Mobile Close Button -->
-        <div class="h-16 px-4 border-b border-[#1e293b] flex items-center justify-between shrink-0 bg-[#0f172a] sidebar-brand-wrapper">
-            <a href="{% url 'management:dashboard' %}" class="flex items-center gap-3 group overflow-hidden">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-600 p-0.5 shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform shrink-0">
-                    <div class="w-full h-full bg-[#0f172a] rounded-[10px] flex items-center justify-center">
-                        <i data-lucide="shield-check" class="w-5 h-5 text-cyan-400"></i>
-                    </div>
-                </div>
-                <div class="flex flex-col sidebar-header-text min-w-0">
-                    <div class="flex items-center gap-1.5">
-                        <span class="font-extrabold text-base tracking-tight text-white group-hover:text-cyan-400 transition-colors">CARTIVO</span>
-                        <span class="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">Root</span>
-                    </div>
-                    <span class="text-[10px] text-slate-400 font-medium truncate">Enterprise Console</span>
+        <!-- Brand Header with Logo & Mobile Close Button Matching Official Storefront -->
+        <div class="h-16 px-4 border-b border-slate-200 flex items-center justify-between shrink-0 bg-white sidebar-brand-wrapper">
+            <a href="{% url 'management:dashboard' %}" class="flex items-center gap-2.5 group overflow-hidden">
+                <img 
+                    src="{% static 'images/cartivo-horizontal.png' %}" 
+                    alt="Cartivo" 
+                    class="h-7 w-auto object-contain transition-transform group-hover:scale-[1.02] shrink-0"
+                >
+                <div class="flex items-center sidebar-header-text min-w-0">
+                    <span class="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">Executive</span>
                 </div>
             </a>
 
@@ -314,7 +612,7 @@
             <button 
                 type="button" 
                 id="sidebar-close-btn" 
-                class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 lg:hidden cursor-pointer" 
+                class="p-1.5 rounded-lg text-slate-400 hover:text-slate-900 hover:bg-slate-100 lg:hidden cursor-pointer" 
                 aria-label="Close navigation sidebar"
             >
                 <i data-lucide="x" class="w-5 h-5"></i>
@@ -331,126 +629,107 @@
                 <!-- 1. Executive Dashboard -->
                 <a 
                     href="{% url 'management:dashboard' %}" 
-                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'dashboard' %}bg-indigo-600/15 text-indigo-400 font-bold border border-indigo-500/30 shadow-sm{% else %}text-slate-300 hover:text-white hover:bg-slate-800/50{% endif %}"
+                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'dashboard' %}bg-blue-50 text-blue-700 font-bold border border-blue-200 shadow-2xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium{% endif %}"
                 >
                     <div class="flex items-center gap-3">
-                        <i data-lucide="layout-dashboard" class="w-4 h-4 {% if active_tab == 'dashboard' %}text-indigo-400{% else %}text-blue-400{% endif %} shrink-0"></i>
+                        <i data-lucide="layout-dashboard" class="w-4 h-4 {% if active_tab == 'dashboard' %}text-blue-600{% else %}text-slate-500 group-hover:text-blue-600{% endif %} shrink-0"></i>
                         <span class="sidebar-text">Executive Dashboard</span>
                     </div>
                     {% if active_tab == 'dashboard' %}
-                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 live-dot shrink-0 sidebar-badge"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-600 live-dot shrink-0 sidebar-badge"></span>
                     {% endif %}
                 </a>
 
                 <!-- 2. All Sales & Financial KPIs -->
                 <a 
                     href="{% url 'management:sales' %}" 
-                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'sales' %}bg-indigo-600/15 text-indigo-400 font-bold border border-indigo-500/30 shadow-sm{% else %}text-slate-300 hover:text-white hover:bg-slate-800/50{% endif %}"
+                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'sales' %}bg-blue-50 text-blue-700 font-bold border border-blue-200 shadow-2xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium{% endif %}"
                 >
                     <div class="flex items-center gap-3">
-                        <i data-lucide="dollar-sign" class="w-4 h-4 {% if active_tab == 'sales' %}text-emerald-400{% else %}text-emerald-400{% endif %} shrink-0"></i>
+                        <i data-lucide="dollar-sign" class="w-4 h-4 {% if active_tab == 'sales' %}text-emerald-600{% else %}text-slate-500 group-hover:text-emerald-600{% endif %} shrink-0"></i>
                         <span class="sidebar-text">All Sales &amp; KPIs</span>
                     </div>
-                    <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 sidebar-badge">Live</span>
+                    <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 sidebar-badge">Live</span>
                 </a>
 
                 <!-- 3. Graph Analyst & Deep Analytics -->
                 <a 
                     href="{% url 'management:analytics' %}" 
-                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'analytics' %}bg-indigo-600/15 text-indigo-400 font-bold border border-indigo-500/30 shadow-sm{% else %}text-slate-300 hover:text-white hover:bg-slate-800/50{% endif %}"
+                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'analytics' %}bg-blue-50 text-blue-700 font-bold border border-blue-200 shadow-2xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium{% endif %}"
                 >
                     <div class="flex items-center gap-3">
-                        <i data-lucide="line-chart" class="w-4 h-4 {% if active_tab == 'analytics' %}text-cyan-400{% else %}text-cyan-400{% endif %} shrink-0"></i>
-                        <span class="sidebar-text">Graph Analyst</span>
+                        <i data-lucide="line-chart" class="w-4 h-4 {% if active_tab == 'analytics' %}text-blue-600{% else %}text-slate-500 group-hover:text-blue-600{% endif %} shrink-0"></i>
+                        <span class="sidebar-text">Analytics &amp; Graphs</span>
                     </div>
-                    <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 sidebar-badge">Visual</span>
+                    <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 sidebar-badge">BI</span>
                 </a>
             </div>
 
-            <!-- Group: ENTERPRISE INFRASTRUCTURE -->
-            <div class="space-y-1 pt-2">
-                <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 pb-1 sidebar-section-title">System &amp; Infrastructure</span>
-                
-                <!-- 4. Domains (All 20 Modular Apps) -->
+            <!-- Group: PLATFORM INFRASTRUCTURE -->
+            <div class="space-y-1 pt-2 border-t border-slate-100">
+                <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 pb-1 sidebar-section-title">Platform Infrastructure</span>
+
+                <!-- 4. 20 Modular Domains Directory -->
                 <a 
                     href="{% url 'management:domains' %}" 
-                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'domains' %}bg-indigo-600/15 text-indigo-400 font-bold border border-indigo-500/30 shadow-sm{% else %}text-slate-300 hover:text-white hover:bg-slate-800/50{% endif %}"
+                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'domains' %}bg-blue-50 text-blue-700 font-bold border border-blue-200 shadow-2xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium{% endif %}"
                 >
                     <div class="flex items-center gap-3">
-                        <i data-lucide="layers" class="w-4 h-4 text-amber-400 shrink-0"></i>
-                        <span class="sidebar-text">Domains (20 Apps)</span>
+                        <i data-lucide="layers" class="w-4 h-4 {% if active_tab == 'domains' %}text-amber-600{% else %}text-slate-500 group-hover:text-amber-600{% endif %} shrink-0"></i>
+                        <span class="sidebar-text">20 Domain Modules</span>
                     </div>
-                    <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 sidebar-badge">20</span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 sidebar-badge">20</span>
                 </a>
 
-                <!-- 5. Users & Accounts Directory -->
+                <!-- 5. User Accounts & RBAC Directory -->
                 <a 
                     href="{% url 'management:users' %}" 
-                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'users' %}bg-indigo-600/15 text-indigo-400 font-bold border border-indigo-500/30 shadow-sm{% else %}text-slate-300 hover:text-white hover:bg-slate-800/50{% endif %}"
+                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'users' %}bg-blue-50 text-blue-700 font-bold border border-blue-200 shadow-2xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium{% endif %}"
                 >
                     <div class="flex items-center gap-3">
-                        <i data-lucide="users" class="w-4 h-4 text-purple-400 shrink-0"></i>
+                        <i data-lucide="users" class="w-4 h-4 {% if active_tab == 'users' %}text-purple-600{% else %}text-slate-500 group-hover:text-purple-600{% endif %} shrink-0"></i>
                         <span class="sidebar-text">Platform Accounts</span>
                     </div>
-                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-500 sidebar-arrow"></i>
                 </a>
 
-                <!-- 6. Department Accounts & Credentials -->
+                <!-- 6. Department Accounts & Access Control -->
                 <a 
                     href="{% url 'management:department_accounts' %}" 
-                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'dept_accounts' %}bg-indigo-600/15 text-indigo-400 font-bold border border-indigo-500/30 shadow-sm{% else %}text-slate-300 hover:text-white hover:bg-slate-800/50{% endif %}"
+                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'dept_accounts' %}bg-blue-50 text-blue-700 font-bold border border-blue-200 shadow-2xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium{% endif %}"
                 >
                     <div class="flex items-center gap-3">
-                        <i data-lucide="key-round" class="w-4 h-4 text-emerald-400 shrink-0"></i>
-                        <span class="sidebar-text">Department Accounts</span>
+                        <i data-lucide="key-round" class="w-4 h-4 {% if active_tab == 'dept_accounts' %}text-emerald-600{% else %}text-slate-500 group-hover:text-emerald-600{% endif %} shrink-0"></i>
+                        <span class="sidebar-text">Dept Credentials</span>
                     </div>
-                    <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 sidebar-badge">Auth</span>
-                </a>
-
-                <!-- 6. Audit & Security Trail -->
-                <a 
-                    href="/admin/audit/auditlog/" 
-                    target="_blank" 
-                    class="sidebar-item flex items-center justify-between px-3 py-2 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-xl transition-colors"
-                >
-                    <div class="flex items-center gap-3">
-                        <i data-lucide="shield-alert" class="w-4 h-4 text-rose-400 shrink-0"></i>
-                        <span class="sidebar-text">Security Trail DB</span>
-                    </div>
-                    <i data-lucide="external-link" class="w-3 h-3 text-slate-500 sidebar-arrow"></i>
+                    <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 sidebar-badge">Auth</span>
                 </a>
             </div>
 
-            <!-- Section: EXTERNAL PORTALS -->
-            <div class="space-y-1 pt-2">
-                <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 pb-1 sidebar-section-title">Portals</span>
-                
-                <a href="{% url 'management:portal' %}" class="sidebar-item flex items-center justify-between px-3 py-2 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-xl transition-colors">
-                    <div class="flex items-center gap-3">
-                        <i data-lucide="globe" class="w-4 h-4 text-cyan-400 shrink-0"></i>
-                        <span class="sidebar-text">Public Directory</span>
-                    </div>
-                    <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-slate-500 sidebar-arrow"></i>
+            <!-- Group: QUICK NAVIGATION -->
+            <div class="space-y-1 pt-2 border-t border-slate-100">
+                <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 pb-1 sidebar-section-title">Navigation Hub</span>
+
+                <a href="{% url 'management:portal' %}" class="sidebar-item flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium transition-colors">
+                    <i data-lucide="layout-grid" class="w-4 h-4 text-blue-600 shrink-0"></i>
+                    <span class="sidebar-text">Domain Directory</span>
                 </a>
-                <a href="/" target="_blank" class="sidebar-item flex items-center justify-between px-3 py-2 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-xl transition-colors">
-                    <div class="flex items-center gap-3">
-                        <i data-lucide="external-link" class="w-4 h-4 text-emerald-400 shrink-0"></i>
-                        <span class="sidebar-text">Customer Storefront</span>
-                    </div>
-                    <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-slate-500 sidebar-arrow"></i>
+
+                <a href="/" target="_blank" class="sidebar-item flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium transition-colors">
+                    <i data-lucide="shopping-bag" class="w-4 h-4 text-amber-500 shrink-0"></i>
+                    <span class="sidebar-text">Storefront</span>
+                    <i data-lucide="external-link" class="w-3 h-3 text-slate-400 ml-auto sidebar-arrow"></i>
                 </a>
-                <a href="/admin/" target="_blank" class="sidebar-item flex items-center justify-between px-3 py-2 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-xl transition-colors">
-                    <div class="flex items-center gap-3">
-                        <i data-lucide="settings-2" class="w-4 h-4 text-blue-400 shrink-0"></i>
-                        <span class="sidebar-text">Django Administration</span>
-                    </div>
-                    <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-slate-500 sidebar-arrow"></i>
+
+                <a href="/admin/" target="_blank" class="sidebar-item flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium transition-colors">
+                    <i data-lucide="database" class="w-4 h-4 text-indigo-500 shrink-0"></i>
+                    <span class="sidebar-text">Django Admin</span>
+                    <i data-lucide="external-link" class="w-3 h-3 text-slate-400 ml-auto sidebar-arrow"></i>
                 </a>
             </div>
 
             <!-- Section: ROOT ACTIONS -->
-            <div class="pt-3 border-t border-[#1e293b]">
-                <a href="{% url 'management:logout' %}" class="sidebar-item flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-xs font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 transition-colors">
+            <div class="pt-3 border-t border-slate-100">
+                <a href="{% url 'management:logout' %}" class="sidebar-item flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-xs font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 transition-colors">
                     <i data-lucide="log-out" class="w-4 h-4 shrink-0"></i>
                     <span class="sidebar-text">Exit Superadmin</span>
                 </a>
@@ -459,11 +738,11 @@
         </nav>
 
         <!-- Sidebar Collapse Toggle Button (Desktop Rail Switcher) -->
-        <div class="p-3 border-t border-[#1e293b] hidden lg:flex items-center justify-between text-slate-400 bg-[#0f172a]">
+        <div class="p-3 border-t border-slate-200 hidden lg:flex items-center justify-between text-slate-500 bg-slate-50">
             <button 
                 type="button" 
                 id="sidebar-rail-btn" 
-                class="w-full flex items-center justify-center gap-2 py-1.5 px-2 rounded-lg hover:bg-slate-800/60 hover:text-white text-xs transition-colors cursor-pointer"
+                class="w-full flex items-center justify-center gap-2 py-1.5 px-2 rounded-lg hover:bg-white hover:text-slate-900 text-xs transition-colors cursor-pointer border border-transparent hover:border-slate-200"
                 title="Toggle Slim Sidebar"
             >
                 <i data-lucide="chevrons-left" id="rail-icon" class="w-4 h-4 transition-transform duration-200"></i>
@@ -475,10 +754,10 @@
     <!-- ======================================================================= -->
     <!-- 2. MAIN CONTENT COLUMN WRAPPER                                          -->
     <!-- ======================================================================= -->
-    <div class="flex flex-col flex-1 h-screen overflow-hidden min-w-0 bg-[#0b0f19]">
+    <div class="flex flex-col flex-1 h-screen overflow-hidden min-w-0 bg-slate-50">
 
-        <!-- Top Header Navigation Bar -->
-        <header id="main-header" class="h-16 shrink-0 bg-[#0f172a] border-b border-[#1e293b] px-4 sm:px-6 flex items-center justify-between gap-3 sm:gap-6 z-30">
+        <!-- Top Header Navigation Bar Matching Official Header -->
+        <header id="main-header" class="h-16 shrink-0 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between gap-3 sm:gap-6 z-30 shadow-xs">
             
             <!-- Left: Mobile Toggle, Brand & Global Search -->
             <div class="flex items-center gap-3 sm:gap-4 flex-1 max-w-xl">
@@ -486,7 +765,7 @@
                 <button 
                     type="button" 
                     id="sidebar-toggle-btn"
-                    class="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/80 transition-colors cursor-pointer shrink-0"
+                    class="p-2 rounded-xl text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
                     aria-label="Toggle Navigation Sidebar"
                 >
                     <i data-lucide="menu" class="w-5 h-5"></i>
@@ -494,23 +773,23 @@
 
                 <!-- Mobile Logo Title -->
                 <div class="flex items-center gap-1.5 lg:hidden">
-                    <span class="font-extrabold text-sm tracking-tight text-white">CARTIVO</span>
-                    <span class="text-[8px] font-bold uppercase px-1 py-0.2 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">Admin</span>
+                    <img src="{% static 'images/cartivo-horizontal.png' %}" alt="Cartivo" class="h-6 w-auto object-contain">
+                    <span class="text-[8px] font-bold uppercase px-1 py-0.2 rounded bg-blue-50 text-blue-700 border border-blue-200">Admin</span>
                 </div>
 
                 <!-- Global Search Box (opens Command Palette) -->
                 <div class="relative w-full hidden sm:block">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                         <i data-lucide="search" class="w-4 h-4"></i>
                     </div>
                     <input 
                         type="text" 
                         id="global-dash-search"
                         placeholder="Search sales, graphs, 20 domains, models..." 
-                        class="w-full pl-9 pr-14 py-2 rounded-xl bg-[#131c2e] border border-[#1e293b] text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all cursor-pointer"
+                        class="w-full pl-9 pr-14 py-2 rounded-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-500/15 focus:border-blue-600 transition-all cursor-pointer shadow-2xs"
                         readonly
                     >
-                    <kbd class="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[9px] font-mono text-slate-400 bg-slate-800 rounded border border-slate-700">Ctrl+K</kbd>
+                    <kbd class="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[9px] font-mono text-slate-500 bg-white rounded border border-slate-200 shadow-2xs">Ctrl+K</kbd>
                 </div>
             </div>
 
@@ -521,25 +800,25 @@
                 <button 
                     type="button" 
                     id="mobile-search-btn"
-                    class="sm:hidden p-2 text-slate-300 hover:text-white hover:bg-slate-800/80 rounded-xl transition-colors" 
+                    class="sm:hidden p-2 text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-colors" 
                     title="Search"
                 >
                     <i data-lucide="search" class="w-4 h-4"></i>
                 </button>
 
                 <!-- Platform Online Status Pill -->
-                <div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span>
+                <div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 live-dot"></span>
                     <span>20/20 Systems Online</span>
                 </div>
 
                 <!-- Direct Navigation Buttons -->
-                <a href="/" target="_blank" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#131c2e] border border-[#1e293b] text-xs text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">
-                    <i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-amber-400"></i>
+                <a href="/" target="_blank" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-xs font-medium text-slate-700 hover:text-blue-600 hover:bg-white transition-colors shadow-2xs">
+                    <i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-amber-500"></i>
                     <span>Storefront</span>
                 </a>
-                <a href="{% url 'management:portal' %}" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#131c2e] border border-[#1e293b] text-xs text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">
-                    <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-blue-400"></i>
+                <a href="{% url 'management:portal' %}" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-xs font-medium text-slate-700 hover:text-blue-600 hover:bg-white transition-colors shadow-2xs">
+                    <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-blue-600"></i>
                     <span>Directory</span>
                 </a>
 
@@ -548,55 +827,53 @@
                     <button 
                         type="button" 
                         id="profile-dropdown-btn"
-                        class="flex items-center gap-2 pl-2 sm:pl-3 border-l border-[#1e293b] cursor-pointer group"
+                        class="flex items-center gap-2 pl-2 sm:pl-3 border-l border-slate-200 cursor-pointer group"
                         aria-expanded="false"
                         aria-haspopup="true"
                     >
-                        <div class="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-600 p-0.5 shrink-0 shadow-md group-hover:scale-105 transition-transform">
-                            <div class="w-full h-full bg-[#0f172a] rounded-full flex items-center justify-center font-black text-xs text-white">
-                                {{ user.username|slice:":2"|upper }}
-                            </div>
-                            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-[#0f172a]"></span>
+                        <div class="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-950 p-0.5 shrink-0 shadow-xs group-hover:scale-105 transition-transform flex items-center justify-center font-bold text-xs text-white">
+                            {{ user.username|slice:":2"|upper }}
+                            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white"></span>
                         </div>
                         <div class="hidden md:flex flex-col text-left">
-                            <span class="text-xs font-bold text-white leading-tight truncate max-w-[110px]">{{ user.username }}</span>
-                            <span class="text-[10px] text-amber-400 font-semibold leading-tight">Superadmin</span>
+                            <span class="text-xs font-bold text-slate-900 leading-tight truncate max-w-[110px]">{{ user.username }}</span>
+                            <span class="text-[10px] text-amber-600 font-semibold leading-tight">Superadmin</span>
                         </div>
-                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 group-hover:text-white transition-transform duration-200 hidden sm:block"></i>
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 transition-transform duration-200 hidden sm:block"></i>
                     </button>
 
                     <!-- Dropdown Menu -->
                     <div 
                         id="profile-dropdown-menu" 
-                        class="hidden dropdown-menu absolute right-0 mt-2.5 w-60 rounded-2xl bg-[#0f172a] border border-[#1e293b] shadow-2xl py-2 z-50 text-xs divide-y divide-[#1e293b]"
+                        class="hidden dropdown-menu absolute right-0 mt-2.5 w-60 rounded-2xl bg-white border border-slate-200 shadow-xl py-2 z-50 text-xs divide-y divide-slate-100"
                     >
-                        <div class="px-4 py-2.5">
-                            <div class="font-bold text-white text-sm">{{ user.username }}</div>
-                            <div class="text-[10px] text-slate-400 truncate">{{ user.email|default:"Governance Root Administrator" }}</div>
-                            <span class="inline-block mt-1.5 px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[9px] font-bold uppercase">
+                        <div class="px-4 py-2.5 bg-slate-50/50">
+                            <div class="font-bold text-slate-900 text-sm">{{ user.username }}</div>
+                            <div class="text-[10px] text-slate-500 truncate">{{ user.email|default:"Governance Root Administrator" }}</div>
+                            <span class="inline-block mt-1.5 px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 text-[9px] font-bold uppercase">
                                 Super Administrator
                             </span>
                         </div>
                         <div class="py-1">
-                            <a href="/admin/" target="_blank" class="flex items-center gap-2.5 px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors">
-                                <i data-lucide="settings" class="w-4 h-4 text-blue-400"></i>
+                            <a href="/admin/" target="_blank" class="flex items-center gap-2.5 px-4 py-2 text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">
+                                <i data-lucide="settings" class="w-4 h-4 text-blue-600"></i>
                                 <span>Django Root Administration</span>
                             </a>
-                            <a href="{% url 'management:users' %}" class="flex items-center gap-2.5 px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors">
-                                <i data-lucide="users" class="w-4 h-4 text-purple-400"></i>
+                            <a href="{% url 'management:users' %}" class="flex items-center gap-2.5 px-4 py-2 text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">
+                                <i data-lucide="users" class="w-4 h-4 text-purple-600"></i>
                                 <span>Manage User Permissions</span>
                             </a>
-                            <a href="{% url 'management:domains' %}" class="flex items-center gap-2.5 px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors">
-                                <i data-lucide="layers" class="w-4 h-4 text-amber-400"></i>
+                            <a href="{% url 'management:domains' %}" class="flex items-center gap-2.5 px-4 py-2 text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">
+                                <i data-lucide="layers" class="w-4 h-4 text-amber-600"></i>
                                 <span>20 Modular Domains</span>
                             </a>
-                            <a href="{% url 'management:portal' %}" class="flex items-center gap-2.5 px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors">
-                                <i data-lucide="grid" class="w-4 h-4 text-cyan-400"></i>
+                            <a href="{% url 'management:portal' %}" class="flex items-center gap-2.5 px-4 py-2 text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">
+                                <i data-lucide="layout-grid" class="w-4 h-4 text-blue-600"></i>
                                 <span>Domain Directory</span>
                             </a>
                         </div>
                         <div class="py-1">
-                            <a href="{% url 'management:logout' %}" class="flex items-center gap-2.5 px-4 py-2 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors">
+                            <a href="{% url 'management:logout' %}" class="flex items-center gap-2.5 px-4 py-2 text-rose-700 hover:bg-rose-50 transition-colors">
                                 <i data-lucide="log-out" class="w-4 h-4"></i>
                                 <span>End Superadmin Session</span>
                             </a>
@@ -611,12 +888,12 @@
         {% if messages %}
         <div id="superadmin-messages-container" class="px-4 sm:px-6 lg:px-8 pt-4 space-y-2">
             {% for message in messages %}
-            <div class="message-alert p-3.5 rounded-2xl text-xs font-medium bg-emerald-950/80 border border-emerald-700/60 text-emerald-200 flex items-center justify-between shadow-lg transition-all duration-500">
+            <div class="message-alert p-3.5 rounded-2xl text-xs font-medium bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center justify-between shadow-xs transition-all duration-500">
                 <div class="flex items-center gap-2.5">
-                    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600 shrink-0"></i>
                     <span>{{ message }}</span>
                 </div>
-                <button type="button" onclick="dismissSuperadminMessage(this.closest('.message-alert'))" class="text-slate-400 hover:text-white p-1 cursor-pointer">
+                <button type="button" onclick="dismissSuperadminMessage(this.closest('.message-alert'))" class="text-slate-400 hover:text-slate-700 p-1 cursor-pointer">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
@@ -641,16 +918,16 @@
         {% endif %}
 
         <!-- Scrollable Dashboard Body Viewport -->
-        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 bg-slate-50">
 
             <!-- Breadcrumb Navigation & Action Header -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1">
                 <div class="flex items-center gap-2 text-sm">
-                    <span class="text-white font-black text-xl sm:text-2xl tracking-tight">{% block page_title %}Dashboard{% endblock %}</span>
-                    <span class="text-slate-600 font-mono">/</span>
-                    <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-400">
+                    <span class="text-slate-900 font-extrabold text-xl sm:text-2xl tracking-tight">{% block page_title %}Dashboard{% endblock %}</span>
+                    <span class="text-slate-300 font-mono">/</span>
+                    <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
                         {% block page_breadcrumb %}
-                        <i data-lucide="home" class="w-3.5 h-3.5 text-blue-400"></i>
+                        <i data-lucide="home" class="w-3.5 h-3.5 text-blue-600"></i>
                         <span>eCommerce Analytics</span>
                         {% endblock %}
                     </div>
@@ -661,11 +938,11 @@
                     <button 
                         type="button" 
                         onclick="document.getElementById('command-palette-modal').classList.remove('hidden')"
-                        class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#131c2e] hover:bg-slate-800 text-slate-300 hover:text-white border border-[#1e293b] transition-all cursor-pointer shadow-sm"
+                        class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 transition-all cursor-pointer shadow-2xs"
                     >
-                        <i data-lucide="command" class="w-3.5 h-3.5 text-blue-400"></i>
+                        <i data-lucide="command" class="w-3.5 h-3.5 text-blue-600"></i>
                         <span>Quick Command</span>
-                        <kbd class="px-1.5 py-0.2 text-[9px] bg-slate-800 rounded text-slate-400 font-mono border border-slate-700">⌘K</kbd>
+                        <kbd class="px-1.5 py-0.2 text-[9px] bg-slate-100 rounded text-slate-500 font-mono border border-slate-200">⌘K</kbd>
                     </button>
 
                     {% block page_actions %}
@@ -674,7 +951,7 @@
                         <button 
                             type="button" 
                             id="header-settings-btn"
-                            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white shadow-lg shadow-indigo-600/25 transition-all cursor-pointer group"
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-sm hover:shadow-md transition-all cursor-pointer group"
                             aria-expanded="false"
                             aria-haspopup="true"
                         >
@@ -685,30 +962,30 @@
 
                         <div 
                             id="header-settings-dropdown" 
-                            class="hidden dropdown-menu absolute right-0 mt-2 w-64 rounded-2xl bg-[#0f172a] border border-[#1e293b] shadow-2xl py-2 z-50 text-xs divide-y divide-[#1e293b]"
+                            class="hidden dropdown-menu absolute right-0 mt-2 w-64 rounded-2xl bg-white border border-slate-200 shadow-xl py-2 z-50 text-xs divide-y divide-slate-100"
                         >
-                            <div class="px-3.5 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                            <div class="px-3.5 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-slate-50/50">
                                 Management Control
                             </div>
                             <div class="py-1">
-                                <a href="/admin/" target="_blank" class="flex items-center gap-2.5 px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors">
-                                    <i data-lucide="shield-check" class="w-4 h-4 text-blue-400"></i>
+                                <a href="/admin/" target="_blank" class="flex items-center gap-2.5 px-4 py-2 text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">
+                                    <i data-lucide="shield-check" class="w-4 h-4 text-blue-600"></i>
                                     <span>Django Root Console</span>
                                 </a>
-                                <a href="{% url 'management:sales' %}" class="flex items-center gap-2.5 px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors">
-                                    <i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-400"></i>
+                                <a href="{% url 'management:sales' %}" class="flex items-center gap-2.5 px-4 py-2 text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">
+                                    <i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-600"></i>
                                     <span>All Sales &amp; KPIs</span>
                                 </a>
-                                <a href="{% url 'management:analytics' %}" class="flex items-center gap-2.5 px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors">
-                                    <i data-lucide="pie-chart" class="w-4 h-4 text-cyan-400"></i>
+                                <a href="{% url 'management:analytics' %}" class="flex items-center gap-2.5 px-4 py-2 text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">
+                                    <i data-lucide="pie-chart" class="w-4 h-4 text-cyan-600"></i>
                                     <span>Graph Analyst Console</span>
                                 </a>
-                                <a href="{% url 'management:domains' %}" class="flex items-center gap-2.5 px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors">
-                                    <i data-lucide="layers" class="w-4 h-4 text-amber-400"></i>
+                                <a href="{% url 'management:domains' %}" class="flex items-center gap-2.5 px-4 py-2 text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">
+                                    <i data-lucide="layers" class="w-4 h-4 text-amber-600"></i>
                                     <span>20 Domain Modules</span>
                                 </a>
-                                <a href="{% url 'management:users' %}" class="flex items-center gap-2.5 px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors">
-                                    <i data-lucide="users" class="w-4 h-4 text-purple-400"></i>
+                                <a href="{% url 'management:users' %}" class="flex items-center gap-2.5 px-4 py-2 text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">
+                                    <i data-lucide="users" class="w-4 h-4 text-purple-600"></i>
                                     <span>User &amp; Staff Directory</span>
                                 </a>
                             </div>
@@ -716,9 +993,9 @@
                                 <button 
                                     type="button" 
                                     onclick="window.location.reload()"
-                                    class="w-full flex items-center gap-2.5 px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors text-left"
+                                    class="w-full flex items-center gap-2.5 px-4 py-2 text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors text-left"
                                 >
-                                    <i data-lucide="refresh-cw" class="w-4 h-4 text-cyan-400"></i>
+                                    <i data-lucide="refresh-cw" class="w-4 h-4 text-blue-600"></i>
                                     <span>Refresh Dashboard Metrics</span>
                                 </button>
                             </div>
@@ -732,17 +1009,17 @@
             {% block admin_content %}{% endblock %}
 
             <!-- Executive Console Footer -->
-            <footer class="border-t border-[#1e293b] pt-6 pb-2 mt-12 text-slate-500 text-xs flex flex-col sm:flex-row items-center justify-between gap-3">
+            <footer class="border-t border-slate-200 pt-6 pb-2 mt-12 text-slate-500 text-xs flex flex-col sm:flex-row items-center justify-between gap-3">
                 <div class="flex items-center gap-2">
-                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-indigo-400 shrink-0"></i>
-                    <span>Cartivo Executive Console &bull; Engineered by <span class="text-slate-300 font-semibold">Utkarsh Gupta</span></span>
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+                    <span>Cartivo Executive Console &bull; Engineered by <span class="text-slate-900 font-semibold">Utkarsh Gupta</span></span>
                 </div>
-                <div class="flex items-center gap-4 text-[11px] text-slate-400 font-mono">
+                <div class="flex items-center gap-4 text-[11px] text-slate-500 font-mono">
                     <span>Django 5.2</span>
                     <span>&bull;</span>
-                    <span>Tailwind CSS v4</span>
+                    <span>Tailwind CSS</span>
                     <span>&bull;</span>
-                    <span class="text-emerald-400">&copy; 2026 Cartivo Inc.</span>
+                    <span class="text-emerald-700 font-semibold">&copy; 2026 Cartivo Inc.</span>
                 </div>
             </footer>
         </main>
@@ -754,77 +1031,77 @@
     <!-- ======================================================================= -->
     <div 
         id="command-palette-modal" 
-        class="hidden fixed inset-0 z-50 bg-[#030712]/80 backdrop-blur-md flex items-start justify-center pt-20 px-4 select-none"
+        class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-start justify-center pt-20 px-4 select-none"
         onclick="if(event.target === this) this.classList.add('hidden')"
     >
-        <div class="w-full max-w-xl bg-[#0f172a] border border-[#1e293b] rounded-3xl shadow-2xl overflow-hidden flex flex-col">
+        <div class="w-full max-w-xl bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col">
             <!-- Search Bar Input in Modal -->
-            <div class="p-4 border-b border-[#1e293b] flex items-center gap-3">
-                <i data-lucide="search" class="w-5 h-5 text-indigo-400 shrink-0"></i>
+            <div class="p-4 border-b border-slate-100 flex items-center gap-3">
+                <i data-lucide="search" class="w-5 h-5 text-blue-600 shrink-0"></i>
                 <input 
                     type="text" 
                     id="palette-search-input" 
                     placeholder="Search sales, graphs, 20 domains, pages..." 
-                    class="w-full bg-transparent text-sm text-white placeholder-slate-400 focus:outline-none"
+                    class="w-full bg-transparent text-sm text-slate-900 placeholder-slate-400 focus:outline-none"
                     autocomplete="off"
                 >
-                <kbd class="px-2 py-0.5 text-[10px] font-mono text-slate-400 bg-slate-800 rounded border border-slate-700">ESC</kbd>
+                <kbd class="px-2 py-0.5 text-[10px] font-mono text-slate-500 bg-slate-100 rounded border border-slate-200">ESC</kbd>
             </div>
 
             <!-- Command Results -->
             <div class="max-h-80 overflow-y-auto p-2 text-xs space-y-1" id="palette-results">
                 <div class="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Navigation Pages</div>
                 
-                <a href="{% url 'management:dashboard' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-white transition-colors">
-                    <i data-lucide="layout-dashboard" class="w-4 h-4 text-indigo-400"></i>
+                <a href="{% url 'management:dashboard' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-50 text-slate-700 hover:text-blue-600 transition-colors">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4 text-blue-600"></i>
                     <span class="flex-1 font-medium">Executive Dashboard</span>
                     <span class="text-[10px] text-slate-400">/management/dashboard/</span>
                 </a>
 
-                <a href="{% url 'management:sales' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-white transition-colors">
-                    <i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-400"></i>
+                <a href="{% url 'management:sales' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-50 text-slate-700 hover:text-emerald-600 transition-colors">
+                    <i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-600"></i>
                     <span class="flex-1 font-medium">All Sales &amp; KPIs Console</span>
                     <span class="text-[10px] text-slate-400">/management/sales/</span>
                 </a>
 
-                <a href="{% url 'management:analytics' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-white transition-colors">
-                    <i data-lucide="line-chart" class="w-4 h-4 text-cyan-400"></i>
+                <a href="{% url 'management:analytics' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-50 text-slate-700 hover:text-blue-600 transition-colors">
+                    <i data-lucide="line-chart" class="w-4 h-4 text-cyan-600"></i>
                     <span class="flex-1 font-medium">Graph Analyst &amp; Analytics Console</span>
                     <span class="text-[10px] text-slate-400">/management/analytics/</span>
                 </a>
 
-                <a href="{% url 'management:domains' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-white transition-colors">
-                    <i data-lucide="layers" class="w-4 h-4 text-amber-400"></i>
+                <a href="{% url 'management:domains' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-50 text-slate-700 hover:text-amber-600 transition-colors">
+                    <i data-lucide="layers" class="w-4 h-4 text-amber-600"></i>
                     <span class="flex-1 font-medium">Domain Modules Infrastructure (20 Apps)</span>
                     <span class="text-[10px] text-slate-400">/management/domains/</span>
                 </a>
 
-                <a href="{% url 'management:users' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-white transition-colors">
-                    <i data-lucide="users" class="w-4 h-4 text-purple-400"></i>
+                <a href="{% url 'management:users' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-50 text-slate-700 hover:text-purple-600 transition-colors">
+                    <i data-lucide="users" class="w-4 h-4 text-purple-600"></i>
                     <span class="flex-1 font-medium">Platform Accounts Directory</span>
                     <span class="text-[10px] text-slate-400">/management/users/</span>
                 </a>
 
-                <a href="{% url 'management:department_accounts' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-white transition-colors">
-                    <i data-lucide="key-round" class="w-4 h-4 text-emerald-400"></i>
+                <a href="{% url 'management:department_accounts' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-50 text-slate-700 hover:text-emerald-600 transition-colors">
+                    <i data-lucide="key-round" class="w-4 h-4 text-emerald-600"></i>
                     <span class="flex-1 font-medium">Department Accounts &amp; Credentials</span>
                     <span class="text-[10px] text-slate-400">/management/departments/accounts/</span>
                 </a>
 
-                <a href="{% url 'management:portal' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-white transition-colors">
-                    <i data-lucide="globe" class="w-4 h-4 text-cyan-400"></i>
+                <a href="{% url 'management:portal' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-50 text-slate-700 hover:text-blue-600 transition-colors">
+                    <i data-lucide="globe" class="w-4 h-4 text-blue-600"></i>
                     <span class="flex-1 font-medium">Domain Directory (Public Services)</span>
                     <span class="text-[10px] text-slate-400">/management/</span>
                 </a>
 
-                <a href="/" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-white transition-colors">
-                    <i data-lucide="shopping-bag" class="w-4 h-4 text-amber-400"></i>
+                <a href="/" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-50 text-slate-700 hover:text-amber-600 transition-colors">
+                    <i data-lucide="shopping-bag" class="w-4 h-4 text-amber-500"></i>
                     <span class="flex-1 font-medium">Storefront Homepage</span>
                     <span class="text-[10px] text-slate-400">/</span>
                 </a>
 
-                <a href="/admin/" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-white transition-colors">
-                    <i data-lucide="settings" class="w-4 h-4 text-blue-400"></i>
+                <a href="/admin/" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-50 text-slate-700 hover:text-indigo-600 transition-colors">
+                    <i data-lucide="settings" class="w-4 h-4 text-indigo-500"></i>
                     <span class="flex-1 font-medium">Django Root Administration</span>
                     <span class="text-[10px] text-slate-400">/admin/</span>
                 </a>
@@ -858,113 +1135,108 @@
                         if (chevron) chevron.classList.add('rotate-180');
                     }
                 });
+
+                document.addEventListener('click', function(e) {
+                    if (!menu.contains(e.target) && !btn.contains(e.target)) {
+                        menu.classList.add('hidden');
+                        if (chevron) chevron.classList.remove('rotate-180');
+                    }
+                });
             }
 
             registerDropdown('profile-dropdown-btn', 'profile-dropdown-menu');
             registerDropdown('header-settings-btn', 'header-settings-dropdown', 'header-settings-chevron');
 
-            // Close all dropdowns when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.dropdown-menu') && !e.target.closest('button')) {
-                    document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.add('hidden'));
-                    document.querySelectorAll('[id$="-chevron"]').forEach(c => c.classList.remove('rotate-180'));
-                }
-            });
-
-            // Mobile & Desktop Sidebar Drawer & Collapse
+            // Sidebar Rail Toggle (Desktop) & Drawer Toggle (Mobile)
             const sidebar = document.getElementById('sidebar');
-            const toggleBtn = document.getElementById('sidebar-toggle-btn');
-            const closeBtn = document.getElementById('sidebar-close-btn');
             const backdrop = document.getElementById('sidebar-backdrop');
-            const railBtn = document.getElementById('sidebar-rail-btn');
+            const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+            const sidebarRailBtn = document.getElementById('sidebar-rail-btn');
+            const sidebarCloseBtn = document.getElementById('sidebar-close-btn');
             const railIcon = document.getElementById('rail-icon');
 
-            function syncRailIcon(isCollapsed) {
-                if (!railIcon) return;
+            function syncRailIcon() {
+                if (!railIcon || !sidebar) return;
+                const isCollapsed = sidebar.classList.contains('collapsed');
                 railIcon.setAttribute('data-lucide', isCollapsed ? 'chevrons-right' : 'chevrons-left');
                 if (window.lucide) lucide.createIcons();
             }
 
-            // Sync initial rail icon if pre-collapsed
-            if (sidebar?.classList.contains('collapsed')) {
-                syncRailIcon(true);
-            }
-
-            function openSidebarMobile() {
-                sidebar?.classList.add('sidebar-open');
-                backdrop?.classList.remove('opacity-0', 'pointer-events-none');
-                backdrop?.classList.add('opacity-100');
-            }
-
-            function closeSidebarMobile() {
-                sidebar?.classList.remove('sidebar-open');
-                backdrop?.classList.add('opacity-0', 'pointer-events-none');
-                backdrop?.classList.remove('opacity-100');
-            }
-
             function toggleSidebar() {
                 if (window.innerWidth >= 1024) {
-                    const isCollapsed = sidebar?.classList.toggle('collapsed');
+                    // Desktop: Rail collapse mode
+                    const isCollapsed = sidebar.classList.toggle('collapsed');
                     localStorage.setItem('cartivo_sidebar_collapsed', isCollapsed ? 'true' : 'false');
-                    syncRailIcon(isCollapsed);
+                    syncRailIcon();
                 } else {
-                    if (sidebar?.classList.contains('sidebar-open')) {
-                        closeSidebarMobile();
+                    // Mobile: Slide-over drawer mode
+                    const isOpen = sidebar.classList.contains('sidebar-open');
+                    if (isOpen) {
+                        sidebar.classList.remove('sidebar-open');
+                        backdrop.classList.remove('opacity-100');
+                        backdrop.classList.add('opacity-0', 'pointer-events-none');
                     } else {
-                        openSidebarMobile();
+                        sidebar.classList.add('sidebar-open');
+                        backdrop.classList.remove('opacity-0', 'pointer-events-none');
+                        backdrop.classList.add('opacity-100');
                     }
                 }
             }
 
-            toggleBtn?.addEventListener('click', toggleSidebar);
-            closeBtn?.addEventListener('click', closeSidebarMobile);
-            backdrop?.addEventListener('click', closeSidebarMobile);
+            sidebarToggleBtn?.addEventListener('click', toggleSidebar);
+            sidebarRailBtn?.addEventListener('click', toggleSidebar);
+            sidebarCloseBtn?.addEventListener('click', toggleSidebar);
+            backdrop?.addEventListener('click', toggleSidebar);
+            syncRailIcon();
 
-            railBtn?.addEventListener('click', function() {
-                const isCollapsed = sidebar?.classList.toggle('collapsed');
-                localStorage.setItem('cartivo_sidebar_collapsed', isCollapsed ? 'true' : 'false');
-                syncRailIcon(isCollapsed);
-            });
-
-            // Quick Command Palette Modal
-            const paletteModal = document.getElementById('command-palette-modal');
+            // Keyboard Shortcuts (Ctrl+K or ⌘K for Command Palette)
+            const commandModal = document.getElementById('command-palette-modal');
             const paletteSearch = document.getElementById('palette-search-input');
             const globalSearch = document.getElementById('global-dash-search');
-            const mobileSearch = document.getElementById('mobile-search-btn');
+            const mobileSearchBtn = document.getElementById('mobile-search-btn');
 
             function openPalette() {
-                paletteModal?.classList.remove('hidden');
-                setTimeout(() => paletteSearch?.focus(), 100);
+                if (!commandModal) return;
+                commandModal.classList.remove('hidden');
+                setTimeout(() => paletteSearch?.focus(), 50);
             }
 
             function closePalette() {
-                paletteModal?.classList.add('hidden');
+                if (!commandModal) return;
+                commandModal.classList.add('hidden');
+                if (paletteSearch) paletteSearch.value = '';
+                filterPalette('');
             }
 
             globalSearch?.addEventListener('click', openPalette);
-            mobileSearch?.addEventListener('click', openPalette);
+            mobileSearchBtn?.addEventListener('click', openPalette);
 
-            window.addEventListener('keydown', function(e) {
+            document.addEventListener('keydown', function(e) {
                 if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
                     e.preventDefault();
-                    if (paletteModal?.classList.contains('hidden')) {
+                    if (commandModal && commandModal.classList.contains('hidden')) {
                         openPalette();
                     } else {
                         closePalette();
                     }
                 }
-                if (e.key === 'Escape' && !paletteModal?.classList.contains('hidden')) {
+                if (e.key === 'Escape' && commandModal && !commandModal.classList.contains('hidden')) {
                     closePalette();
                 }
             });
 
-            paletteSearch?.addEventListener('input', function(e) {
-                const q = e.target.value.toLowerCase().trim();
-                const items = document.querySelectorAll('#palette-results a');
-                items.forEach(item => {
-                    const text = item.textContent.toLowerCase();
-                    item.style.display = text.includes(q) ? 'flex' : 'none';
+            // Command Palette Live Filter
+            function filterPalette(query) {
+                const results = document.querySelectorAll('#palette-results a');
+                const q = query.toLowerCase().trim();
+                results.forEach(link => {
+                    const text = link.textContent.toLowerCase();
+                    link.style.display = (!q || text.includes(q)) ? 'flex' : 'none';
                 });
+            }
+
+            paletteSearch?.addEventListener('input', function(e) {
+                filterPalette(e.target.value);
             });
         });
     </script>

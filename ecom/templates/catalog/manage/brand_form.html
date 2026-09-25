@@ -9,88 +9,88 @@
 <div class="space-y-6 max-w-3xl mx-auto pb-16">
 
     <div class="flex items-center justify-between">
-        <a href="{% url 'catalog:brand_list' %}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors">
+        <a href="{% url 'catalog:brand_list' %}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors">
             <i data-lucide="arrow-left" class="w-4 h-4"></i>
             <span>Back to Brands</span>
         </a>
     </div>
 
-    <form method="POST" enctype="multipart/form-data" class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 space-y-6">
+    <form method="POST" enctype="multipart/form-data" class="p-6 sm:p-8 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-6">
         {% csrf_token %}
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <!-- Name -->
             <div class="md:col-span-2">
-                <label class="block text-xs font-bold text-slate-300 mb-1.5">Brand Name *</label>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Brand Name *</label>
                 <input 
                     type="text" 
                     name="name" 
                     required 
                     value="{{ brand.name|default:'' }}" 
                     placeholder="e.g. Master & Dynamic, Bang & Olufsen"
-                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-cyan-500"
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 shadow-2xs transition-all"
                 >
             </div>
 
             <!-- Slug -->
             <div class="md:col-span-2">
-                <label class="block text-xs font-bold text-slate-300 mb-1.5">Slug (Auto-generated if blank)</label>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Slug (Auto-generated if blank)</label>
                 <input 
                     type="text" 
                     name="slug" 
                     value="{{ brand.slug|default:'' }}" 
                     placeholder="master-dynamic"
-                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-300 font-mono placeholder-slate-500 focus:outline-hidden focus:border-cyan-500"
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 font-mono placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 shadow-2xs transition-all"
                 >
             </div>
 
             <!-- Description -->
             <div class="md:col-span-2">
-                <label class="block text-xs font-bold text-slate-300 mb-1.5">Brand Overview & Story (Optional)</label>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Brand Overview & Story (Optional)</label>
                 <textarea 
                     name="description" 
                     rows="3" 
                     placeholder="Brand heritage, sound signature, craftsmanship..."
-                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-300 placeholder-slate-500 focus:outline-hidden focus:border-cyan-500"
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 shadow-2xs transition-all"
                 >{{ brand.description|default:'' }}</textarea>
             </div>
 
             <!-- Logo File & URL -->
             <div>
-                <label class="block text-xs font-bold text-slate-300 mb-1.5">Brand Logo (File Upload)</label>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Brand Logo (File Upload)</label>
                 <input 
                     type="file" 
                     name="logo" 
                     accept="image/*"
-                    class="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-slate-200 cursor-pointer"
+                    class="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 cursor-pointer"
                 >
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-300 mb-1.5">Or Direct Logo URL</label>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Or Direct Logo URL</label>
                 <input 
                     type="url" 
                     name="logo_url" 
                     value="{{ brand.logo_url|default:'' }}" 
                     placeholder="https://..."
-                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-300 placeholder-slate-500 focus:outline-hidden focus:border-cyan-500"
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 shadow-2xs transition-all"
                 >
             </div>
 
             {% if is_edit %}
             <div class="md:col-span-2 pt-2">
-                <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-300">
-                    <input type="checkbox" name="is_active" value="1" {% if brand.is_active %}checked{% endif %} class="w-4 h-4 rounded-sm bg-slate-950 border-slate-700 text-cyan-600 focus:ring-0">
+                <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700">
+                    <input type="checkbox" name="is_active" value="1" {% if brand.is_active %}checked{% endif %} class="w-4 h-4 rounded-sm border-slate-300 text-blue-600 focus:ring-blue-500">
                     <span>Brand is Active on Storefront</span>
                 </label>
             </div>
             {% endif %}
         </div>
 
-        <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
-            <a href="{% url 'catalog:brand_list' %}" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-colors">
+        <div class="flex items-center justify-end gap-3 pt-5 border-t border-slate-100">
+            <a href="{% url 'catalog:brand_list' %}" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors">
                 Cancel
             </a>
-            <button type="submit" class="px-5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold transition-colors shadow-xs shadow-cyan-500/20">
+            <button type="submit" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-sm shadow-blue-500/10">
                 {% if is_edit %}Save Changes{% else %}Create Brand{% endif %}
             </button>
         </div>

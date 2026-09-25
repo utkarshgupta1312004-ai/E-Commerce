@@ -3,97 +3,209 @@
 
 {% block title %}{% if is_edit %}Edit {{ attribute.name }}{% else %}Add Attribute{% endif %} &bull; Catalog Console{% endblock %}
 {% block header_title %}{% if is_edit %}Edit Attribute{% else %}New Configurable Attribute{% endif %}{% endblock %}
-{% block header_subtitle %}{% if is_edit %}{{ attribute.name }} (ID: {{ attribute.id }}){% else %}Create an attribute for product variations{% endif %}{% endblock %}
+{% block header_subtitle %}{% if is_edit %}{{ attribute.name }} (Code: {{ attribute.code }}){% else %}Create an attribute for product variations{% endif %}{% endblock %}
 
 {% block catalog_content %}
 <div class="space-y-6 max-w-3xl mx-auto pb-16">
 
+    <!-- Back Navigation Bar -->
     <div class="flex items-center justify-between">
-        <a href="{% url 'catalog:attribute_list' %}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors">
+        <a href="{% url 'catalog:attribute_list' %}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors">
             <i data-lucide="arrow-left" class="w-4 h-4"></i>
             <span>Back to Attributes</span>
         </a>
     </div>
 
-    <form method="POST" class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 space-y-6">
+    <!-- Main Attribute Form Card -->
+    <form method="POST" class="p-6 sm:p-8 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-6">
         {% csrf_token %}
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Name -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <!-- Attribute Name -->
             <div>
-                <label class="block text-xs font-bold text-slate-300 mb-1.5">Attribute Name *</label>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Attribute Name *</label>
                 <input 
                     type="text" 
                     name="name" 
                     required 
                     value="{{ attribute.name|default:'' }}" 
                     placeholder="e.g. Color, Storage, Case Size"
-                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-emerald-500"
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 shadow-2xs transition-all"
                 >
             </div>
 
-            <!-- Code -->
+            <!-- Internal Code -->
             <div>
-                <label class="block text-xs font-bold text-slate-300 mb-1.5">Internal Code (Unique)</label>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Internal Code (Unique) *</label>
                 <input 
                     type="text" 
                     name="code" 
+                    required
                     value="{{ attribute.code|default:'' }}" 
                     placeholder="color, storage, case_size"
-                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-300 font-mono placeholder-slate-500 focus:outline-hidden focus:border-emerald-500"
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 font-mono placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 shadow-2xs transition-all"
                 >
             </div>
 
             {% if not is_edit %}
-            <!-- Values Comma Separated (Add mode) -->
-            <div class="md:col-span-2">
-                <label class="block text-xs font-bold text-slate-300 mb-1.5">Initial Values (Comma-separated)</label>
+            <!-- Initial Values Comma Separated (Add mode) -->
+            <div class="md:col-span-2 pt-2">
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Initial Values (Comma-separated)</label>
                 <input 
                     type="text" 
                     name="values" 
                     placeholder="Black, Silver, Midnight Blue, Starlight"
-                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-200 placeholder-slate-500 focus:outline-hidden focus:border-emerald-500"
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 shadow-2xs transition-all"
                 >
-                <span class="text-[11px] text-slate-500 mt-1 block">You can add additional values at any time later.</span>
+                <span class="text-[11px] text-slate-500 mt-1 block">You can add or remove additional values at any time later.</span>
             </div>
             {% else %}
-            <!-- Existing Values and Append (Edit mode) -->
-            <div class="md:col-span-2 pt-2 border-t border-slate-800 space-y-3">
-                <label class="block text-xs font-bold text-emerald-400">Configured Values for {{ attribute.name }}</label>
-                <div class="flex flex-wrap gap-2">
+            <!-- Existing Configured Values List & Inline Append (Edit mode) -->
+            <div class="md:col-span-2 pt-3 border-t border-slate-100 space-y-3">
+                <div class="flex items-center justify-between pb-1">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+                        <label class="text-xs font-bold text-slate-800 uppercase tracking-wider">Configured Values for {{ attribute.name }}</label>
+                    </div>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                        <i data-lucide="layers" class="w-3 h-3"></i>
+                        <span>{{ attribute.values.count }} values</span>
+                    </span>
+                </div>
+
+                <!-- Configured Value Badges -->
+                <div class="flex flex-wrap gap-2 pt-1 max-h-80 overflow-y-auto pr-1">
                     {% for val in attribute.values.all %}
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-semibold text-slate-200">
-                        <span>{{ val.value }}</span>
+                    <span class="group inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-white border border-slate-200 hover:border-blue-400 text-xs font-medium text-slate-800 shadow-2xs hover:shadow-xs transition-all">
+                        {% if attribute.code == 'color' %}
+                        <span class="color-swatch-dot w-3 h-3 rounded-full border border-slate-300 shadow-2xs shrink-0 inline-block bg-slate-300" data-color="{{ val.value }}"></span>
+                        {% endif %}
+                        <span class="font-semibold">{{ val.value }}</span>
+                        <button 
+                            type="submit" 
+                            name="delete_val_id" 
+                            value="{{ val.id }}" 
+                            onclick="return confirm('Remove value \'{{ val.value|escapejs }}\'?')" 
+                            title="Remove {{ val.value }}" 
+                            class="text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md p-0.5 transition-colors cursor-pointer"
+                        >
+                            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                        </button>
                     </span>
                     {% empty %}
-                    <span class="text-xs text-slate-500">No values configured yet.</span>
+                    <div class="w-full p-6 rounded-xl bg-slate-50 border border-dashed border-slate-200 text-center text-xs text-slate-500">
+                        No values configured yet for this attribute.
+                    </div>
                     {% endfor %}
                 </div>
 
-                <div class="pt-3">
-                    <label class="block text-xs font-bold text-slate-300 mb-1.5">Add New Value</label>
+                <!-- Add New Value Box -->
+                <div class="pt-3 p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                    <label class="block text-xs font-bold text-slate-700">Add New Value(s)</label>
                     <div class="flex gap-2">
                         <input 
                             type="text" 
                             name="new_value" 
-                            placeholder="e.g. Titanium Gray"
-                            class="flex-1 px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-emerald-500"
+                            placeholder="e.g. Titanium Gray, Midnight Blue (comma-separated allowed)"
+                            class="flex-1 px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 shadow-2xs transition-all"
                         >
+                        <button 
+                            type="submit" 
+                            class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-xs inline-flex items-center gap-1.5 cursor-pointer shrink-0"
+                        >
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                            <span>Add Value</span>
+                        </button>
                     </div>
+                    <span class="text-[11px] text-slate-500 block">Separate multiple values by commas to bulk-insert options.</span>
                 </div>
             </div>
             {% endif %}
         </div>
 
-        <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
-            <a href="{% url 'catalog:attribute_list' %}" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-colors">
+        <!-- Form Submission Footer Actions -->
+        <div class="flex items-center justify-end gap-3 pt-5 border-t border-slate-100">
+            <a href="{% url 'catalog:attribute_list' %}" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors">
                 Cancel
             </a>
-            <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors shadow-xs shadow-emerald-500/20">
-                {% if is_edit %}Update Attribute{% else %}Create Attribute{% endif %}
+            <button type="submit" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-sm shadow-blue-500/10">
+                {% if is_edit %}Save Changes{% else %}Create Attribute{% endif %}
             </button>
         </div>
     </form>
 
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const colorKeywords = {
+            'amber': '#f59e0b',
+            'gold': '#d97706',
+            'charcoal': '#334155',
+            'basalt': '#475569',
+            'stainless': '#94a3b8',
+            'tan': '#d2b48c',
+            'camel': '#c19a6b',
+            'blue': '#2563eb',
+            'celestial': '#38bdf8',
+            'white': '#ffffff',
+            'chalk': '#f8fafc',
+            'black': '#0f172a',
+            'onyx': '#1e293b',
+            'gray': '#64748b',
+            'grey': '#64748b',
+            'cognac': '#9a3412',
+            'coral': '#fb7185',
+            'crimson': '#dc2626',
+            'red': '#ef4444',
+            'green': '#16a34a',
+            'emerald': '#059669',
+            'brown': '#78350f',
+            'espresso': '#451a03',
+            'sage': '#84a98c',
+            'glacier': '#e0f2fe',
+            'graphite': '#374151',
+            'cobalt': '#1d4ed8',
+            'navy': '#1e3a8a',
+            'midnight': '#0f172a',
+            'beechwood': '#e5d3b3',
+            'volt': '#a3e635',
+            'ivory': '#fefce8',
+            'obsidian': '#18181b',
+            'teal': '#0d9488',
+            'rose': '#f43f5e',
+            'silver': '#cbd5e1',
+            'frost': '#e2e8f0',
+            'steel': '#94a3b8',
+            'slate': '#475569',
+            'ash': '#64748b',
+            'orange': '#ea580c',
+            'sunset': '#f97316',
+            'terracotta': '#c2410c',
+            'earth': '#78350f',
+            'walnut': '#5c4033',
+            'wood': '#8b5a2b',
+            'brass': '#b59a57',
+            'purple': '#9333ea',
+            'yellow': '#eab308'
+        };
+
+        document.querySelectorAll('.color-swatch-dot').forEach(el => {
+            const raw = (el.getAttribute('data-color') || '').toLowerCase();
+            let matched = false;
+            for (const [key, hex] of Object.entries(colorKeywords)) {
+                if (raw.includes(key)) {
+                    el.style.backgroundColor = hex;
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched) {
+                el.style.backgroundColor = raw;
+            }
+        });
+    });
+</script>
 {% endblock %}

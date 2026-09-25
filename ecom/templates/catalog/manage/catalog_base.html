@@ -1,15 +1,15 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-[#0b0f19] text-slate-100 antialiased">
+<html lang="en" class="h-full bg-slate-50 text-slate-900 antialiased">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Catalog Studio Console{% endblock %} | Cartivo Operations</title>
 
-    <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+    <!-- Google Fonts: Poppins, Plus Jakarta Sans & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Compiled Tailwind CSS -->
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
@@ -40,18 +40,33 @@
 
     <style>
         body {
-            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            letter-spacing: -0.015em;
+            font-family: 'Poppins', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            letter-spacing: -0.012em;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             text-rendering: optimizeLegibility;
         }
 
+        html, body {
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+        }
+
+        #sidebar {
+            background-color: #ffffff !important;
+            border-right: 1px solid #e2e8f0 !important;
+        }
+
+        header, #main-header {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+        }
+
         /* Custom scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0b0f19; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
-        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
@@ -61,6 +76,162 @@
             50% { opacity: 0.4; transform: scale(1.2); }
         }
         .live-dot { animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+        /* Universal Light Theme Styling Engine */
+        .bg-\[\#0b0f19\], [class*="bg-[#0b0f19]"],
+        .bg-\[\#0d1424\], [class*="bg-[#0d1424]"] {
+            background-color: #f8fafc !important;
+        }
+        .bg-\[\#0f172a\], [class*="bg-[#0f172a]"],
+        .bg-\[\#131c2e\], [class*="bg-[#131c2e]"],
+        .bg-\[\#14203a\], [class*="bg-[#14203a]"],
+        .bg-slate-950, [class*="bg-slate-950"],
+        .bg-slate-900, [class*="bg-slate-900"] {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.03) !important;
+        }
+
+        /* Card and inner panel styling */
+        div[class*="bg-slate-900"], div[class*="bg-slate-950"],
+        div[class*="bg-slate-800/40"], div[class*="bg-slate-800/50"], div[class*="bg-slate-800/60"] {
+            background-color: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04) !important;
+        }
+
+        /* Progress Bar Tracks and Containers */
+        div[class*="rounded-full"][class*="bg-[#0f172a]"],
+        div[class*="rounded-full"][class*="bg-slate-800"],
+        div[class*="h-2"][class*="bg-slate-800"],
+        div[class*="h-3"][class*="bg-[#0f172a]"] {
+            background-color: #f1f5f9 !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        /* Sub-cards and Stat Boxes */
+        div[class*="p-3"][class*="rounded-2xl"][class*="bg-[#0f172a]"],
+        div[class*="p-2.5"][class*="rounded-xl"][class*="bg-[#0f172a]"] {
+            background-color: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+        }
+
+        /* Universal Borders */
+        .border-\[\#1e293b\], [class*="border-[#1e293b]"],
+        .border-slate-800, [class*="border-slate-800"],
+        .border-slate-700, [class*="border-slate-700"] {
+            border-color: #e2e8f0 !important;
+        }
+
+        /* Typography */
+        .text-white:not(.keep-white) {
+            color: #0f172a !important;
+        }
+        .bg-blue-600, .bg-blue-700, .bg-indigo-600, .bg-emerald-600, .btn-primary,
+        [class*="bg-blue-600"], [class*="bg-emerald-600"], [class*="from-emerald-600"], [class*="from-blue-600"] {
+            color: #ffffff !important;
+        }
+        .bg-blue-600 *, .bg-blue-700 *, .bg-indigo-600 *, .bg-emerald-600 *, .btn-primary *,
+        [class*="from-emerald-600"] *, [class*="from-blue-600"] * {
+            color: #ffffff !important;
+        }
+        .text-slate-100 { color: #0f172a !important; }
+        .text-slate-200 { color: #1e293b !important; }
+        .text-slate-300 { color: #475569 !important; }
+        .text-slate-400 { color: #64748b !important; }
+        .text-slate-500 { color: #64748b !important; }
+
+        /* Readable Accents on Light Background */
+        .text-emerald-400 { color: #059669 !important; }
+        .text-cyan-400 { color: #0284c7 !important; }
+        .text-amber-400 { color: #d97706 !important; }
+        .text-rose-400 { color: #e11d48 !important; }
+        .text-blue-400 { color: #2563eb !important; }
+        .text-purple-400 { color: #7c3aed !important; }
+        .text-indigo-400 { color: #4f46e5 !important; }
+
+        /* Tables */
+        table thead, table thead tr, table thead th {
+            background-color: #f8fafc !important;
+            color: #475569 !important;
+            font-weight: 600 !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+        }
+        table tbody tr {
+            background-color: #ffffff !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+            color: #1e293b !important;
+        }
+        table tbody tr:hover {
+            background-color: #f8fafc !important;
+        }
+        table tbody td {
+            border-color: #f1f5f9 !important;
+        }
+        .divide-\[\#1e293b\], [class*="divide-[#1e293b]"], [class*="divide-slate-800"] {
+            border-color: #f1f5f9 !important;
+        }
+
+        /* Form Inputs & Selects */
+        input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]), select, textarea {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border: 1px solid #e2e8f0 !important;
+        }
+        input::placeholder, textarea::placeholder {
+            color: #94a3b8 !important;
+        }
+        select option {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+        }
+        input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):focus, select:focus, textarea:focus {
+            background-color: #ffffff !important;
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12) !important;
+            outline: none !important;
+        }
+
+        /* Badges, Pills & Tags */
+        span[class*="bg-slate-950"], span[class*="bg-slate-900"], span[class*="bg-slate-800"],
+        span.bg-slate-950, span.bg-slate-900, span.bg-slate-800,
+        div.bg-slate-800:not(button):not(a), div.bg-slate-950:not(button):not(a) {
+            background-color: #f8fafc !important;
+            color: #1e293b !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+        }
+        .bg-emerald-500\/10, .bg-emerald-500\/15, .bg-emerald-500\/20 {
+            background-color: #ecfdf5 !important;
+            color: #047857 !important;
+            border-color: #a7f3d0 !important;
+        }
+        .bg-blue-500\/10, .bg-blue-500\/15, .bg-blue-500\/20 {
+            background-color: #eff6ff !important;
+            color: #1d4ed8 !important;
+            border-color: #bfdbfe !important;
+        }
+        .bg-cyan-500\/10, .bg-cyan-500\/15, .bg-cyan-500\/20 {
+            background-color: #ecfeff !important;
+            color: #0e7490 !important;
+            border-color: #a5f3fc !important;
+        }
+        .bg-amber-500\/10, .bg-amber-500\/15, .bg-amber-500\/20 {
+            background-color: #fffbeb !important;
+            color: #b45309 !important;
+            border-color: #fde68a !important;
+        }
+        .bg-rose-500\/10, .bg-rose-500\/15, .bg-rose-500\/20 {
+            background-color: #fff1f2 !important;
+            color: #be123c !important;
+            border-color: #fecdd3 !important;
+        }
+
+        /* Sidebar Item Hover & Active */
+        .sidebar-item:hover:not(.bg-gradient-to-r) {
+            background-color: #f1f5f9 !important;
+            color: #0f172a !important;
+        }
 
         /* Desktop Compact Mini-Rail Mode */
         @media (min-width: 1024px) {
@@ -109,7 +280,7 @@
 
     {% block extra_head %}{% endblock %}
 </head>
-<body class="h-full bg-[#0b0f19] text-slate-200 overflow-hidden flex flex-col font-sans select-text">
+<body class="h-full bg-slate-50 text-slate-900 overflow-hidden flex flex-col font-sans select-text">
 
 <div class="flex flex-1 h-screen overflow-hidden">
 
@@ -119,7 +290,7 @@
     <!-- =============================================================== -->
     <!-- 1. SIDEBAR NAVIGATION                                           -->
     <!-- =============================================================== -->
-    <aside id="sidebar" class="z-50 w-64 shrink-0 bg-[#0d1424] border-r border-[#1e293b] flex flex-col h-full overflow-hidden shadow-2xl">
+    <aside id="sidebar" class="z-50 w-64 shrink-0 bg-white border-r border-slate-200 flex flex-col h-full overflow-hidden shadow-sm">
         <script>
             (function() {
                 try {
@@ -131,28 +302,28 @@
         </script>
 
         <!-- Sidebar Brand Header -->
-        <div class="h-16 flex items-center justify-between px-4 border-b border-[#1e293b] bg-[#0d1424]/80 backdrop-blur-md shrink-0 sidebar-brand-wrapper">
+        <div class="h-16 flex items-center justify-between px-4 border-b border-slate-200 bg-white/95 backdrop-blur-md shrink-0 sidebar-brand-wrapper">
             <a href="{% url 'catalog:dashboard' %}" class="flex items-center gap-3 overflow-hidden group">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/25 shrink-0 group-hover:scale-105 transition-transform">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 shrink-0 group-hover:scale-105 transition-transform">
                     <i data-lucide="layers" class="w-5 h-5"></i>
                 </div>
                 <div class="flex flex-col leading-tight overflow-hidden sidebar-header-text">
-                    <span class="text-sm font-extrabold tracking-tight text-white flex items-center gap-1.5 truncate">
+                    <span class="text-sm font-extrabold tracking-tight text-slate-900 flex items-center gap-1.5 truncate">
                         Cartivo
-                        <span class="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30">Catalog</span>
-                        <span class="inline-block w-2 h-2 rounded-full bg-blue-400 live-dot"></span>
+                        <span class="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">Catalog</span>
+                        <span class="inline-block w-2 h-2 rounded-full bg-blue-500 live-dot"></span>
                     </span>
-                    <span class="text-[11px] font-medium text-slate-400 truncate">Product Master Studio</span>
+                    <span class="text-[11px] font-medium text-slate-500 truncate">Product Master Studio</span>
                 </div>
             </a>
             
             <div class="flex items-center gap-1">
                 <!-- Desktop Mini-Rail Toggle Button -->
-                <button type="button" onclick="toggleCollapseSidebar()" class="hidden lg:flex p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition-colors" title="Toggle Sidebar Width">
+                <button type="button" onclick="toggleCollapseSidebar()" class="hidden lg:flex p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors" title="Toggle Sidebar Width">
                     <i data-lucide="panel-left" class="w-4 h-4"></i>
                 </button>
                 <!-- Mobile Close Button -->
-                <button type="button" onclick="toggleSidebar()" class="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition-colors lg:hidden">
+                <button type="button" onclick="toggleSidebar()" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors lg:hidden">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
@@ -276,10 +447,10 @@
         </div>
 
         <!-- Sidebar User Footer -->
-        <div class="p-3 border-t border-[#1e293b] bg-[#0d1424]/90 shrink-0">
-            <div class="flex items-center justify-between gap-2.5 p-2 rounded-xl bg-[#131c2e] border border-[#1e293b]">
+        <div class="p-3 border-t border-slate-200 bg-slate-50 shrink-0">
+            <div class="flex items-center justify-between gap-2.5 p-2 rounded-xl bg-white border border-slate-200 shadow-xs">
                 <div class="flex items-center gap-2.5 overflow-hidden min-w-0">
-                    <div class="w-8 h-8 rounded-lg {% if is_superadmin %}bg-amber-500/20 text-amber-400 border-amber-500/30{% else %}bg-blue-600/30 text-blue-400 border-blue-500/30{% endif %} flex items-center justify-center font-bold text-xs shrink-0 border">
+                    <div class="w-8 h-8 rounded-lg {% if is_superadmin %}bg-amber-50 text-amber-700 border-amber-200{% else %}bg-blue-50 text-blue-700 border-blue-200{% endif %} flex items-center justify-center font-bold text-xs shrink-0 border">
                         {% if department_login_id %}
                             {{ department_login_id|slice:":2"|upper }}
                         {% elif request.user.first_name and request.user.last_name %}
@@ -291,7 +462,7 @@
                         {% endif %}
                     </div>
                     <div class="overflow-hidden leading-tight sidebar-text min-w-0 flex-1">
-                        <p class="text-xs font-bold text-white truncate">
+                        <p class="text-xs font-bold text-slate-900 truncate">
                             {% if department_operator_name %}
                                 {{ department_operator_name }}
                             {% elif department_login_id %}
@@ -304,7 +475,7 @@
                                 Catalog Staff
                             {% endif %}
                         </p>
-                        <p class="text-[10px] {% if is_superadmin %}text-amber-400{% else %}text-blue-400{% endif %} truncate font-medium">
+                        <p class="text-[10px] {% if is_superadmin %}text-amber-600{% else %}text-blue-600{% endif %} truncate font-semibold">
                             {% if department_name %}
                                 {{ department_name }}
                             {% elif is_superadmin %}
@@ -315,7 +486,7 @@
                         </p>
                     </div>
                 </div>
-                <a href="{% if request.user.is_superuser and not request.session.department_slug %}{% url 'management:logout' %}{% else %}{% url 'management:dept_logout' %}{% endif %}" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/15 border border-transparent hover:border-rose-500/20 transition-colors shrink-0" title="Sign Out">
+                <a href="{% if request.user.is_superuser and not request.session.department_slug %}{% url 'management:logout' %}{% else %}{% url 'management:dept_logout' %}{% endif %}" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-colors shrink-0" title="Sign Out">
                     <i data-lucide="log-out" class="w-4 h-4"></i>
                 </a>
             </div>
@@ -325,24 +496,24 @@
     <!-- =============================================================== -->
     <!-- 2. MAIN WORKSPACE CONTENT CONTAINER                             -->
     <!-- =============================================================== -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-[#0b0f19]">
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50">
         
         <!-- Top Navbar Header -->
-        <header class="h-16 border-b border-[#1e293b] bg-[#0d1424]/80 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between gap-4 shrink-0 z-20">
+        <header class="h-16 border-b border-slate-200 bg-white/95 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between gap-4 shrink-0 z-20">
             <div class="flex items-center gap-3">
-                <button type="button" onclick="toggleSidebar()" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors lg:hidden" title="Open Menu">
+                <button type="button" onclick="toggleSidebar()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors lg:hidden" title="Open Menu">
                     <i data-lucide="menu" class="w-5 h-5"></i>
                 </button>
-                <div class="flex items-center gap-2 text-xs text-slate-400">
-                    <span class="font-bold text-slate-200">{% block header_title %}Catalog Management{% endblock %}</span>
-                    <span class="text-slate-600 hidden sm:inline">/</span>
-                    <span class="hidden sm:inline text-slate-400">{% block header_subtitle %}Product Master Administration{% endblock %}</span>
+                <div class="flex items-center gap-2 text-xs text-slate-500">
+                    <span class="font-bold text-slate-900">{% block header_title %}Catalog Management{% endblock %}</span>
+                    <span class="text-slate-300 hidden sm:inline">/</span>
+                    <span class="hidden sm:inline text-slate-500">{% block header_subtitle %}Product Master Administration{% endblock %}</span>
                 </div>
             </div>
 
             <div class="flex items-center gap-3">
-                <div class="hidden md:flex items-center gap-2 px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold">
-                    <span class="w-2 h-2 rounded-full bg-blue-400 live-dot"></span>
+                <div class="hidden md:flex items-center gap-2 px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-blue-500 live-dot"></span>
                     <span>Catalog Active</span>
                 </div>
 

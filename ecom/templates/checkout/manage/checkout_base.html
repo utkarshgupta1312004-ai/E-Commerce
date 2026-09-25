@@ -1,17 +1,17 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-[#0b0f19] text-slate-100 antialiased">
+<html lang="en" class="h-full bg-slate-50 text-slate-900 antialiased">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Checkout & Logistics Command Center{% endblock %} | Cartivo Operations</title>
 
-    <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+    <!-- Google Fonts: Poppins, Plus Jakarta Sans & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Compiled Tailwind CSS -->
+    <!-- Pre-compiled Tailwind CSS -->
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
 
     <!-- Lucide Icons -->
@@ -24,93 +24,260 @@
 
     <style>
         body {
-            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            letter-spacing: -0.015em;
+            font-family: 'Poppins', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            letter-spacing: -0.012em;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+
+        html, body {
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+        }
+
+        #sidebar {
+            background-color: #ffffff !important;
+            border-right: 1px solid #e2e8f0 !important;
+        }
+
+        header, #main-header {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            border-bottom: 1px solid #e2e8f0 !important;
         }
 
         /* Custom scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0b0f19; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
-        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
         @keyframes pulse-radar {
             0% { transform: scale(0.95); opacity: 0.8; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            70% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
             100% { transform: scale(0.95); opacity: 0.8; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
         .live-radar { animation: pulse-radar 2s infinite; }
+
+        /* Universal Light Theme Styling Engine */
+        .bg-\[\#0b0f19\], [class*="bg-[#0b0f19]"],
+        .bg-\[\#0e1424\], [class*="bg-[#0e1424]"] {
+            background-color: #f8fafc !important;
+        }
+        .bg-\[\#0f172a\], [class*="bg-[#0f172a]"],
+        .bg-\[\#131c2e\], [class*="bg-[#131c2e]"],
+        .bg-slate-950, [class*="bg-slate-950"],
+        .bg-slate-900, [class*="bg-slate-900"] {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.03) !important;
+        }
+
+        /* Card and inner panel styling */
+        div[class*="bg-slate-900"], div[class*="bg-slate-950"],
+        div[class*="bg-slate-800/40"], div[class*="bg-slate-800/50"], div[class*="bg-slate-800/60"] {
+            background-color: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04) !important;
+        }
+
+        /* Progress Bar Tracks and Containers */
+        div[class*="rounded-full"][class*="bg-[#0f172a]"],
+        div[class*="rounded-full"][class*="bg-slate-800"],
+        div[class*="h-2"][class*="bg-slate-800"],
+        div[class*="h-3"][class*="bg-[#0f172a]"] {
+            background-color: #f1f5f9 !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        /* Sub-cards and Stat Boxes */
+        div[class*="p-3"][class*="rounded-2xl"][class*="bg-[#0f172a]"],
+        div[class*="p-2.5"][class*="rounded-xl"][class*="bg-[#0f172a]"] {
+            background-color: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+        }
+
+        /* Universal Borders */
+        .border-\[\#1e293b\], [class*="border-[#1e293b]"],
+        .border-slate-800, [class*="border-slate-800"],
+        .border-slate-700, [class*="border-slate-700"] {
+            border-color: #e2e8f0 !important;
+        }
+
+        /* Typography */
+        .text-white:not(.keep-white) {
+            color: #0f172a !important;
+        }
+        .bg-blue-600, .bg-blue-700, .bg-indigo-600, .bg-emerald-600, .btn-primary,
+        [class*="bg-blue-600"], [class*="bg-emerald-600"], [class*="from-emerald-600"], [class*="from-blue-600"] {
+            color: #ffffff !important;
+        }
+        .bg-blue-600 *, .bg-blue-700 *, .bg-indigo-600 *, .bg-emerald-600 *, .btn-primary *,
+        [class*="from-emerald-600"] *, [class*="from-blue-600"] * {
+            color: #ffffff !important;
+        }
+        .text-slate-100 { color: #0f172a !important; }
+        .text-slate-200 { color: #1e293b !important; }
+        .text-slate-300 { color: #475569 !important; }
+        .text-slate-400 { color: #64748b !important; }
+        .text-slate-500 { color: #64748b !important; }
+
+        /* Readable Accents on Light Background */
+        .text-emerald-400 { color: #059669 !important; }
+        .text-cyan-400 { color: #0284c7 !important; }
+        .text-amber-400 { color: #d97706 !important; }
+        .text-rose-400 { color: #e11d48 !important; }
+        .text-blue-400 { color: #2563eb !important; }
+        .text-purple-400 { color: #7c3aed !important; }
+        .text-indigo-400 { color: #4f46e5 !important; }
+
+        /* Tables */
+        table thead, table thead tr, table thead th {
+            background-color: #f8fafc !important;
+            color: #475569 !important;
+            font-weight: 600 !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+        }
+        table tbody tr {
+            background-color: #ffffff !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+            color: #1e293b !important;
+        }
+        table tbody tr:hover {
+            background-color: #f8fafc !important;
+        }
+        table tbody td {
+            border-color: #f1f5f9 !important;
+        }
+        .divide-\[\#1e293b\], [class*="divide-[#1e293b]"], [class*="divide-slate-800"] {
+            border-color: #f1f5f9 !important;
+        }
+
+        /* Form Inputs & Selects */
+        input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]), select, textarea {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border: 1px solid #e2e8f0 !important;
+        }
+        input::placeholder, textarea::placeholder {
+            color: #94a3b8 !important;
+        }
+        select option {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+        }
+        input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):focus, select:focus, textarea:focus {
+            background-color: #ffffff !important;
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12) !important;
+            outline: none !important;
+        }
+
+        /* Badges, Pills & Tags */
+        span[class*="bg-slate-950"], span[class*="bg-slate-900"], span[class*="bg-slate-800"],
+        span.bg-slate-950, span.bg-slate-900, span.bg-slate-800,
+        div.bg-slate-800:not(button):not(a), div.bg-slate-950:not(button):not(a) {
+            background-color: #f8fafc !important;
+            color: #1e293b !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+        }
+        .bg-emerald-500\/10, .bg-emerald-500\/15, .bg-emerald-500\/20 {
+            background-color: #ecfdf5 !important;
+            color: #047857 !important;
+            border-color: #a7f3d0 !important;
+        }
+        .bg-blue-500\/10, .bg-blue-500\/15, .bg-blue-500\/20 {
+            background-color: #eff6ff !important;
+            color: #1d4ed8 !important;
+            border-color: #bfdbfe !important;
+        }
+        .bg-cyan-500\/10, .bg-cyan-500\/15, .bg-cyan-500\/20 {
+            background-color: #ecfeff !important;
+            color: #0e7490 !important;
+            border-color: #a5f3fc !important;
+        }
+        .bg-amber-500\/10, .bg-amber-500\/15, .bg-amber-500\/20 {
+            background-color: #fffbeb !important;
+            color: #b45309 !important;
+            border-color: #fde68a !important;
+        }
+        .bg-rose-500\/10, .bg-rose-500\/15, .bg-rose-500\/20 {
+            background-color: #fff1f2 !important;
+            color: #be123c !important;
+            border-color: #fecdd3 !important;
+        }
     </style>
 </head>
-<body class="h-full flex flex-col bg-[#0b0f19] text-slate-100 overflow-x-hidden">
+<body class="h-full flex flex-col bg-slate-50 text-slate-900 overflow-x-hidden">
     <div class="flex flex-1 min-h-screen">
         <!-- Sidebar Navigation -->
-        <aside id="sidebar" class="w-64 bg-[#0e1424] border-r border-slate-800/80 flex flex-col shrink-0 transition-all duration-300 z-30">
+        <aside id="sidebar" class="w-64 bg-white border-r border-slate-200 flex flex-col shrink-0 transition-all duration-300 z-30 shadow-sm">
             <!-- Brand & Division -->
-            <div class="p-5 border-b border-slate-800/80 flex items-center justify-between">
+            <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-white/95 backdrop-blur-md">
                 <a href="{% url 'checkout:dashboard' %}" class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-cyan-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
                         <i data-lucide="truck" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <div class="font-extrabold text-sm text-white tracking-tight flex items-center gap-1.5">
+                        <div class="font-extrabold text-sm text-slate-900 tracking-tight flex items-center gap-1.5">
                             <span>Cartivo</span>
-                            <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">CHK</span>
+                            <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">CHK</span>
                         </div>
-                        <p class="text-[11px] text-slate-400 font-medium">Checkout & Logistics</p>
+                        <p class="text-[11px] text-slate-500 font-medium">Checkout & Logistics</p>
                     </div>
                 </a>
             </div>
 
             <!-- Department Account Credentials Badge -->
-            <div class="px-4 py-3 mx-4 my-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between">
+            <div class="px-4 py-3 mx-4 my-3 rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 live-radar"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 live-radar"></span>
                     <div class="text-[11px]">
-                        <p class="font-bold text-slate-200">{{ department_login_id|default:"CHK001" }}</p>
-                        <p class="text-slate-400 text-[10px]">Checkout Operator</p>
+                        <p class="font-bold text-slate-900">{{ department_login_id|default:"CHK001" }}</p>
+                        <p class="text-slate-500 text-[10px]">Checkout Operator</p>
                     </div>
                 </div>
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Active</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Active</span>
             </div>
 
             <!-- Navigation Links -->
             <nav class="flex-1 px-3 py-2 space-y-1.5 overflow-y-auto">
                 <div class="px-3 pt-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Operations Control</div>
 
-                <a href="{% url 'checkout:dashboard' %}" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all {% if active_tab == 'dashboard' %}bg-emerald-600 text-white shadow-md shadow-emerald-600/20{% else %}text-slate-300 hover:bg-slate-800/80 hover:text-white{% endif %}">
+                <a href="{% url 'checkout:dashboard' %}" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all {% if active_tab == 'dashboard' %}bg-emerald-600 text-white shadow-xs shadow-emerald-600/20{% else %}text-slate-600 hover:bg-slate-100 hover:text-slate-900{% endif %}">
                     <div class="flex items-center gap-2.5">
                         <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
                         <span>Checkout Dashboard</span>
                     </div>
-                    <span class="px-1.5 py-0.5 rounded text-[10px] font-bold {% if active_tab == 'dashboard' %}bg-white/20 text-white{% else %}bg-slate-800 text-slate-400{% endif %}">Live</span>
+                    <span class="px-1.5 py-0.5 rounded text-[10px] font-bold {% if active_tab == 'dashboard' %}bg-white/20 text-white{% else %}bg-slate-100 text-slate-600 border border-slate-200{% endif %}">Live</span>
                 </a>
 
-                <a href="{% url 'checkout:deliveries' %}" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all {% if active_tab == 'deliveries' %}bg-emerald-600 text-white shadow-md shadow-emerald-600/20{% else %}text-slate-300 hover:bg-slate-800/80 hover:text-white{% endif %}">
+                <a href="{% url 'checkout:deliveries' %}" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all {% if active_tab == 'deliveries' %}bg-emerald-600 text-white shadow-xs shadow-emerald-600/20{% else %}text-slate-600 hover:bg-slate-100 hover:text-slate-900{% endif %}">
                     <div class="flex items-center gap-2.5">
                         <i data-lucide="navigation" class="w-4 h-4"></i>
                         <span>Live Deliveries & Tracking</span>
                     </div>
                     {% if sidebar_out_for_delivery %}
-                    <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">{{ sidebar_out_for_delivery }}</span>
+                    <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">{{ sidebar_out_for_delivery }}</span>
                     {% endif %}
                 </a>
 
                 <div class="px-3 pt-4 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Integrated Modules</div>
 
-                <a href="{% url 'orders:manage_dashboard' %}" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 transition-all">
+                <a href="{% url 'orders:manage_dashboard' %}" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all">
                     <div class="flex items-center gap-2.5">
-                        <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+                        <i data-lucide="clipboard-list" class="w-4 h-4 text-blue-600"></i>
                         <span>Orders Fulfillment Hub</span>
                     </div>
                     <i data-lucide="external-link" class="w-3 h-3 text-slate-400"></i>
                 </a>
 
-                <a href="{% url 'inventory:dashboard' %}" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 transition-all">
+                <a href="{% url 'inventory:dashboard' %}" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all">
                     <div class="flex items-center gap-2.5">
-                        <i data-lucide="boxes" class="w-4 h-4"></i>
+                        <i data-lucide="boxes" class="w-4 h-4 text-emerald-600"></i>
                         <span>Warehouse & Stock</span>
                     </div>
                     <i data-lucide="external-link" class="w-3 h-3 text-slate-400"></i>
@@ -118,17 +285,17 @@
 
                 <div class="px-3 pt-4 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Storefront & Portals</div>
 
-                <a href="{% url 'checkout:checkout' %}" target="_blank" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 transition-all">
+                <a href="{% url 'checkout:checkout' %}" target="_blank" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all">
                     <div class="flex items-center gap-2.5">
-                        <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                        <i data-lucide="shopping-bag" class="w-4 h-4 text-amber-600"></i>
                         <span>View Customer Checkout</span>
                     </div>
                     <i data-lucide="arrow-up-right" class="w-3 h-3 text-slate-400"></i>
                 </a>
 
-                <a href="{% url 'management:portal' %}" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 transition-all">
+                <a href="{% url 'management:portal' %}" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all">
                     <div class="flex items-center gap-2.5">
-                        <i data-lucide="shield-check" class="w-4 h-4"></i>
+                        <i data-lucide="shield-check" class="w-4 h-4 text-indigo-600"></i>
                         <span>Operations Portal</span>
                     </div>
                     <i data-lucide="external-link" class="w-3 h-3 text-slate-400"></i>
@@ -136,18 +303,18 @@
             </nav>
 
             <!-- Bottom Session / Logout -->
-            <div class="p-4 border-t border-slate-800/80 bg-[#090d18]">
+            <div class="p-4 border-t border-slate-200 bg-slate-50">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 font-bold text-xs">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center font-bold text-xs">
                             {{ request.user.username|default:"OP"|slice:":2"|upper }}
                         </div>
                         <div class="text-[11px] leading-tight">
-                            <p class="font-bold text-slate-200 truncate max-w-[100px]">{{ request.user.username }}</p>
-                            <span class="text-[10px] text-slate-400">Checkout Dispatch</span>
+                            <p class="font-bold text-slate-900 truncate max-w-[100px]">{{ request.user.username }}</p>
+                            <span class="text-[10px] text-slate-500">Checkout Dispatch</span>
                         </div>
                     </div>
-                    <a href="{% url 'management:dept_logout' %}" title="Log Out" class="p-2 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all">
+                    <a href="{% url 'management:dept_logout' %}" title="Log Out" class="p-2 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all">
                         <i data-lucide="log-out" class="w-4 h-4"></i>
                     </a>
                 </div>
@@ -155,25 +322,25 @@
         </aside>
 
         <!-- Main Content Area -->
-        <div class="flex-1 flex flex-col min-w-0 bg-[#0b0f19]">
+        <div class="flex-1 flex flex-col min-w-0 bg-slate-50">
             <!-- Top App Bar -->
-            <header class="h-16 bg-[#0e1424]/90 backdrop-blur-md border-b border-slate-800/80 px-6 flex items-center justify-between sticky top-0 z-20">
+            <header class="h-16 bg-white/95 backdrop-blur-md border-b border-slate-200 px-6 flex items-center justify-between sticky top-0 z-20">
                 <div class="flex items-center gap-3">
                     <div class="flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 live-radar"></span>
-                        <h2 class="text-sm font-bold text-white tracking-tight">Checkout Command & Dispatch System</h2>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 live-radar"></span>
+                        <h2 class="text-sm font-bold text-slate-900 tracking-tight">Checkout Command & Dispatch System</h2>
                     </div>
-                    <span class="hidden md:inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span class="hidden md:inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                         Cash on Delivery (COD) Active
                     </span>
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <a href="{% url 'checkout:deliveries' %}" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all">
-                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    <a href="{% url 'checkout:deliveries' %}" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 transition-all shadow-2xs">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-600"></i>
                         <span class="hidden sm:inline">Track Shipments</span>
                     </a>
-                    <a href="/" target="_blank" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-md shadow-emerald-600/20">
+                    <a href="/" target="_blank" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition-all shadow-xs shadow-emerald-600/20">
                         <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                         <span class="hidden sm:inline">Storefront</span>
                     </a>
@@ -184,7 +351,7 @@
             {% if messages %}
             <div class="px-6 pt-4 space-y-2">
                 {% for message in messages %}
-                <div class="p-3.5 rounded-xl text-xs font-semibold flex items-center justify-between shadow-xs border {% if message.tags == 'error' %}bg-rose-950/50 border-rose-800/80 text-rose-200{% elif message.tags == 'success' %}bg-emerald-950/50 border-emerald-800/80 text-emerald-200{% elif message.tags == 'warning' %}bg-amber-950/50 border-amber-800/80 text-amber-200{% else %}bg-blue-950/50 border-blue-800/80 text-blue-200{% endif %}">
+                <div class="p-3.5 rounded-xl text-xs font-semibold flex items-center justify-between shadow-2xs border {% if message.tags == 'error' %}bg-rose-50 border-rose-200 text-rose-700{% elif message.tags == 'success' %}bg-emerald-50 border-emerald-200 text-emerald-700{% elif message.tags == 'warning' %}bg-amber-50 border-amber-200 text-amber-700{% else %}bg-blue-50 border-blue-200 text-blue-700{% endif %}">
                     <div class="flex items-center gap-2.5">
                         <i data-lucide="{% if message.tags == 'error' %}alert-octagon{% elif message.tags == 'success' %}check-circle-2{% elif message.tags == 'warning' %}alert-triangle{% else %}info{% endif %}" class="w-4 h-4 shrink-0"></i>
                         <span>{{ message }}</span>

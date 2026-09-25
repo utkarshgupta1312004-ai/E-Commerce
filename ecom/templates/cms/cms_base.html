@@ -1,15 +1,15 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-[#0b0f19] text-slate-100 antialiased">
+<html lang="en" class="h-full bg-slate-50 text-slate-800 antialiased">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}CMS Studio Console{% endblock %} | Cartivo Operations</title>
 
-    <!-- Premium Google Fonts: Plus Jakarta Sans & Inter with fast display swap -->
+    <!-- Premium Google Fonts: Poppins & Plus Jakarta Sans with fast display swap -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Offline Tailwind CSS (Pre-compiled local bundle) -->
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
@@ -45,18 +45,33 @@
     <style>
         /* Modern Premium Typography Settings */
         body {
-            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            letter-spacing: -0.015em;
+            font-family: 'Poppins', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            letter-spacing: -0.012em;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             text-rendering: optimizeLegibility;
         }
 
+        html, body {
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+        }
+
+        #sidebar {
+            background-color: #ffffff !important;
+            border-right: 1px solid #e2e8f0 !important;
+        }
+
+        header, #main-header {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+        }
+
         /* Custom scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0b0f19; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
-        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
@@ -66,6 +81,187 @@
             50% { opacity: 0.4; transform: scale(1.2); }
         }
         .live-dot { animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+        /* ======================================================================= */
+        /* UNIVERSAL LIGHT THEME STYLING ENGINE FOR CMS STUDIO                     */
+        /* ======================================================================= */
+        .bg-\[\#0b0f19\], [class*="bg-[#0b0f19]"],
+        .bg-\[\#0d1424\], [class*="bg-[#0d1424]"] {
+            background-color: #f8fafc !important;
+        }
+        .bg-\[\#0f172a\], [class*="bg-[#0f172a]"],
+        .bg-\[\#131c2e\], [class*="bg-[#131c2e]"],
+        .bg-\[\#14203a\], [class*="bg-[#14203a]"],
+        .bg-slate-950, [class*="bg-slate-950"],
+        .bg-slate-900, [class*="bg-slate-900"] {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.03) !important;
+        }
+
+        /* Card and inner panel styling */
+        div[class*="bg-slate-900"], div[class*="bg-slate-950"],
+        div[class*="bg-slate-800/40"], div[class*="bg-slate-800/50"], div[class*="bg-slate-800/60"] {
+            background-color: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04) !important;
+        }
+
+        /* Progress Bar Tracks and Containers */
+        div[class*="rounded-full"][class*="bg-[#0f172a]"],
+        div[class*="rounded-full"][class*="bg-slate-800"],
+        div[class*="h-2"][class*="bg-slate-800"],
+        div[class*="h-3"][class*="bg-[#0f172a]"] {
+            background-color: #f1f5f9 !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        /* Sub-cards and Stat Boxes */
+        div[class*="p-3"][class*="rounded-2xl"][class*="bg-[#0f172a]"],
+        div[class*="p-2.5"][class*="rounded-xl"][class*="bg-[#0f172a]"],
+        div[class*="p-4"][class*="rounded-2xl"][class*="bg-[#0f172a]"],
+        div[class*="rounded-2xl"][class*="bg-[#0f172a]"] {
+            background-color: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+        }
+
+        /* Universal Borders */
+        .border-\[\#1e293b\], [class*="border-[#1e293b]"],
+        .border-slate-800, [class*="border-slate-800"],
+        .border-slate-700, [class*="border-slate-700"] {
+            border-color: #e2e8f0 !important;
+        }
+
+        /* Typography */
+        .text-white:not(.keep-white) {
+            color: #0f172a !important;
+        }
+        .bg-blue-600, .bg-blue-700, .bg-indigo-600, .bg-emerald-600, .btn-primary,
+        [class*="bg-blue-600"], [class*="bg-emerald-600"], [class*="from-emerald-600"], [class*="from-blue-600"] {
+            color: #ffffff !important;
+        }
+        .bg-blue-600 *, .bg-blue-700 *, .bg-indigo-600 *, .bg-emerald-600 *, .btn-primary *,
+        [class*="from-emerald-600"] *, [class*="from-blue-600"] * {
+            color: #ffffff !important;
+        }
+        .text-slate-100 { color: #0f172a !important; }
+        .text-slate-200 { color: #1e293b !important; }
+        .text-slate-300 { color: #475569 !important; }
+        .text-slate-400 { color: #64748b !important; }
+        .text-slate-500 { color: #64748b !important; }
+
+        /* Readable Accents on Light Background */
+        .text-emerald-400 { color: #059669 !important; }
+        .text-cyan-400 { color: #0284c7 !important; }
+        .text-amber-400 { color: #d97706 !important; }
+        .text-rose-400 { color: #e11d48 !important; }
+        .text-blue-400 { color: #2563eb !important; }
+        .text-purple-400 { color: #7c3aed !important; }
+        .text-indigo-400 { color: #4f46e5 !important; }
+
+        /* Tables */
+        table thead, table thead tr, table thead th {
+            background-color: #f8fafc !important;
+            color: #475569 !important;
+            font-weight: 600 !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+        }
+        table tbody tr {
+            background-color: #ffffff !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+            color: #1e293b !important;
+        }
+        table tbody tr:hover {
+            background-color: #f8fafc !important;
+        }
+        table tbody td {
+            border-color: #f1f5f9 !important;
+        }
+        .divide-\[\#1e293b\], [class*="divide-[#1e293b]"], [class*="divide-slate-800"] {
+            border-color: #f1f5f9 !important;
+        }
+
+        /* Form Inputs & Selects */
+        input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]), select, textarea {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border: 1px solid #e2e8f0 !important;
+        }
+        input::placeholder, textarea::placeholder {
+            color: #94a3b8 !important;
+        }
+        select option {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+        }
+        input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):focus, select:focus, textarea:focus {
+            background-color: #ffffff !important;
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12) !important;
+            outline: none !important;
+        }
+
+        /* Badges, Pills & Tags */
+        span[class*="bg-slate-950"], span[class*="bg-slate-900"], span[class*="bg-slate-800"],
+        span.bg-slate-950, span.bg-slate-900, span.bg-slate-800,
+        div.bg-slate-800:not(button):not(a), div.bg-slate-950:not(button):not(a) {
+            background-color: #f8fafc !important;
+            color: #1e293b !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+        }
+        .bg-emerald-500\/10, .bg-emerald-500\/15, .bg-emerald-500\/20 {
+            background-color: #ecfdf5 !important;
+            color: #047857 !important;
+            border-color: #a7f3d0 !important;
+        }
+        .bg-blue-500\/10, .bg-blue-500\/15, .bg-blue-500\/20 {
+            background-color: #eff6ff !important;
+            color: #1d4ed8 !important;
+            border-color: #bfdbfe !important;
+        }
+        .bg-cyan-500\/10, .bg-cyan-500\/15, .bg-cyan-500\/20 {
+            background-color: #ecfeff !important;
+            color: #0e7490 !important;
+            border-color: #a5f3fc !important;
+        }
+        .bg-amber-500\/10, .bg-amber-500\/15, .bg-amber-500\/20 {
+            background-color: #fffbeb !important;
+            color: #b45309 !important;
+            border-color: #fde68a !important;
+        }
+        .bg-rose-500\/10, .bg-rose-500\/15, .bg-rose-500\/20 {
+            background-color: #fff1f2 !important;
+            color: #be123c !important;
+            border-color: #fecdd3 !important;
+        }
+        .bg-purple-500\/10, .bg-purple-500\/15, .bg-purple-500\/20 {
+            background-color: #faf5ff !important;
+            color: #7e22ce !important;
+            border-color: #e9d5ff !important;
+        }
+        .bg-indigo-500\/10, .bg-indigo-500\/15, .bg-indigo-500\/20 {
+            background-color: #eef2ff !important;
+            color: #4338ca !important;
+            border-color: #c7d2fe !important;
+        }
+
+        /* Sidebar Item Hover & Active */
+        .sidebar-item:hover:not(.bg-gradient-to-r) {
+            background-color: #f1f5f9 !important;
+            color: #0f172a !important;
+        }
+        .sidebar-item.active-nav, .sidebar-item[class*="bg-blue-600"] {
+            background-color: #eff6ff !important;
+            color: #1d4ed8 !important;
+            border-color: #bfdbfe !important;
+        }
+
+        /* Command Palette in Light Mode */
+        #command-palette-modal .bg-\[\#0f172a\] {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+        }
 
         /* Desktop Compact Mini-Rail Mode */
         @media (min-width: 1024px) {
@@ -113,14 +309,14 @@
     </style>
     {% block extra_head %}{% endblock %}
 </head>
-<body class="h-full bg-[#0b0f19] text-slate-200 overflow-hidden flex flex-col font-sans select-text">
+<body class="h-full bg-slate-50 text-slate-800 overflow-hidden flex flex-col font-sans select-text">
 
 <div class="flex flex-1 h-screen overflow-hidden">
 
     <!-- Mobile Overlay Backdrop -->
     <div 
         id="sidebar-backdrop" 
-        class="fixed inset-0 bg-black/60 z-40 lg:hidden hidden backdrop-blur-xs transition-opacity duration-200"
+        class="fixed inset-0 bg-slate-900/40 z-40 lg:hidden hidden backdrop-blur-xs transition-opacity duration-200"
         aria-hidden="true"
     ></div>
 
@@ -129,7 +325,7 @@
     <!-- ======================================================================= -->
     <aside 
         id="sidebar" 
-        class="w-64 bg-[#0f172a] border-r border-[#1e293b] flex flex-col shrink-0 h-screen z-50 select-none shadow-2xl lg:shadow-none"
+        class="w-64 bg-white border-r border-slate-200 flex flex-col shrink-0 h-screen z-50 select-none shadow-sm lg:shadow-none"
     >
         <script>
             (function() {
@@ -142,19 +338,19 @@
         </script>
 
         <!-- Brand Header with Logo & Mobile Close Button -->
-        <div class="h-16 px-4 border-b border-[#1e293b] flex items-center justify-between shrink-0 bg-[#0f172a] sidebar-brand-wrapper">
+        <div class="h-16 px-4 border-b border-slate-200 flex items-center justify-between shrink-0 bg-white sidebar-brand-wrapper">
             <a href="{% url 'cms:dashboard' %}" class="flex items-center gap-3 group overflow-hidden">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-600 p-0.5 shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform shrink-0">
-                    <div class="w-full h-full bg-[#0f172a] rounded-[10px] flex items-center justify-center">
-                        <i data-lucide="layout-template" class="w-5 h-5 text-cyan-400"></i>
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-600 p-0.5 shadow-md shadow-blue-500/10 group-hover:scale-105 transition-transform shrink-0">
+                    <div class="w-full h-full bg-white rounded-[10px] flex items-center justify-center">
+                        <i data-lucide="layout-template" class="w-5 h-5 text-blue-600"></i>
                     </div>
                 </div>
                 <div class="flex flex-col sidebar-header-text min-w-0">
                     <div class="flex items-center gap-1.5">
-                        <span class="font-extrabold text-base tracking-tight text-white group-hover:text-cyan-400 transition-colors">CARTIVO</span>
-                        <span class="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30">CMS</span>
+                        <span class="font-extrabold text-base tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors">CARTIVO</span>
+                        <span class="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">CMS</span>
                     </div>
-                    <span class="text-[10px] text-slate-400 font-medium truncate">Content Studio Console</span>
+                    <span class="text-[10px] text-slate-500 font-medium truncate">Content Studio Console</span>
                 </div>
             </a>
 
@@ -162,7 +358,7 @@
             <button 
                 type="button" 
                 id="sidebar-close-btn" 
-                class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 lg:hidden cursor-pointer" 
+                class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 lg:hidden cursor-pointer" 
                 aria-label="Close navigation sidebar"
             >
                 <i data-lucide="x" class="w-5 h-5"></i>
@@ -179,87 +375,87 @@
                 <!-- 1. CMS Dashboard Overview -->
                 <a 
                     href="{% url 'cms:dashboard' %}" 
-                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'dashboard' %}bg-blue-600/15 text-blue-400 font-bold border border-blue-500/30 shadow-sm{% else %}text-slate-300 hover:text-white hover:bg-slate-800/50{% endif %}"
+                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'dashboard' %}bg-blue-50 text-blue-700 font-bold border border-blue-200 shadow-xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}"
                 >
                     <div class="flex items-center gap-3">
-                        <i data-lucide="layout-dashboard" class="w-4 h-4 text-blue-400 shrink-0"></i>
+                        <i data-lucide="layout-dashboard" class="w-4 h-4 text-blue-600 shrink-0"></i>
                         <span class="sidebar-text">CMS Dashboard</span>
                     </div>
                     {% if active_tab == 'dashboard' %}
-                    <span class="w-1.5 h-1.5 rounded-full bg-blue-400 live-dot shrink-0 sidebar-badge"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-600 live-dot shrink-0 sidebar-badge"></span>
                     {% endif %}
                 </a>
 
                 <!-- 2. Hero & Promotional Banners -->
                 <a 
                     href="{% url 'cms:banners' %}" 
-                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'banners' %}bg-blue-600/15 text-blue-400 font-bold border border-blue-500/30 shadow-sm{% else %}text-slate-300 hover:text-white hover:bg-slate-800/50{% endif %}"
+                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'banners' %}bg-blue-50 text-blue-700 font-bold border border-blue-200 shadow-xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}"
                 >
                     <div class="flex items-center gap-3">
-                        <i data-lucide="image" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                        <i data-lucide="image" class="w-4 h-4 text-emerald-600 shrink-0"></i>
                         <span class="sidebar-text">Promotional Banners</span>
                     </div>
-                    <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 sidebar-badge">{{ kpis.total_banners }}</span>
+                    <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 sidebar-badge">{{ kpis.total_banners }}</span>
                 </a>
 
                 <!-- 3. Homepage Sections Orchestrator -->
                 <a 
                     href="{% url 'cms:sections' %}" 
-                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'sections' %}bg-blue-600/15 text-blue-400 font-bold border border-blue-500/30 shadow-sm{% else %}text-slate-300 hover:text-white hover:bg-slate-800/50{% endif %}"
+                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'sections' %}bg-blue-50 text-blue-700 font-bold border border-blue-200 shadow-xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}"
                 >
                     <div class="flex items-center gap-3">
-                        <i data-lucide="layers" class="w-4 h-4 text-cyan-400 shrink-0"></i>
+                        <i data-lucide="layers" class="w-4 h-4 text-cyan-600 shrink-0"></i>
                         <span class="sidebar-text">Homepage Sections</span>
                     </div>
-                    <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 sidebar-badge">{{ kpis.total_sections }}</span>
+                    <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-50 text-cyan-700 border border-cyan-200 sidebar-badge">{{ kpis.total_sections }}</span>
                 </a>
 
                 <!-- 4. Category Sub-Nav Items -->
                 <a 
                     href="{% url 'cms:category_nav' %}" 
-                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'category_nav' %}bg-blue-600/15 text-blue-400 font-bold border border-blue-500/30 shadow-sm{% else %}text-slate-300 hover:text-white hover:bg-slate-800/50{% endif %}"
+                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'category_nav' %}bg-blue-50 text-blue-700 font-bold border border-blue-200 shadow-xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}"
                 >
                     <div class="flex items-center gap-3">
-                        <i data-lucide="compass" class="w-4 h-4 text-amber-400 shrink-0"></i>
+                        <i data-lucide="compass" class="w-4 h-4 text-amber-600 shrink-0"></i>
                         <span class="sidebar-text">Category Sub-Menu</span>
                     </div>
-                    <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 sidebar-badge">{{ kpis.total_nav_items }}</span>
+                    <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200 sidebar-badge">{{ kpis.total_nav_items }}</span>
                 </a>
 
                 <!-- 5. Curated Category Cards -->
                 <a 
                     href="{% url 'cms:curations' %}" 
-                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'curations' %}bg-blue-600/15 text-blue-400 font-bold border border-blue-500/30 shadow-sm{% else %}text-slate-300 hover:text-white hover:bg-slate-800/50{% endif %}"
+                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'curations' %}bg-blue-50 text-blue-700 font-bold border border-blue-200 shadow-xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}"
                 >
                     <div class="flex items-center gap-3">
-                        <i data-lucide="grid-2x2" class="w-4 h-4 text-purple-400 shrink-0"></i>
+                        <i data-lucide="grid-2x2" class="w-4 h-4 text-purple-600 shrink-0"></i>
                         <span class="sidebar-text">Curated Showcases</span>
                     </div>
-                    <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-purple-500/15 text-purple-300 border border-purple-500/30 sidebar-badge">{{ kpis.total_curations }}</span>
+                    <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200 sidebar-badge">{{ kpis.total_curations }}</span>
                 </a>
 
                 <!-- 6. Value Propositions & Trust -->
                 <a 
                     href="{% url 'cms:trust_badges' %}" 
-                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'trust_badges' %}bg-blue-600/15 text-blue-400 font-bold border border-blue-500/30 shadow-sm{% else %}text-slate-300 hover:text-white hover:bg-slate-800/50{% endif %}"
+                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'trust_badges' %}bg-blue-50 text-blue-700 font-bold border border-blue-200 shadow-xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}"
                 >
                     <div class="flex items-center gap-3">
-                        <i data-lucide="shield-check" class="w-4 h-4 text-rose-400 shrink-0"></i>
+                        <i data-lucide="shield-check" class="w-4 h-4 text-rose-600 shrink-0"></i>
                         <span class="sidebar-text">Trust Badges</span>
                     </div>
-                    <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-300 border border-rose-500/30 sidebar-badge">{{ kpis.total_trust_badges }}</span>
+                    <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200 sidebar-badge">{{ kpis.total_trust_badges }}</span>
                 </a>
 
                 <!-- 7. Navbar Items Hierarchy -->
                 <a 
                     href="{% url 'cms:navbar' %}" 
-                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'navbar' %}bg-blue-600/15 text-blue-400 font-bold border border-blue-500/30 shadow-sm{% else %}text-slate-300 hover:text-white hover:bg-slate-800/50{% endif %}"
+                    class="sidebar-item flex items-center justify-between px-3 py-2 rounded-xl transition-all group {% if active_tab == 'navbar' %}bg-blue-50 text-blue-700 font-bold border border-blue-200 shadow-xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}"
                 >
                     <div class="flex items-center gap-3">
-                        <i data-lucide="menu" class="w-4 h-4 text-indigo-400 shrink-0"></i>
+                        <i data-lucide="menu" class="w-4 h-4 text-indigo-600 shrink-0"></i>
                         <span class="sidebar-text">Navigation Bar</span>
                     </div>
-                    <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 sidebar-badge">{{ kpis.total_navbar_items }}</span>
+                    <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200 sidebar-badge">{{ kpis.total_navbar_items }}</span>
                 </a>
             </div>
 
@@ -267,50 +463,50 @@
             <div class="space-y-1 pt-2">
                 <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 pb-1 sidebar-section-title">Connected Portals</span>
                 
-                <a href="/" target="_blank" class="sidebar-item flex items-center justify-between px-3 py-2 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-xl transition-colors">
+                <a href="/" target="_blank" class="sidebar-item flex items-center justify-between px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors">
                     <div class="flex items-center gap-3">
-                        <i data-lucide="shopping-bag" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                        <i data-lucide="shopping-bag" class="w-4 h-4 text-emerald-600 shrink-0"></i>
                         <span class="sidebar-text">Live Storefront</span>
                     </div>
-                    <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-slate-500 sidebar-arrow"></i>
+                    <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-slate-400 sidebar-arrow"></i>
                 </a>
 
-                <a href="{% url 'management:portal' %}" class="sidebar-item flex items-center justify-between px-3 py-2 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-xl transition-colors">
+                <a href="{% url 'management:portal' %}" class="sidebar-item flex items-center justify-between px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors">
                     <div class="flex items-center gap-3">
-                        <i data-lucide="globe" class="w-4 h-4 text-cyan-400 shrink-0"></i>
+                        <i data-lucide="globe" class="w-4 h-4 text-cyan-600 shrink-0"></i>
                         <span class="sidebar-text">Management Portal</span>
                     </div>
-                    <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-slate-500 sidebar-arrow"></i>
+                    <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-slate-400 sidebar-arrow"></i>
                 </a>
 
                 {% if dept_info.is_superuser %}
-                <a href="/admin/cms/" target="_blank" class="sidebar-item flex items-center justify-between px-3 py-2 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-xl transition-colors">
+                <a href="/admin/cms/" target="_blank" class="sidebar-item flex items-center justify-between px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors">
                     <div class="flex items-center gap-3">
-                        <i data-lucide="database" class="w-4 h-4 text-blue-400 shrink-0"></i>
+                        <i data-lucide="database" class="w-4 h-4 text-blue-600 shrink-0"></i>
                         <span class="sidebar-text">Django CMS Admin</span>
                     </div>
-                    <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-500 sidebar-arrow"></i>
+                    <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400 sidebar-arrow"></i>
                 </a>
 
-                <a href="{% url 'management:dashboard' %}" class="sidebar-item flex items-center justify-between px-3 py-2 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-xl transition-colors">
+                <a href="{% url 'management:dashboard' %}" class="sidebar-item flex items-center justify-between px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors">
                     <div class="flex items-center gap-3">
-                        <i data-lucide="crown" class="w-4 h-4 text-amber-400 shrink-0"></i>
+                        <i data-lucide="crown" class="w-4 h-4 text-amber-600 shrink-0"></i>
                         <span class="sidebar-text">Superadmin Control</span>
                     </div>
-                    <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-slate-500 sidebar-arrow"></i>
+                    <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-slate-400 sidebar-arrow"></i>
                 </a>
                 {% endif %}
             </div>
 
             <!-- Section: SIGN OUT / LOGOUT -->
-            <div class="pt-3 border-t border-[#1e293b]">
+            <div class="pt-3 border-t border-slate-200">
                 {% if dept_info.is_cms_staff %}
-                <a href="{% url 'management:dept_logout' %}" class="sidebar-item flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-xs font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 transition-colors">
+                <a href="{% url 'management:dept_logout' %}" class="sidebar-item flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-xs font-semibold bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition-colors">
                     <i data-lucide="log-out" class="w-4 h-4 shrink-0"></i>
                     <span class="sidebar-text">Sign Out (CMS Staff)</span>
                 </a>
                 {% else %}
-                <a href="{% url 'management:logout' %}" class="sidebar-item flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-xs font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 transition-colors">
+                <a href="{% url 'management:logout' %}" class="sidebar-item flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-xs font-semibold bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition-colors">
                     <i data-lucide="log-out" class="w-4 h-4 shrink-0"></i>
                     <span class="sidebar-text">Exit Superadmin</span>
                 </a>
@@ -320,11 +516,11 @@
         </nav>
 
         <!-- Sidebar Collapse Toggle Button (Desktop Rail Switcher) -->
-        <div class="p-3 border-t border-[#1e293b] hidden lg:flex items-center justify-between text-slate-400 bg-[#0f172a]">
+        <div class="p-3 border-t border-slate-200 hidden lg:flex items-center justify-between text-slate-500 bg-white">
             <button 
                 type="button" 
                 id="sidebar-rail-btn" 
-                class="w-full flex items-center justify-center gap-2 py-1.5 px-2 rounded-lg hover:bg-slate-800/60 hover:text-white text-xs transition-colors cursor-pointer"
+                class="w-full flex items-center justify-center gap-2 py-1.5 px-2 rounded-lg hover:bg-slate-100 hover:text-slate-900 text-xs transition-colors cursor-pointer"
                 title="Toggle Slim Sidebar"
             >
                 <i data-lucide="chevrons-left" id="rail-icon" class="w-4 h-4 transition-transform duration-200"></i>
@@ -336,10 +532,10 @@
     <!-- ======================================================================= -->
     <!-- 2. MAIN CONTENT COLUMN WRAPPER                                          -->
     <!-- ======================================================================= -->
-    <div class="flex flex-col flex-1 h-screen overflow-hidden min-w-0 bg-[#0b0f19]">
+    <div class="flex flex-col flex-1 h-screen overflow-hidden min-w-0 bg-slate-50">
 
         <!-- Top Header Navigation Bar -->
-        <header id="main-header" class="h-16 shrink-0 bg-[#0f172a] border-b border-[#1e293b] px-4 sm:px-6 flex items-center justify-between gap-3 sm:gap-6 z-30">
+        <header id="main-header" class="h-16 shrink-0 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between gap-3 sm:gap-6 z-30">
             
             <!-- Left: Mobile Toggle, Brand & Global Search -->
             <div class="flex items-center gap-3 sm:gap-4 flex-1 max-w-xl">
@@ -347,7 +543,7 @@
                 <button 
                     type="button" 
                     id="sidebar-toggle-btn"
-                    class="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/80 transition-colors cursor-pointer shrink-0"
+                    class="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
                     aria-label="Toggle Navigation Sidebar"
                 >
                     <i data-lucide="menu" class="w-5 h-5"></i>
@@ -355,8 +551,8 @@
 
                 <!-- Mobile Logo Title -->
                 <div class="flex items-center gap-1.5 lg:hidden">
-                    <span class="font-extrabold text-sm tracking-tight text-white">CARTIVO</span>
-                    <span class="text-[8px] font-bold uppercase px-1 py-0.2 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30">CMS</span>
+                    <span class="font-extrabold text-sm tracking-tight text-slate-900">CARTIVO</span>
+                    <span class="text-[8px] font-bold uppercase px-1 py-0.2 rounded bg-blue-50 text-blue-700 border border-blue-200">CMS</span>
                 </div>
 
                 <!-- Global Search Box -->
@@ -368,11 +564,11 @@
                         type="text" 
                         id="global-cms-search"
                         placeholder="Search banners, sections, sub-menus, pages..." 
-                        class="w-full pl-9 pr-14 py-2 rounded-xl bg-[#131c2e] border border-[#1e293b] text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer"
+                        class="w-full pl-9 pr-14 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer"
                         readonly
                         onclick="document.getElementById('command-palette-modal').classList.remove('hidden')"
                     >
-                    <kbd class="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[9px] font-mono text-slate-400 bg-slate-800 rounded border border-slate-700">Ctrl+K</kbd>
+                    <kbd class="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[9px] font-mono text-slate-500 bg-slate-100 rounded border border-slate-200">Ctrl+K</kbd>
                 </div>
             </div>
 
@@ -383,33 +579,33 @@
                 <a 
                     href="/" 
                     target="_blank" 
-                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#131c2e] hover:bg-slate-800 text-slate-300 hover:text-white border border-[#1e293b] transition-all shadow-sm"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200 transition-all shadow-xs"
                     title="View Live Storefront"
                 >
-                    <i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    <i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-emerald-600"></i>
                     <span class="hidden sm:inline">Storefront</span>
-                    <i data-lucide="arrow-up-right" class="w-3 h-3 text-slate-500"></i>
+                    <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-slate-400"></i>
                 </a>
 
                 <!-- Department Operator Pill -->
-                <div class="flex items-center gap-2 bg-[#131c2e] border border-[#1e293b] rounded-full pl-3 pr-1.5 py-1">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span>
+                <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-full pl-3 pr-1.5 py-1">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 live-dot"></span>
                     <div class="flex flex-col text-right">
-                        <span class="text-xs font-bold text-white leading-tight truncate max-w-[120px]">{{ dept_info.operator_name }}</span>
-                        <span class="text-[9px] text-blue-400 font-semibold leading-tight">{{ dept_info.login_id }}</span>
+                        <span class="text-xs font-bold text-slate-900 leading-tight truncate max-w-[120px]">{{ dept_info.operator_name }}</span>
+                        <span class="text-[9px] text-blue-600 font-semibold leading-tight">{{ dept_info.login_id }}</span>
                     </div>
-                    <span class="p-1 rounded-full bg-blue-500/20 text-blue-400">
+                    <span class="p-1 rounded-full bg-blue-50 text-blue-600">
                         <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
                     </span>
                 </div>
 
                 <!-- Sign Out -->
                 {% if dept_info.is_cms_staff %}
-                <a href="{% url 'management:dept_logout' %}" title="Sign Out of CMS" class="p-2 rounded-xl bg-[#131c2e] border border-[#1e293b] hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 transition-colors">
+                <a href="{% url 'management:dept_logout' %}" title="Sign Out of CMS" class="p-2 rounded-xl bg-slate-50 border border-slate-200 hover:bg-rose-50 hover:border-rose-200 text-slate-500 hover:text-rose-600 transition-colors">
                     <i data-lucide="log-out" class="w-4 h-4"></i>
                 </a>
                 {% else %}
-                <a href="{% url 'management:logout' %}" title="Sign Out of Superadmin" class="p-2 rounded-xl bg-[#131c2e] border border-[#1e293b] hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 transition-colors">
+                <a href="{% url 'management:logout' %}" title="Sign Out of Superadmin" class="p-2 rounded-xl bg-slate-50 border border-slate-200 hover:bg-rose-50 hover:border-rose-200 text-slate-500 hover:text-rose-600 transition-colors">
                     <i data-lucide="log-out" class="w-4 h-4"></i>
                 </a>
                 {% endif %}
@@ -421,12 +617,12 @@
         {% if messages %}
         <div id="cms-messages-container" class="px-4 sm:px-6 lg:px-8 pt-4 space-y-2">
             {% for message in messages %}
-            <div class="message-alert p-3.5 rounded-2xl text-xs font-medium bg-emerald-950/80 border border-emerald-700/60 text-emerald-200 flex items-center justify-between shadow-lg transition-all duration-500">
+            <div class="message-alert p-3.5 rounded-2xl text-xs font-medium bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center justify-between shadow-sm transition-all duration-500">
                 <div class="flex items-center gap-2.5">
-                    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600 shrink-0"></i>
                     <span>{{ message }}</span>
                 </div>
-                <button type="button" onclick="dismissCmsMessage(this.closest('.message-alert'))" class="text-slate-400 hover:text-white p-1 cursor-pointer">
+                <button type="button" onclick="dismissCmsMessage(this.closest('.message-alert'))" class="text-slate-400 hover:text-slate-700 p-1 cursor-pointer">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
@@ -456,11 +652,11 @@
             <!-- Breadcrumb Navigation & Action Header -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1">
                 <div class="flex items-center gap-2 text-sm">
-                    <span class="text-white font-black text-xl sm:text-2xl tracking-tight">{% block page_title %}CMS Studio{% endblock %}</span>
-                    <span class="text-slate-600 font-mono">/</span>
-                    <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-400">
+                    <span class="text-slate-900 font-black text-xl sm:text-2xl tracking-tight">{% block page_title %}CMS Studio{% endblock %}</span>
+                    <span class="text-slate-300 font-mono">/</span>
+                    <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
                         {% block page_breadcrumb %}
-                        <i data-lucide="layout-template" class="w-3.5 h-3.5 text-blue-400"></i>
+                        <i data-lucide="layout-template" class="w-3.5 h-3.5 text-blue-600"></i>
                         <span>Content Management Operations</span>
                         {% endblock %}
                     </div>
@@ -472,11 +668,11 @@
                     <a 
                         href="/admin/cms/" 
                         target="_blank" 
-                        class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#131c2e] hover:bg-slate-800 text-slate-300 hover:text-white border border-[#1e293b] transition-all shadow-sm"
+                        class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200 transition-all shadow-xs"
                     >
-                        <i data-lucide="settings" class="w-3.5 h-3.5 text-blue-400"></i>
+                        <i data-lucide="settings" class="w-3.5 h-3.5 text-blue-600"></i>
                         <span>CMS Database</span>
-                        <i data-lucide="external-link" class="w-3 h-3 text-slate-500"></i>
+                        <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
                     </a>
                     {% endif %}
                     {% endblock %}
@@ -497,69 +693,69 @@
     <!-- ======================================================================= -->
     <div 
         id="command-palette-modal" 
-        class="hidden fixed inset-0 z-50 bg-[#030712]/80 backdrop-blur-md flex items-start justify-center pt-20 px-4 select-none"
+        class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-start justify-center pt-20 px-4 select-none"
         onclick="if(event.target === this) this.classList.add('hidden')"
     >
-        <div class="w-full max-w-xl bg-[#0f172a] border border-[#1e293b] rounded-3xl shadow-2xl overflow-hidden flex flex-col">
-            <div class="p-4 border-b border-[#1e293b] flex items-center gap-3">
-                <i data-lucide="search" class="w-5 h-5 text-blue-400 shrink-0"></i>
+        <div class="w-full max-w-xl bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col">
+            <div class="p-4 border-b border-slate-200 flex items-center gap-3 bg-white">
+                <i data-lucide="search" class="w-5 h-5 text-blue-600 shrink-0"></i>
                 <input 
                     type="text" 
                     id="palette-search-input" 
                     placeholder="Search banners, categories, sections..." 
-                    class="w-full bg-transparent text-sm text-white placeholder-slate-400 focus:outline-none"
+                    class="w-full bg-transparent text-sm text-slate-900 placeholder-slate-400 focus:outline-none"
                     autocomplete="off"
                 >
-                <kbd class="px-2 py-0.5 text-[10px] font-mono text-slate-400 bg-slate-800 rounded border border-slate-700">ESC</kbd>
+                <kbd class="px-2 py-0.5 text-[10px] font-mono text-slate-500 bg-slate-100 rounded border border-slate-200">ESC</kbd>
             </div>
 
-            <div class="max-h-80 overflow-y-auto p-2 text-xs space-y-1">
+            <div class="max-h-80 overflow-y-auto p-2 text-xs space-y-1 bg-white">
                 <div class="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">CMS Navigation</div>
                 
-                <a href="{% url 'cms:dashboard' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-white transition-colors">
-                    <i data-lucide="layout-dashboard" class="w-4 h-4 text-blue-400"></i>
+                <a href="{% url 'cms:dashboard' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-50 text-slate-700 hover:text-slate-900 transition-colors">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4 text-blue-600"></i>
                     <span class="flex-1 font-medium">CMS Studio Dashboard</span>
                     <span class="text-[10px] text-slate-400">/cms/dashboard/</span>
                 </a>
 
-                <a href="{% url 'cms:banners' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-white transition-colors">
-                    <i data-lucide="image" class="w-4 h-4 text-emerald-400"></i>
+                <a href="{% url 'cms:banners' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-50 text-slate-700 hover:text-slate-900 transition-colors">
+                    <i data-lucide="image" class="w-4 h-4 text-emerald-600"></i>
                     <span class="flex-1 font-medium">Promotional Hero Banners</span>
                     <span class="text-[10px] text-slate-400">/cms/banners/</span>
                 </a>
 
-                <a href="{% url 'cms:sections' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-white transition-colors">
-                    <i data-lucide="layers" class="w-4 h-4 text-cyan-400"></i>
+                <a href="{% url 'cms:sections' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-50 text-slate-700 hover:text-slate-900 transition-colors">
+                    <i data-lucide="layers" class="w-4 h-4 text-cyan-600"></i>
                     <span class="flex-1 font-medium">Homepage Sections Orchestrator</span>
                     <span class="text-[10px] text-slate-400">/cms/sections/</span>
                 </a>
 
-                <a href="{% url 'cms:category_nav' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-white transition-colors">
-                    <i data-lucide="compass" class="w-4 h-4 text-amber-400"></i>
+                <a href="{% url 'cms:category_nav' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-50 text-slate-700 hover:text-slate-900 transition-colors">
+                    <i data-lucide="compass" class="w-4 h-4 text-amber-600"></i>
                     <span class="flex-1 font-medium">Category Sub-Menu Nav Items</span>
                     <span class="text-[10px] text-slate-400">/cms/category-nav/</span>
                 </a>
 
-                <a href="{% url 'cms:curations' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-white transition-colors">
-                    <i data-lucide="grid-2x2" class="w-4 h-4 text-purple-400"></i>
+                <a href="{% url 'cms:curations' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-50 text-slate-700 hover:text-slate-900 transition-colors">
+                    <i data-lucide="grid-2x2" class="w-4 h-4 text-purple-600"></i>
                     <span class="flex-1 font-medium">Curated Showcases</span>
                     <span class="text-[10px] text-slate-400">/cms/curations/</span>
                 </a>
 
-                <a href="{% url 'cms:trust_badges' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-white transition-colors">
-                    <i data-lucide="shield-check" class="w-4 h-4 text-rose-400"></i>
+                <a href="{% url 'cms:trust_badges' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-50 text-slate-700 hover:text-slate-900 transition-colors">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-rose-600"></i>
                     <span class="flex-1 font-medium">Trust Badges & Value Props</span>
                     <span class="text-[10px] text-slate-400">/cms/trust-badges/</span>
                 </a>
 
-                <a href="{% url 'cms:navbar' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-white transition-colors">
-                    <i data-lucide="menu" class="w-4 h-4 text-indigo-400"></i>
+                <a href="{% url 'cms:navbar' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-50 text-slate-700 hover:text-slate-900 transition-colors">
+                    <i data-lucide="menu" class="w-4 h-4 text-indigo-600"></i>
                     <span class="flex-1 font-medium">Navigation Bar Hierarchy</span>
                     <span class="text-[10px] text-slate-400">/cms/navbar/</span>
                 </a>
 
-                <a href="/" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-800 text-slate-200 hover:text-white transition-colors">
-                    <i data-lucide="shopping-bag" class="w-4 h-4 text-emerald-400"></i>
+                <a href="/" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-50 text-slate-700 hover:text-slate-900 transition-colors">
+                    <i data-lucide="shopping-bag" class="w-4 h-4 text-emerald-600"></i>
                     <span class="flex-1 font-medium">Live Storefront</span>
                     <span class="text-[10px] text-slate-400">/</span>
                 </a>

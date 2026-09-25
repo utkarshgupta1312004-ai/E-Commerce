@@ -1056,14 +1056,31 @@ def attribute_edit_view(request, pk):
 
     attr = get_object_or_404(Attribute.objects.prefetch_related('values'), id=pk)
     if request.method == 'POST':
+        # Delete specific attribute value if requested
+        delete_val_id = request.POST.get('delete_val_id')
+        if delete_val_id:
+            val_to_del = attr.values.filter(id=delete_val_id).first()
+            if val_to_del:
+                val_text = val_to_del.value
+                val_to_del.delete()
+                messages.success(request, f"Value '{val_text}' removed from '{attr.name}'.")
+            return redirect('catalog:attribute_edit', pk=attr.id)
+
         attr.name = request.POST.get('name', '').strip() or attr.name
         attr.code = request.POST.get('code', '').strip() or attr.code
         attr.save()
 
-        # Add any new values submitted
+        # Add any new values submitted (supports comma-separated or single)
         new_val = request.POST.get('new_value', '').strip()
         if new_val:
-            AttributeValue.objects.get_or_create(attribute=attr, value=new_val, defaults={'display_order': attr.values.count()})
+            raw_vals = [v.strip() for v in new_val.split(',') if v.strip()]
+            added_count = 0
+            for v in raw_vals:
+                _, created = AttributeValue.objects.get_or_create(attribute=attr, value=v, defaults={'display_order': attr.values.count()})
+                if created:
+                    added_count += 1
+            if added_count > 0:
+                messages.success(request, f"Added {added_count} value(s) to '{attr.name}'.")
 
         messages.success(request, f"Attribute '{attr.name}' updated.")
         return redirect('catalog:attribute_edit', pk=attr.id)

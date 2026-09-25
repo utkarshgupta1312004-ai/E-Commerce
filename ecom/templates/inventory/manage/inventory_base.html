@@ -1,15 +1,15 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-[#0b0f19] text-slate-100 antialiased">
+<html lang="en" class="h-full bg-slate-50 text-slate-900 antialiased">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Inventory & Warehouse Operations{% endblock %} | Cartivo Operations</title>
 
-    <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+    <!-- Google Fonts: Poppins, Plus Jakarta Sans & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Compiled Tailwind CSS -->
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
@@ -24,18 +24,33 @@
 
     <style>
         body {
-            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            letter-spacing: -0.015em;
+            font-family: 'Poppins', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            letter-spacing: -0.012em;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             text-rendering: optimizeLegibility;
         }
 
+        html, body {
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+        }
+
+        #sidebar {
+            background-color: #ffffff !important;
+            border-right: 1px solid #e2e8f0 !important;
+        }
+
+        header, #main-header {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+        }
+
         /* Custom scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0b0f19; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
-        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
@@ -45,6 +60,163 @@
             50% { opacity: 0.4; transform: scale(1.2); }
         }
         .live-dot { animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+        /* Universal Light Theme Styling Engine */
+        .bg-\[\#0b0f19\], [class*="bg-[#0b0f19]"],
+        .bg-\[\#070a13\], [class*="bg-[#070a13]"],
+        .bg-\[\#0d1424\], [class*="bg-[#0d1424]"] {
+            background-color: #f8fafc !important;
+        }
+        .bg-\[\#0f172a\], [class*="bg-[#0f172a]"],
+        .bg-\[\#131c2e\], [class*="bg-[#131c2e]"],
+        .bg-\[\#14203a\], [class*="bg-[#14203a]"],
+        .bg-slate-950, [class*="bg-slate-950"],
+        .bg-slate-900, [class*="bg-slate-900"] {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.03) !important;
+        }
+
+        /* Card and inner panel styling */
+        div[class*="bg-slate-900"], div[class*="bg-slate-950"],
+        div[class*="bg-slate-800/40"], div[class*="bg-slate-800/50"], div[class*="bg-slate-800/60"] {
+            background-color: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04) !important;
+        }
+
+        /* Progress Bar Tracks and Containers */
+        div[class*="rounded-full"][class*="bg-[#0f172a]"],
+        div[class*="rounded-full"][class*="bg-slate-800"],
+        div[class*="h-2"][class*="bg-slate-800"],
+        div[class*="h-3"][class*="bg-[#0f172a]"] {
+            background-color: #f1f5f9 !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        /* Sub-cards and Stat Boxes */
+        div[class*="p-3"][class*="rounded-2xl"][class*="bg-[#0f172a]"],
+        div[class*="p-2.5"][class*="rounded-xl"][class*="bg-[#0f172a]"] {
+            background-color: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+        }
+
+        /* Universal Borders */
+        .border-\[\#1e293b\], [class*="border-[#1e293b]"],
+        .border-slate-800, [class*="border-slate-800"],
+        .border-slate-700, [class*="border-slate-700"] {
+            border-color: #e2e8f0 !important;
+        }
+
+        /* Typography */
+        .text-white:not(.keep-white) {
+            color: #0f172a !important;
+        }
+        .bg-blue-600, .bg-blue-700, .bg-indigo-600, .bg-emerald-600, .btn-primary,
+        [class*="bg-blue-600"], [class*="bg-emerald-600"], [class*="from-emerald-600"], [class*="from-blue-600"] {
+            color: #ffffff !important;
+        }
+        .bg-blue-600 *, .bg-blue-700 *, .bg-indigo-600 *, .bg-emerald-600 *, .btn-primary *,
+        [class*="from-emerald-600"] *, [class*="from-blue-600"] * {
+            color: #ffffff !important;
+        }
+        .text-slate-100 { color: #0f172a !important; }
+        .text-slate-200 { color: #1e293b !important; }
+        .text-slate-300 { color: #475569 !important; }
+        .text-slate-400 { color: #64748b !important; }
+        .text-slate-500 { color: #64748b !important; }
+
+        /* Readable Accents on Light Background */
+        .text-emerald-400 { color: #059669 !important; }
+        .text-cyan-400 { color: #0284c7 !important; }
+        .text-amber-400 { color: #d97706 !important; }
+        .text-rose-400 { color: #e11d48 !important; }
+        .text-blue-400 { color: #2563eb !important; }
+        .text-purple-400 { color: #7c3aed !important; }
+        .text-indigo-400 { color: #4f46e5 !important; }
+
+        /* Tables */
+        table thead, table thead tr, table thead th {
+            background-color: #f8fafc !important;
+            color: #475569 !important;
+            font-weight: 600 !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+        }
+        table tbody tr {
+            background-color: #ffffff !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+            color: #1e293b !important;
+        }
+        table tbody tr:hover {
+            background-color: #f8fafc !important;
+        }
+        table tbody td {
+            border-color: #f1f5f9 !important;
+        }
+        .divide-\[\#1e293b\], [class*="divide-[#1e293b]"], [class*="divide-slate-800"] {
+            border-color: #f1f5f9 !important;
+        }
+
+        /* Form Inputs & Selects */
+        input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]), select, textarea {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border: 1px solid #e2e8f0 !important;
+        }
+        input::placeholder, textarea::placeholder {
+            color: #94a3b8 !important;
+        }
+        select option {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+        }
+        input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):focus, select:focus, textarea:focus {
+            background-color: #ffffff !important;
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12) !important;
+            outline: none !important;
+        }
+
+        /* Badges, Pills & Tags */
+        span[class*="bg-slate-950"], span[class*="bg-slate-900"], span[class*="bg-slate-800"],
+        span.bg-slate-950, span.bg-slate-900, span.bg-slate-800,
+        div.bg-slate-800:not(button):not(a), div.bg-slate-950:not(button):not(a) {
+            background-color: #f8fafc !important;
+            color: #1e293b !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+        }
+        .bg-emerald-500\/10, .bg-emerald-500\/15, .bg-emerald-500\/20, .bg-emerald-950\/30 {
+            background-color: #ecfdf5 !important;
+            color: #047857 !important;
+            border-color: #a7f3d0 !important;
+        }
+        .bg-blue-500\/10, .bg-blue-500\/15, .bg-blue-500\/20 {
+            background-color: #eff6ff !important;
+            color: #1d4ed8 !important;
+            border-color: #bfdbfe !important;
+        }
+        .bg-cyan-500\/10, .bg-cyan-500\/15, .bg-cyan-500\/20 {
+            background-color: #ecfeff !important;
+            color: #0e7490 !important;
+            border-color: #a5f3fc !important;
+        }
+        .bg-amber-500\/10, .bg-amber-500\/15, .bg-amber-500\/20 {
+            background-color: #fffbeb !important;
+            color: #b45309 !important;
+            border-color: #fde68a !important;
+        }
+        .bg-rose-500\/10, .bg-rose-500\/15, .bg-rose-500\/20 {
+            background-color: #fff1f2 !important;
+            color: #be123c !important;
+            border-color: #fecdd3 !important;
+        }
+
+        /* Sidebar Item Hover & Active */
+        .sidebar-item:hover:not(.bg-emerald-600) {
+            background-color: #f1f5f9 !important;
+            color: #0f172a !important;
+        }
 
         @media (min-width: 1024px) {
             #sidebar {
@@ -90,7 +262,7 @@
         }
     </style>
 </head>
-<body class="h-full flex overflow-hidden bg-[#070a13] text-slate-100">
+<body class="h-full flex overflow-hidden bg-slate-50 text-slate-900">
 
     <!-- Mobile Overlay -->
     <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 hidden lg:hidden"></div>
@@ -98,33 +270,33 @@
     <!-- ========================================================================= -->
     <!-- ENTERPRISE INVENTORY SIDEBAR                                              -->
     <!-- ========================================================================= -->
-    <aside id="sidebar" class="w-68 bg-[#0b0f19] border-r border-slate-800/80 flex flex-col shrink-0 select-none z-30 transition-all duration-200">
+    <aside id="sidebar" class="w-68 bg-white border-r border-slate-200 flex flex-col shrink-0 select-none z-30 transition-all duration-200 shadow-sm">
         <!-- Logo Header -->
-        <div class="h-16 flex items-center justify-between px-5 border-b border-slate-800/80 sidebar-brand-wrapper">
+        <div class="h-16 flex items-center justify-between px-5 border-b border-slate-200 sidebar-brand-wrapper bg-white/95 backdrop-blur-md">
             <a href="{% url 'inventory:dashboard' %}" class="flex items-center gap-3 group">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
                     <i data-lucide="boxes" class="w-5 h-5"></i>
                 </div>
                 <div class="flex flex-col sidebar-header-text">
-                    <span class="font-extrabold text-sm tracking-tight text-white flex items-center gap-1.5">
-                        Cartivo <span class="text-xs px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20">INV</span>
+                    <span class="font-extrabold text-sm tracking-tight text-slate-900 flex items-center gap-1.5">
+                        Cartivo <span class="text-xs px-1.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold border border-emerald-200">INV</span>
                     </span>
-                    <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Inventory Hub</span>
+                    <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Inventory Hub</span>
                 </div>
             </a>
-            <button onclick="toggleSidebarCollapse()" class="hidden lg:flex p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors cursor-pointer">
+            <button onclick="toggleSidebarCollapse()" class="hidden lg:flex p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer">
                 <i data-lucide="panel-left-close" class="w-4 h-4"></i>
             </button>
         </div>
 
         <!-- Live Operations Pill -->
         <div class="px-4 pt-4 pb-2 sidebar-text">
-            <div class="flex items-center justify-between px-3 py-2 rounded-xl bg-emerald-950/30 border border-emerald-800/30 text-emerald-400 text-xs font-semibold">
+            <div class="flex items-center justify-between px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
                 <span class="flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 live-dot"></span>
                     Multi-Hub Inventory
                 </span>
-                <span class="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Live</span>
+                <span class="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">Live</span>
             </div>
         </div>
 
@@ -240,8 +412,8 @@
         </nav>
 
         <!-- Department Footer -->
-        <div class="p-3 border-t border-slate-800/80 bg-slate-900/40">
-            <a href="{% url 'management:dashboard' %}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors">
+        <div class="p-3 border-t border-slate-200 bg-slate-50">
+            <a href="{% url 'management:dashboard' %}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
                 <i data-lucide="chevron-left" class="w-4 h-4"></i>
                 <span class="sidebar-text">Management Portal</span>
             </a>
@@ -251,27 +423,27 @@
     <!-- ========================================================================= -->
     <!-- MAIN APPLICATION WRAPPER                                                  -->
     <!-- ========================================================================= -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-[#070a13]">
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50">
         <!-- Top Navigation Bar -->
-        <header class="h-16 border-b border-slate-800/80 bg-[#0b0f19]/80 backdrop-blur-md flex items-center justify-between px-4 sm:px-6 z-20 shrink-0">
+        <header class="h-16 border-b border-slate-200 bg-white/95 backdrop-blur-md flex items-center justify-between px-4 sm:px-6 z-20 shrink-0">
             <div class="flex items-center gap-3">
-                <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer">
+                <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer">
                     <i data-lucide="menu" class="w-5 h-5"></i>
                 </button>
                 <div class="flex items-center gap-2 text-xs">
-                    <span class="text-slate-300 font-medium">Cartivo Enterprise</span>
-                    <span class="text-slate-400">/</span>
-                    <span class="text-slate-200 font-bold">Inventory Hub</span>
+                    <span class="text-slate-500 font-medium">Cartivo Enterprise</span>
+                    <span class="text-slate-300">/</span>
+                    <span class="text-slate-900 font-bold">Inventory Hub</span>
                 </div>
             </div>
 
             <!-- Header Right Actions -->
             <div class="flex items-center gap-3">
-                <a href="{% url 'catalog:product_list' %}" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800/80 hover:bg-slate-700/80 text-slate-200 transition-colors">
-                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                <a href="{% url 'catalog:product_list' %}" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 transition-colors shadow-2xs">
+                    <i data-lucide="external-link" class="w-3.5 h-3.5 text-blue-600"></i>
                     <span>View Storefront</span>
                 </a>
-                <a href="{% url 'catalog:dashboard' %}" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-blue-600/10 hover:bg-blue-600/20 text-blue-400 border border-blue-500/20 transition-colors">
+                <a href="{% url 'catalog:dashboard' %}" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition-colors">
                     <i data-lucide="tag" class="w-3.5 h-3.5"></i>
                     <span>Catalog Studio</span>
                 </a>

@@ -1,47 +1,223 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-[#0b0f19] text-slate-100 antialiased">
+<html lang="en" class="h-full bg-slate-50 text-slate-900 antialiased">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Order Management & Operations{% endblock %} | Cartivo Operations</title>
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts: Poppins, Plus Jakarta Sans & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Tailwind CSS -->
-    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <!-- Pre-compiled Tailwind CSS -->
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
 
     <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="{% static 'js/lucide.min.js' %}"></script>
+    <script>
+        if (typeof lucide === 'undefined') {
+            document.write('<script src="https://unpkg.com/lucide@latest"><\/script>');
+        }
+    </script>
 
     <style>
         body {
-            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            letter-spacing: -0.015em;
+            font-family: 'Poppins', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            letter-spacing: -0.012em;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
         }
+
+        html, body {
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+        }
+
+        #sidebar {
+            background-color: #ffffff !important;
+            border-right: 1px solid #e2e8f0 !important;
+        }
+
+        header, #main-header {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+        }
+
+        /* Custom scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0b0f19; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
-        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Universal Light Theme Styling Engine */
+        .bg-\[\#0b0f19\], [class*="bg-[#0b0f19]"],
+        .bg-\[\#0e1424\], [class*="bg-[#0e1424]"] {
+            background-color: #f8fafc !important;
+        }
+        .bg-\[\#0f172a\], [class*="bg-[#0f172a]"],
+        .bg-\[\#131c2e\], [class*="bg-[#131c2e]"],
+        .bg-slate-950, [class*="bg-slate-950"],
+        .bg-slate-900, [class*="bg-slate-900"] {
+            background-color: #ffffff !important;
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.03) !important;
+        }
+
+        /* Card and inner panel styling */
+        div[class*="bg-slate-900"], div[class*="bg-slate-950"],
+        div[class*="bg-slate-800/40"], div[class*="bg-slate-800/50"], div[class*="bg-slate-800/60"] {
+            background-color: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04) !important;
+        }
+
+        /* Progress Bar Tracks and Containers */
+        div[class*="rounded-full"][class*="bg-[#0f172a]"],
+        div[class*="rounded-full"][class*="bg-slate-800"],
+        div[class*="h-2"][class*="bg-slate-800"],
+        div[class*="h-3"][class*="bg-[#0f172a]"] {
+            background-color: #f1f5f9 !important;
+            border-color: #e2e8f0 !important;
+        }
+
+        /* Sub-cards and Stat Boxes */
+        div[class*="p-3"][class*="rounded-2xl"][class*="bg-[#0f172a]"],
+        div[class*="p-2.5"][class*="rounded-xl"][class*="bg-[#0f172a]"] {
+            background-color: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+        }
+
+        /* Universal Borders */
+        .border-\[\#1e293b\], [class*="border-[#1e293b]"],
+        .border-slate-800, [class*="border-slate-800"],
+        .border-slate-700, [class*="border-slate-700"] {
+            border-color: #e2e8f0 !important;
+        }
+
+        /* Typography */
+        .text-white:not(.keep-white) {
+            color: #0f172a !important;
+        }
+        .bg-blue-600, .bg-blue-700, .bg-indigo-600, .bg-emerald-600, .btn-primary,
+        [class*="bg-blue-600"], [class*="bg-emerald-600"], [class*="from-emerald-600"], [class*="from-blue-600"] {
+            color: #ffffff !important;
+        }
+        .bg-blue-600 *, .bg-blue-700 *, .bg-indigo-600 *, .bg-emerald-600 *, .btn-primary *,
+        [class*="from-emerald-600"] *, [class*="from-blue-600"] * {
+            color: #ffffff !important;
+        }
+        .text-slate-100 { color: #0f172a !important; }
+        .text-slate-200 { color: #1e293b !important; }
+        .text-slate-300 { color: #475569 !important; }
+        .text-slate-400 { color: #64748b !important; }
+        .text-slate-500 { color: #64748b !important; }
+
+        /* Readable Accents on Light Background */
+        .text-emerald-400 { color: #059669 !important; }
+        .text-cyan-400 { color: #0284c7 !important; }
+        .text-amber-400 { color: #d97706 !important; }
+        .text-rose-400 { color: #e11d48 !important; }
+        .text-blue-400 { color: #2563eb !important; }
+        .text-purple-400 { color: #7c3aed !important; }
+        .text-indigo-400 { color: #4f46e5 !important; }
+
+        /* Tables */
+        table thead, table thead tr, table thead th {
+            background-color: #f8fafc !important;
+            color: #475569 !important;
+            font-weight: 600 !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+        }
+        table tbody tr {
+            background-color: #ffffff !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+            color: #1e293b !important;
+        }
+        table tbody tr:hover {
+            background-color: #f8fafc !important;
+        }
+        table tbody td {
+            border-color: #f1f5f9 !important;
+        }
+        .divide-\[\#1e293b\], [class*="divide-[#1e293b]"], [class*="divide-slate-800"] {
+            border-color: #f1f5f9 !important;
+        }
+
+        /* Form Inputs & Selects */
+        input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]), select, textarea {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border: 1px solid #e2e8f0 !important;
+        }
+        input::placeholder, textarea::placeholder {
+            color: #94a3b8 !important;
+        }
+        select option {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+        }
+        input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):focus, select:focus, textarea:focus {
+            background-color: #ffffff !important;
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12) !important;
+            outline: none !important;
+        }
+
+        /* Badges, Pills & Tags */
+        span[class*="bg-slate-950"], span[class*="bg-slate-900"], span[class*="bg-slate-800"],
+        span.bg-slate-950, span.bg-slate-900, span.bg-slate-800,
+        div.bg-slate-800:not(button):not(a), div.bg-slate-950:not(button):not(a) {
+            background-color: #f8fafc !important;
+            color: #1e293b !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+        }
+        .bg-emerald-500\/10, .bg-emerald-500\/15, .bg-emerald-500\/20 {
+            background-color: #ecfdf5 !important;
+            color: #047857 !important;
+            border-color: #a7f3d0 !important;
+        }
+        .bg-blue-500\/10, .bg-blue-500\/15, .bg-blue-500\/20 {
+            background-color: #eff6ff !important;
+            color: #1d4ed8 !important;
+            border-color: #bfdbfe !important;
+        }
+        .bg-cyan-500\/10, .bg-cyan-500\/15, .bg-cyan-500\/20 {
+            background-color: #ecfeff !important;
+            color: #0e7490 !important;
+            border-color: #a5f3fc !important;
+        }
+        .bg-amber-500\/10, .bg-amber-500\/15, .bg-amber-500\/20 {
+            background-color: #fffbeb !important;
+            color: #b45309 !important;
+            border-color: #fde68a !important;
+        }
+        .bg-rose-500\/10, .bg-rose-500\/15, .bg-rose-500\/20 {
+            background-color: #fff1f2 !important;
+            color: #be123c !important;
+            border-color: #fecdd3 !important;
+        }
     </style>
 </head>
-<body class="h-full flex overflow-hidden bg-[#0b0f19]">
+<body class="h-full flex overflow-hidden bg-slate-50 text-slate-900">
 
     <!-- Sidebar -->
-    <aside id="sidebar" class="w-64 bg-[#0e1424] border-r border-slate-800/80 flex flex-col justify-between shrink-0 z-30 transition-all duration-200">
+    <aside id="sidebar" class="w-64 bg-white border-r border-slate-200 flex flex-col justify-between shrink-0 z-30 transition-all duration-200 shadow-sm">
         <div>
             <!-- Brand / Department Title -->
-            <div class="h-16 px-5 flex items-center justify-between border-b border-slate-800/80">
+            <div class="h-16 px-5 flex items-center justify-between border-b border-slate-200 bg-white/95 backdrop-blur-md">
                 <a href="{% url 'orders:manage_dashboard' %}" class="flex items-center gap-2.5">
                     <div class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-sm shadow-md shadow-blue-500/20">
                         <i data-lucide="package" class="w-4 h-4"></i>
                     </div>
                     <div>
-                        <span class="font-extrabold text-sm tracking-tight text-white block">CARTIVO</span>
-                        <span class="text-[10px] font-bold text-blue-400 uppercase tracking-wider block -mt-0.5">Order Operations</span>
+                        <span class="font-extrabold text-sm tracking-tight text-slate-900 block">CARTIVO</span>
+                        <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider block -mt-0.5">Order Operations</span>
                     </div>
                 </a>
             </div>
@@ -50,7 +226,7 @@
             <nav class="p-3 space-y-1">
                 <a 
                     href="{% url 'orders:manage_dashboard' %}" 
-                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors {% if active_tab == 'dashboard' %}bg-blue-600 text-white shadow-md shadow-blue-600/20{% else %}text-slate-400 hover:text-white hover:bg-slate-800/50{% endif %}"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors {% if active_tab == 'dashboard' %}bg-blue-600 text-white shadow-xs shadow-blue-600/20{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}"
                 >
                     <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
                     <span>Dashboard</span>
@@ -58,57 +234,57 @@
 
                 <a 
                     href="{% url 'orders:manage_list' %}" 
-                    class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors {% if active_tab == 'all_orders' %}bg-blue-600 text-white shadow-md shadow-blue-600/20{% else %}text-slate-400 hover:text-white hover:bg-slate-800/50{% endif %}"
+                    class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors {% if active_tab == 'all_orders' %}bg-blue-600 text-white shadow-xs shadow-blue-600/20{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}"
                 >
                     <div class="flex items-center gap-3">
                         <i data-lucide="list-ordered" class="w-4 h-4"></i>
                         <span>All Orders</span>
                     </div>
                     {% if sidebar_total_orders %}
-                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-slate-800 text-slate-300">{{ sidebar_total_orders }}</span>
+                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-700 border border-slate-200">{{ sidebar_total_orders }}</span>
                     {% endif %}
                 </a>
 
                 <a 
                     href="{% url 'orders:manage_list' %}?payment_status=PENDING" 
-                    class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors {% if active_tab == 'cod_pending' %}bg-blue-600 text-white{% else %}text-slate-400 hover:text-white hover:bg-slate-800/50{% endif %}"
+                    class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors {% if active_tab == 'cod_pending' %}bg-blue-600 text-white{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}"
                 >
                     <div class="flex items-center gap-3">
-                        <i data-lucide="clock" class="w-4 h-4 text-amber-400"></i>
+                        <i data-lucide="clock" class="w-4 h-4 text-amber-500"></i>
                         <span>Pending COD</span>
                     </div>
                     {% if sidebar_pending_cod_count %}
-                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300">{{ sidebar_pending_cod_count }}</span>
+                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200">{{ sidebar_pending_cod_count }}</span>
                     {% endif %}
                 </a>
 
                 <a 
                     href="{% url 'orders:manage_list' %}?status=CONFIRMED" 
-                    class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors {% if active_tab == 'confirmed' %}bg-blue-600 text-white{% else %}text-slate-400 hover:text-white hover:bg-slate-800/50{% endif %}"
+                    class="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors {% if active_tab == 'confirmed' %}bg-blue-600 text-white{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}"
                 >
                     <div class="flex items-center gap-3">
-                        <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+                        <i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i>
                         <span>Confirmed Orders</span>
                     </div>
                     {% if sidebar_confirmed_count %}
-                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300">{{ sidebar_confirmed_count }}</span>
+                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">{{ sidebar_confirmed_count }}</span>
                     {% endif %}
                 </a>
 
-                <div class="pt-4 mt-4 border-t border-slate-800/80">
-                    <span class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Cross Hub</span>
+                <div class="pt-4 mt-4 border-t border-slate-200">
+                    <span class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-2">Cross Hub</span>
                     
-                    <a href="{% url 'inventory:dashboard' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors">
-                        <i data-lucide="boxes" class="w-4 h-4 text-emerald-400"></i>
+                    <a href="{% url 'inventory:dashboard' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+                        <i data-lucide="boxes" class="w-4 h-4 text-emerald-600"></i>
                         <span>Inventory Hub</span>
                     </a>
 
-                    <a href="{% url 'management:dashboard' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors">
-                        <i data-lucide="shield" class="w-4 h-4 text-purple-400"></i>
+                    <a href="{% url 'management:dashboard' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+                        <i data-lucide="shield" class="w-4 h-4 text-purple-600"></i>
                         <span>Superadmin Portal</span>
                     </a>
 
-                    <a href="/" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors">
+                    <a href="/" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
                         <i data-lucide="external-link" class="w-4 h-4"></i>
                         <span>Customer Storefront</span>
                     </a>
@@ -117,13 +293,13 @@
         </div>
 
         <!-- Operator User Bar -->
-        <div class="p-3 border-t border-slate-800/80">
-            <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/60 text-xs">
+        <div class="p-3 border-t border-slate-200 bg-slate-50">
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-white border border-slate-200 shadow-2xs text-xs">
                 <div class="min-w-0 pr-2">
-                    <span class="font-bold text-white block truncate">{{ department_operator_name|default:request.user.username }}</span>
-                    <span class="text-[10px] text-slate-400 block truncate">{{ department_login_id|default:"ORD-STAFF" }}</span>
+                    <span class="font-bold text-slate-900 block truncate">{{ department_operator_name|default:request.user.username }}</span>
+                    <span class="text-[10px] text-slate-500 block truncate">{{ department_login_id|default:"ORD-STAFF" }}</span>
                 </div>
-                <a href="{% url 'management:dept_logout' %}" title="Log out" class="p-1.5 text-slate-400 hover:text-rose-400 rounded-lg hover:bg-slate-800 transition-colors">
+                <a href="{% url 'management:dept_logout' %}" title="Log out" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors">
                     <i data-lucide="log-out" class="w-4 h-4"></i>
                 </a>
             </div>
@@ -131,17 +307,17 @@
     </aside>
 
     <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col h-full overflow-hidden min-w-0">
+    <div class="flex-1 flex flex-col h-full overflow-hidden min-w-0 bg-slate-50">
         
         <!-- Top App Bar -->
-        <header class="h-16 px-6 bg-[#0e1424] border-b border-slate-800/80 flex items-center justify-between shrink-0">
+        <header class="h-16 px-6 bg-white/95 backdrop-blur-md border-b border-slate-200 flex items-center justify-between shrink-0">
             <div class="flex items-center gap-3">
                 <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-xs shadow-emerald-500/50"></span>
-                <span class="text-xs font-bold text-slate-300">Live Order Fulfillment & Cash on Delivery (COD) Engine</span>
+                <span class="text-xs font-bold text-slate-800">Live Order Fulfillment & Cash on Delivery (COD) Engine</span>
             </div>
 
             <div class="flex items-center gap-3 text-xs">
-                <span class="text-slate-400">Active COD Orders: <strong class="text-white">{{ sidebar_total_orders|default:0 }}</strong></span>
+                <span class="text-slate-500">Active COD Orders: <strong class="text-slate-900">{{ sidebar_total_orders|default:0 }}</strong></span>
             </div>
         </header>
 
@@ -149,7 +325,7 @@
         {% if messages %}
         <div class="px-6 pt-4 shrink-0 space-y-2">
             {% for message in messages %}
-            <div class="px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between {% if message.tags == 'error' %}bg-rose-500/20 text-rose-300 border border-rose-500/30{% elif message.tags == 'success' %}bg-emerald-500/20 text-emerald-300 border border-emerald-500/30{% else %}bg-blue-500/20 text-blue-300 border border-blue-500/30{% endif %}">
+            <div class="px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between {% if message.tags == 'error' %}bg-rose-50 text-rose-700 border border-rose-200{% elif message.tags == 'success' %}bg-emerald-50 text-emerald-700 border border-emerald-200{% else %}bg-blue-50 text-blue-700 border border-blue-200{% endif %}">
                 <span>{{ message }}</span>
             </div>
             {% endfor %}

@@ -15,12 +15,11 @@ dist/
 # Django files
 *.log
 local_settings.py
-db.sqlite3
 db.sqlite3-journal
-*.sqlite3
-media/
+# Track SQLite database & data for vendor deployment
+!db.sqlite3
+!ecom/db.sqlite3
 staticfiles/
-ecom/media/
 ecom/staticfiles/
 
 # Environment files & Secrets

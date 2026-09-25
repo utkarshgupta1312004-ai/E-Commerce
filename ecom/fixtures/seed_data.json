@@ -1,6 +1,241 @@
 [
 {
+  "model": "admin.logentry",
+  "pk": 1,
+  "fields": {
+    "action_time": "2026-09-08T12:44:08.125Z",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "1",
+    "object_repr": "VIRAT V1 5G",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Is active\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 2,
+  "fields": {
+    "action_time": "2026-09-08T12:44:08.130Z",
+    "user": 1,
+    "content_type": 11,
+    "object_id": "2",
+    "object_repr": "Ortho Slippers",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Is active\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 3,
+  "fields": {
+    "action_time": "2026-09-08T13:00:32.357Z",
+    "user": 1,
+    "content_type": 14,
+    "object_id": "16",
+    "object_repr": "Fashion",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Is highlighted\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 4,
+  "fields": {
+    "action_time": "2026-09-08T13:00:51.314Z",
+    "user": 1,
+    "content_type": 14,
+    "object_id": "16",
+    "object_repr": "Fashion",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Is highlighted\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 5,
+  "fields": {
+    "action_time": "2026-09-15T08:06:46.688Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "8",
+    "object_repr": "Saddle Leather Daypack",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Is trending\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 6,
+  "fields": {
+    "action_time": "2026-09-15T08:06:46.691Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "7",
+    "object_repr": "Atelier Merino Overcoat",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Is trending\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 7,
+  "fields": {
+    "action_time": "2026-09-15T08:06:46.694Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "6",
+    "object_repr": "Aura ANC Pro Earbuds",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Is trending\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 8,
+  "fields": {
+    "action_time": "2026-09-15T08:06:46.696Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "5",
+    "object_repr": "Titanium Smart Chronograph",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Is trending\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 9,
+  "fields": {
+    "action_time": "2026-09-15T08:07:15.335Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "8",
+    "object_repr": "Saddle Leather Daypack",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Is trending\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 10,
+  "fields": {
+    "action_time": "2026-09-15T08:07:15.336Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "7",
+    "object_repr": "Atelier Merino Overcoat",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Is trending\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 11,
+  "fields": {
+    "action_time": "2026-09-15T08:07:15.337Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "6",
+    "object_repr": "Aura ANC Pro Earbuds",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Is trending\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 12,
+  "fields": {
+    "action_time": "2026-09-15T08:07:15.338Z",
+    "user": 1,
+    "content_type": 8,
+    "object_id": "5",
+    "object_repr": "Titanium Smart Chronograph",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Is trending\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 13,
+  "fields": {
+    "action_time": "2026-09-15T08:58:39.818Z",
+    "user": 1,
+    "content_type": 19,
+    "object_id": "3",
+    "object_repr": "CMS Content Manager",
+    "action_flag": 2,
+    "change_message": "[]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 14,
+  "fields": {
+    "action_time": "2026-09-16T12:24:18.307Z",
+    "user": 1,
+    "content_type": 3,
+    "object_id": "1",
+    "object_repr": "Cartivo Department",
+    "action_flag": 2,
+    "change_message": "[]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 15,
+  "fields": {
+    "action_time": "2026-09-16T12:24:32.278Z",
+    "user": 1,
+    "content_type": 3,
+    "object_id": "2",
+    "object_repr": "Customer",
+    "action_flag": 2,
+    "change_message": "[]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 16,
+  "fields": {
+    "action_time": "2026-09-16T12:32:49.618Z",
+    "user": 1,
+    "content_type": 3,
+    "object_id": "1",
+    "object_repr": "Cartivo Department",
+    "action_flag": 2,
+    "change_message": "[]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 17,
+  "fields": {
+    "action_time": "2026-09-16T12:32:54.897Z",
+    "user": 1,
+    "content_type": 3,
+    "object_id": "2",
+    "object_repr": "Customer",
+    "action_flag": 2,
+    "change_message": "[]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 18,
+  "fields": {
+    "action_time": "2026-09-16T12:33:26.398Z",
+    "user": 1,
+    "content_type": 4,
+    "object_id": "9",
+    "object_repr": "CMS001",
+    "action_flag": 2,
+    "change_message": "[]"
+  }
+},
+{
   "model": "auth.group",
+  "pk": 1,
   "fields": {
     "name": "Cartivo Department",
     "permissions": []
@@ -8,16 +243,26 @@
 },
 {
   "model": "auth.group",
+  "pk": 2,
   "fields": {
     "name": "Customer",
     "permissions": []
   }
 },
 {
-  "model": "auth.user",
+  "model": "auth.group",
+  "pk": 3,
   "fields": {
-    "password": "pbkdf2_sha256$1000000$jBuNoSC6W4eQdfCaWrEyM2$LbB0BY0SHtBIfYApmcFEpS7SL2BLES4D86BZ9Q7Dsl0=",
-    "last_login": "2026-09-21T05:53:12.928Z",
+    "name": "",
+    "permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$jM2nmUvrHfPZFSywWgmHGW$cDYDKr6O54CguxlV09nbBdT85XIKYANHg7jPE4mjCF4=",
+    "last_login": "2026-09-25T15:14:12.341Z",
     "is_superuser": true,
     "username": "admin",
     "first_name": "",
@@ -26,12 +271,15 @@
     "is_staff": true,
     "is_active": true,
     "date_joined": "2026-09-08T12:29:28.361Z",
-    "groups": [],
+    "groups": [
+      1
+    ],
     "user_permissions": []
   }
 },
 {
   "model": "auth.user",
+  "pk": 7,
   "fields": {
     "password": "!5OtINGk88poXp3usWU2OUWJTyZdk0UHHgEZjC5cn",
     "last_login": "2026-09-19T05:34:48.060Z",
@@ -44,18 +292,17 @@
     "is_active": true,
     "date_joined": "2026-09-16T11:45:30.730Z",
     "groups": [
-      [
-        "Customer"
-      ]
+      2
     ],
     "user_permissions": []
   }
 },
 {
   "model": "auth.user",
+  "pk": 8,
   "fields": {
-    "password": "pbkdf2_sha256$1000000$FUENw8wgtPQ6VF4IrR1ZGs$E0RVl/8mWY4v3mLlw7HycHUkFzVngDETw1TS/BrlcyU=",
-    "last_login": "2026-09-21T05:52:27.192Z",
+    "password": "pbkdf2_sha256$1000000$zi6ooMNde5ipteuz9EzZNd$MYEiHfb1reuAW7zXRxMzcLRtnQevZg6++M5b+mxoVOo=",
+    "last_login": "2026-09-25T14:03:37.151Z",
     "is_superuser": false,
     "username": "ACC001",
     "first_name": "Account Management",
@@ -65,15 +312,14 @@
     "is_active": true,
     "date_joined": "2026-09-16T12:22:56.494Z",
     "groups": [
-      [
-        "Cartivo Department"
-      ]
+      1
     ],
     "user_permissions": []
   }
 },
 {
   "model": "auth.user",
+  "pk": 9,
   "fields": {
     "password": "pbkdf2_sha256$1000000$opgJSdqy0uz5qLQ5rth5sF$zbu4uwAWaq5Rjm2dTTOnTtiVv1yLBlrfHqPymQYqWts=",
     "last_login": "2026-09-17T04:23:29.334Z",
@@ -86,18 +332,17 @@
     "is_active": true,
     "date_joined": "2026-09-16T12:22:56Z",
     "groups": [
-      [
-        "Cartivo Department"
-      ]
+      1
     ],
     "user_permissions": []
   }
 },
 {
   "model": "auth.user",
+  "pk": 22,
   "fields": {
-    "password": "pbkdf2_sha256$1000000$9tdKbbCEeWVkaX5gm4TPLI$pPfaiazL3QHBcflH8mtB1dLJzQa09QSe68L4QG6UFoM=",
-    "last_login": "2026-09-18T16:24:46.209Z",
+    "password": "pbkdf2_sha256$1000000$LI21NSKRVMM2L9dkEcc0Ba$TNn935blhfYOsPLEbOBZsY4eMPedMS5VcpO5th35lW4=",
+    "last_login": "2026-09-25T14:20:07.144Z",
     "is_superuser": false,
     "username": "CAT001",
     "first_name": "Catalog Management",
@@ -107,15 +352,14 @@
     "is_active": true,
     "date_joined": "2026-09-17T06:23:15.631Z",
     "groups": [
-      [
-        "Cartivo Department"
-      ]
+      1
     ],
     "user_permissions": []
   }
 },
 {
   "model": "auth.user",
+  "pk": 23,
   "fields": {
     "password": "pbkdf2_sha256$1000000$UdPDpq2d5DL6cak2ljBCmA$4LzhTBzwVLBbv1FXXbbh3Tcy9r8Zkm/QgRILb5Po/48=",
     "last_login": "2026-09-17T10:05:58.941Z",
@@ -128,15 +372,14 @@
     "is_active": true,
     "date_joined": "2026-09-17T09:52:52.770Z",
     "groups": [
-      [
-        "Cartivo Department"
-      ]
+      1
     ],
     "user_permissions": []
   }
 },
 {
   "model": "auth.user",
+  "pk": 25,
   "fields": {
     "password": "pbkdf2_sha256$1000000$CDX3lC3dcSxbdygf52SfRg$gZUubRQF+5FXoGxkPIe2r95CVvc+Bq/1QGgAt8BQMN4=",
     "last_login": "2026-09-19T05:25:51.209Z",
@@ -149,15 +392,14 @@
     "is_active": false,
     "date_joined": "2026-09-18T17:29:51.721Z",
     "groups": [
-      [
-        "Cartivo Department"
-      ]
+      1
     ],
     "user_permissions": []
   }
 },
 {
   "model": "auth.user",
+  "pk": 26,
   "fields": {
     "password": "pbkdf2_sha256$1000000$qHXsiQtEfZUV69hyM85Uka$88AcZCTO+m582tMq2QrULOZKJHLnn1rhpsGyytMno2M=",
     "last_login": "2026-09-21T05:49:28.270Z",
@@ -170,15 +412,14 @@
     "is_active": true,
     "date_joined": "2026-09-18T17:30:42.432Z",
     "groups": [
-      [
-        "Cartivo Department"
-      ]
+      1
     ],
     "user_permissions": []
   }
 },
 {
   "model": "auth.user",
+  "pk": 27,
   "fields": {
     "password": "pbkdf2_sha256$1000000$hcoGMwqCgjNqCrU3gZRYiz$bo1UBlPgFl2mVojSD8kYg2PMCaMehD82Mqo82oFihQY=",
     "last_login": "2026-09-21T05:47:14.094Z",
@@ -191,15 +432,14 @@
     "is_active": true,
     "date_joined": "2026-09-18T17:31:15.805Z",
     "groups": [
-      [
-        "Cartivo Department"
-      ]
+      1
     ],
     "user_permissions": []
   }
 },
 {
   "model": "auth.user",
+  "pk": 28,
   "fields": {
     "password": "pbkdf2_sha256$1000000$bxzHSO71MpvZVQgZATgHD8$1+bqmPLIRcwR3bGM3o7B4k2XhJLAHpwZVcFSLKY67ls=",
     "last_login": "2026-09-19T05:36:30.587Z",
@@ -212,15 +452,14 @@
     "is_active": true,
     "date_joined": "2026-09-19T05:29:48.180Z",
     "groups": [
-      [
-        "Cartivo Department"
-      ]
+      1
     ],
     "user_permissions": []
   }
 },
 {
   "model": "auth.user",
+  "pk": 29,
   "fields": {
     "password": "pbkdf2_sha256$1000000$gfOEKiBMaZt0ZGMgDmjj9l$zl3d0QNq/5loldWwRDeBIbOc9owWBb0Z+hlLdiC5VVw=",
     "last_login": "2026-09-21T10:03:36.111Z",
@@ -233,10 +472,26 @@
     "is_active": true,
     "date_joined": "2026-09-21T05:44:20.487Z",
     "groups": [
-      [
-        "Customer"
-      ]
+      2
     ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 30,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$MYuFgZFIPaNCkGk7R21GIU$9o58hRC6MjMjZxTPU+O3XX5soKJZ7XHQ4UYmwg9lbNc=",
+    "last_login": "2026-09-25T14:02:18.848Z",
+    "is_superuser": true,
+    "username": "cartivo.admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-09-25T13:38:43.876Z",
+    "groups": [],
     "user_permissions": []
   }
 },
@@ -278,6 +533,14 @@
   "fields": {
     "session_data": ".eJxVjMsOwiAQRf-FtSEgMO106d5vIFMeFjVgoE00xn83JF3o9p5zz5tZ2tbFbi1UmzybmGSH320mdwu5A3-lfCnclbzWNPOu8J02fi4-3E-7-xdYqC39jQSjV9rAYCIOx8E5r9EZ9MKj1EpTBCMpwuxAgwIcISotNASIUQrs0RZaSyXb8Hyk-mKT-HwBbqE-eQ:1x64Fx:6SRR_015acc1EY-aeoxwuKXGD_VYjbyjgasSYDMRJFo",
     "expire_date": "2026-09-28T10:49:49.356Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "3vywfvehmcqm8da8lh13rcheom1vynbv",
+  "fields": {
+    "session_data": "eyJndWVzdF9jYXJ0Ijp7fX0:1x8rsn:1aQttOo8YqKu-DBS31sZMlkzaDsTy3m4GVjc3BNnbjY",
+    "expire_date": "2026-10-06T04:13:29.106Z"
   }
 },
 {
@@ -330,6 +593,38 @@
 },
 {
   "model": "sessions.session",
+  "pk": "6hdvff2kepgwagyeik9g439l4yktpaun",
+  "fields": {
+    "session_data": ".eJxVjEsOgjAUAO_y1qZpHxUoS_ecgbxPsahpEwor490NCQvdzkzmDRPtW5r2GtdpURjAweWXMckz5kPog_K9GCl5Wxc2R2JOW81YNL5uZ_s3SFQTDEDOdcErIzsUbjWgtRHtzMjqxQeVJmCwDWLshKVnpebaxpl67HqcHXy-52I4Gg:1xA6hi:3nH3OVEC6hhD9faUUlssG7BMMnJ6cuIMercLLzQx6AA",
+    "expire_date": "2026-10-09T14:15:10.456Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "6lxo82asu7g48hqrqco50spc3lkf26dm",
+  "fields": {
+    "session_data": ".eJxVjEsOgjAUAO_y1qZpHxUoS_ecgbxPsahpEwor490NCQvdzkzmDRPtW5r2GtdpURjAweWXMckz5kPog_K9GCl5Wxc2R2JOW81YNL5uZ_s3SFQTDEDOdcErIzsUbjWgtRHtzMjqxQeVJmCwDWLshKVnpebaxpl67HqcHXy-52I4Gg:1xA6I2:HcCkQzig1Tdy-HZkDjOHu_ZvdvxU6nyaMDEp8hsRWJI",
+    "expire_date": "2026-10-09T13:48:38.164Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "6mjohh7hfendnqh1kbpuoaq9jc5lljvv",
+  "fields": {
+    "session_data": "eyJndWVzdF9jYXJ0Ijp7fX0:1xA4Yx:k5xlj3Fv6LdE0tmaeT6DOmifNQ-KshannDhUoArFvR0",
+    "expire_date": "2026-10-09T11:57:59.295Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "6tm4sxxzni4erjeec0vmmf4yf7a72tyj",
+  "fields": {
+    "session_data": ".eJxVjEsOgjAUAO_y1qZpHxUoS_ecgbxPsahpEwor490NCQvdzkzmDRPtW5r2GtdpURjAweWXMckz5kPog_K9GCl5Wxc2R2JOW81YNL5uZ_s3SFQTDEDOdcErIzsUbjWgtRHtzMjqxQeVJmCwDWLshKVnpebaxpl67HqcHXy-52I4Gg:1xA75E:JZOCmYZuLnAXLhKVjx-GJ0audFdRdtKJ11NHD3ggC-M",
+    "expire_date": "2026-10-09T14:39:28.047Z"
+  }
+},
+{
+  "model": "sessions.session",
   "pk": "71yg9m6vys70ie9ec2dap36s3ldykr9a",
   "fields": {
     "session_data": "eyJndWVzdF9jYXJ0Ijp7fX0:1x8beg:o0VSk_y29b2kF_PXCvHgYEzZyM-q2XSNLcM3HU3gg-Y",
@@ -378,6 +673,22 @@
 },
 {
   "model": "sessions.session",
+  "pk": "a03qulo2e22t2jc8a0ginn9qnkyt52ir",
+  "fields": {
+    "session_data": ".eJxlkEluwzAMRa9ScB0YUuVB0S7NOmcQSIkeWkcKLAloEOTugRtvjG7_e_wE-YChcMrW4ZLBPJ4HsFjyaEvixU4eDGjYZYTuh8MK_DeGIVYuhrxMVK1KtdFUXaLn-WtzdwUjphEMsGyprlXTkMaepCZsdXNsWsnayU_RH6VsO1UrYiEUKU8doa-7TivqZO_dWpo4pSkGy7-3abmDEQfwfMMlXzlki87FEvLfFXJH_icBrwwGTu-RjwsGHHglsNPmOEzh_ZbT-SyE3OM0lwEMbIsTPF-qBnc4:1xA5BV:HaosZ1DWbYBOd3bl0nzTNVy3yR9n76w_-S6Z0x2E6lQ",
+    "expire_date": "2026-10-09T12:37:49.774Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "a32wvozwq7pw05dgyp5jp5lodrd99h6v",
+  "fields": {
+    "session_data": "eyJndWVzdF9jYXJ0Ijp7fX0:1xA6U9:MX5eGX20lkrgD4VEGsn1ik8oOz97Iu1lwgAneo7fYDc",
+    "expire_date": "2026-10-09T14:01:09.725Z"
+  }
+},
+{
+  "model": "sessions.session",
   "pk": "ajmd2q9py0tbbz47y9ryxh64j39wzdhh",
   "fields": {
     "session_data": ".eJxVjMsOwiAQAP-FsyE86hY8evcbyLIsUjWQlPZk_HdD0oNeZybzFgH3rYS98xqWJC5Ci9Mvi0hPrkOkB9Z7k9Tqti5RjkQetstbS_y6Hu3foGAvYwvWGkRN7LxhPTPkaSJGJoUJAJENOmvPmU12CtmS8irPJunoAdiIzxf6DDiB:1x79K7:7OXB_SQCZpsA3sEoz_ezRToVYH3vltwL54lX8ZLsBao",
@@ -402,6 +713,22 @@
 },
 {
   "model": "sessions.session",
+  "pk": "b300u4e80ze46f20hg75kj1hgh886zvq",
+  "fields": {
+    "session_data": "eyJndWVzdF9jYXJ0Ijp7fX0:1xA64p:dvyasMSEas4Py8v2ja4HRPrtQ1xEqK6vkGOY4rg0BF0",
+    "expire_date": "2026-10-09T13:34:59.754Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "b3lyx0iyz98ese89n1s2lihllibevz45",
+  "fields": {
+    "session_data": ".eJxVjEsOgjAUAO_y1qZpHxUoS_ecgbxPsahpEwor490NCQvdzkzmDRPtW5r2GtdpURjAweWXMckz5kPog_K9GCl5Wxc2R2JOW81YNL5uZ_s3SFQTDEDOdcErIzsUbjWgtRHtzMjqxQeVJmCwDWLshKVnpebaxpl67HqcHXy-52I4Gg:1xA6fH:gXFcnqD-so-8UGtxDcOy6AF5DVWenw-gkRQbsqgcjB4",
+    "expire_date": "2026-10-09T14:12:39.407Z"
+  }
+},
+{
+  "model": "sessions.session",
   "pk": "bqgg02zld1ko4bnlbr0mkj5bpsf8n2ok",
   "fields": {
     "session_data": ".eJxVjMsOgyAQAP9lzw0BSxfw2Hu_gSzLon1EE8GT8d8bEy9eZyazwbBKbZFpadBv-w0irW2Ma5UlvjP04ODCEvFXpkPkD03DrHie2vJO6kjUaat6zVl-z7O9DEaqI_TABTkRMzNauWvXZS2dMd64ELQvOSA6Y1HrhzWoM3pJ1oVUqCQvvrOw_wEGgD2D:1x7ci0:SjEQyN-vapEniXSTjSg1deoerIB7ZX7oZsEwo4NgOvU",
@@ -414,6 +741,14 @@
   "fields": {
     "session_data": "eyJndWVzdF9jYXJ0Ijp7fX0:1x8AtE:-8KWP0IyuXUo_WBkLntvs7vzmJ7KUbTBfAxI6_QtlCw",
     "expire_date": "2026-10-04T06:19:04.569Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "c1te530vx9131djtgh8whctagc4sra1z",
+  "fields": {
+    "session_data": ".eJxVjEsOgjAUAO_y1qZpHxUoS_ecgbxPsahpEwor490NCQvdzkzmDRPtW5r2GtdpURjAweWXMckz5kPog_K9GCl5Wxc2R2JOW81YNL5uZ_s3SFQTDEDOdcErIzsUbjWgtRHtzMjqxQeVJmCwDWLshKVnpebaxpl67HqcHXy-52I4Gg:1xA6Tt:_wQEZsnoOnE58DyHdRWaycxdZKq8sTAuAZUNcocSw0w",
+    "expire_date": "2026-10-09T14:00:53.270Z"
   }
 },
 {
@@ -450,10 +785,26 @@
 },
 {
   "model": "sessions.session",
+  "pk": "dcgyungaconr38vvblc3zns3czx75ygg",
+  "fields": {
+    "session_data": ".eJxVjEEOgyAQAP-y58YArbhy7L1vIAssattgA5i0Mf69MfHidWYyKwwLl2o95Qpm3S5gaamjXQpnOwUwcBVwgo78i9NuwpPSMDd-TjVPrtmT5rClecyB3_ejPQ1GKiMYIGSiwKz6qELfo3IYpUDplOYgMF61V9i2LPpOY0tBt8LH4G_Scewkun1auJRpTpa_nyn_wIjtD25VRbc:1xA7oR:JqZ-QGl6-qfU9PVDBleRLeGjhn0DSluJ-B8meIx7ObA",
+    "expire_date": "2026-10-09T15:26:11.157Z"
+  }
+},
+{
+  "model": "sessions.session",
   "pk": "dhcxs4w4ckqy946ec9typbqxuz2muk3p",
   "fields": {
     "session_data": ".eJxVjEEOwiAQRe_C2hCQYei4dO8ZmoEBqZo2Ke3KeHdD0oVu_3vvv9XI-1bHveV1nERdlFWn3y1yeua5A3nwfF90WuZtnaLuij5o07dF8ut6uH8HlVvtNTEO4sBj8IXCOaQkQMmTGCELDrigt1wwJgR0SAMWBwYwYynWkPp8AdObNzw:1x6Nfx:MpkdmsR3EECg4TDCLmZ9CXg_kUJFz4AyvOfw8C1RrZU",
     "expire_date": "2026-09-29T07:33:57.587Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "dm7wmcf6lkizyp9zufr2s68tnpdn39x4",
+  "fields": {
+    "session_data": ".eJxVjDkOgzAQAP-ydWTZCwFMmT5vsPYwRxKBZJsK8fcIiYZ2ZjQ7jFvMJQilAv1-PCDQVqaw5ZjCrNCDgxtjkm9cTqEfWsbVyLqUNLM5E3PZbN6rxt_ram-DifIEPZBzra-VkR0KN-rR2oh2YGStpfYqlUdvK8TYCkvHStWziQN12HY4ODj-_8Q97Q:1xA75k:GeTrL6Jy-iYPGo4meKY-nhf8GS9m3c3FUAxwCqq_6e0",
+    "expire_date": "2026-10-09T14:40:00.650Z"
   }
 },
 {
@@ -498,6 +849,14 @@
 },
 {
   "model": "sessions.session",
+  "pk": "f1q693x6x1plnjk31qpcu1czihnv6g4a",
+  "fields": {
+    "session_data": ".eJxVjEsOgjAUAO_y1qZpHxUoS_ecgbxPsahpEwor490NCQvdzkzmDRPtW5r2GtdpURjAweWXMckz5kPog_K9GCl5Wxc2R2JOW81YNL5uZ_s3SFQTDEDOdcErIzsUbjWgtRHtzMjqxQeVJmCwDWLshKVnpebaxpl67HqcHXy-52I4Gg:1xA7cq:Ivtn6sXhpJy_7YybKaAQWVKYBtcsfdXz5NPaWTdyZIE",
+    "expire_date": "2026-10-09T15:14:12.629Z"
+  }
+},
+{
+  "model": "sessions.session",
   "pk": "fa1o3dtrh8lj3fnio9968ljkenumvbfx",
   "fields": {
     "session_data": ".eJxVjEEKwjAQAP-yZwnNpk2THr37hpDubm1UEmlaUMS_S8GDXmeGeUGI2zqHrcoSEsMA2MLhF46RrpJ3w5eYz0VRyeuSRrUn6murOhWW2_Hb_g3mWGcYwGqvzWR728eWDTkm9oyN6-yE0nlDSNSL41Fo6rQzJOgR0YrmxjHafVql1lRykMc9LU8YmvcHsw0_Vg:1x78un:ZADK40ddwsgQR88OTnX9CeiyH-n3RcWpRCMnIZZzYxM",
@@ -518,6 +877,22 @@
   "fields": {
     "session_data": ".eJxVjEEOgjAQRe_StZDSlkJZqltj4gWamc4gKELSwsp4d9OEhW7_e_-9hYdtHfyWOPqRRCeUE4ffESE8ec6EHjDflzIs8xpHLLNS7jSVl4V4Ou7uX2CANOQ31VpRjWypt63SGtASOwxtBdKCcZLBmqC5QmqMBmidDEi96SsDBnN0grT6JRJHP28v5Cg6cb2dCyWVlU5VhW7sSYvPF3PCRTk:1x8are:nFVWIcCR8uC7FPUIl0Rpgn3Ur6h2XQCMrsDsvyNXtSA",
     "expire_date": "2026-10-05T10:03:10.603Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "g3a40tpsre1ng16oqi78oadqgjuso3sh",
+  "fields": {
+    "session_data": "eyJndWVzdF9jYXJ0Ijp7fX0:1x8c7S:8Yny8oZ29baBeZcIDW4MYeya1hQ4zhwN-V6JAmuGQb0",
+    "expire_date": "2026-10-05T11:23:34.998Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "gubtkzhag7amqlbh61sklpzcogodes3g",
+  "fields": {
+    "session_data": "eyJndWVzdF9jYXJ0Ijp7fX0:1x8ryM:CbYhI9O20TqUQIKF3xxgwhedPAl_aTATn-k02FyGoiQ",
+    "expire_date": "2026-10-06T04:19:14.383Z"
   }
 },
 {
@@ -546,6 +921,14 @@
 },
 {
   "model": "sessions.session",
+  "pk": "hyqcklks0c5dpnn5ixxu8s1rh2lg0vi8",
+  "fields": {
+    "session_data": "eyJndWVzdF9jYXJ0Ijp7fX0:1xA4av:okLqMnGVp-E8Y43-ne_rlKQS0p9aMYPW7V1Gx4G-c9w",
+    "expire_date": "2026-10-09T12:00:01.600Z"
+  }
+},
+{
+  "model": "sessions.session",
   "pk": "ifmtkxmfvdhqgtv0hv1tqgt1sdlug1aw",
   "fields": {
     "session_data": ".eJxVjMsOwiAQRf-FtSEgMO106d5vIFMeFjVgoE00xn83JF3o9p5zz5tZ2tbFbi1UmzybmGSH320mdwu5A3-lfCnclbzWNPOu8J02fi4-3E-7-xdYqC39jQSjV9rAYCIOx8E5r9EZ9MKj1EpTBCMpwuxAgwIcISotNASIUQrs0RZaSyXb8Hyk-mKT-HwBbqE-eQ:1x64wW:Xs1Jqy3SGWq6742F_MFaG1y18cgTHoJ6YJMUhkqm2Rw",
@@ -554,10 +937,34 @@
 },
 {
   "model": "sessions.session",
+  "pk": "iiq8f15scucut5cnvzbnm500cid87cop",
+  "fields": {
+    "session_data": ".eJxVjEsOgjAUAO_y1qZpHxUoS_ecgbxPsahpEwor490NCQvdzkzmDRPtW5r2GtdpURjAweWXMckz5kPog_K9GCl5Wxc2R2JOW81YNL5uZ_s3SFQTDEDOdcErIzsUbjWgtRHtzMjqxQeVJmCwDWLshKVnpebaxpl67HqcHXy-52I4Gg:1xA7Sf:rFLC3FWTtW1IrSo-VZyGyHdrnIrN7gvaIkPiJo_ngmI",
+    "expire_date": "2026-10-09T15:03:41.429Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "ijldw1okztohya83k2ktpud3vpv997an",
+  "fields": {
+    "session_data": "eyJndWVzdF9jYXJ0Ijp7fX0:1xA7KJ:21G91zPCNmf658zLcF3q0zbJ6-hi91wRF86ORonpE-A",
+    "expire_date": "2026-10-09T14:55:03.959Z"
+  }
+},
+{
+  "model": "sessions.session",
   "pk": "ink3yhwsp4psfpcyawyf463yv918g9re",
   "fields": {
     "session_data": ".eJxVjMsOwiAQAP-FsyE86hY8evcbyLIsUjWQlPZk_HdD0oNeZybzFgH3rYS98xqWJC5Ci9Mvi0hPrkOkB9Z7k9Tqti5RjkQetstbS_y6Hu3foGAvYwvWGkRN7LxhPTPkaSJGJoUJAJENOmvPmU12CtmS8irPJunoAdiIzxf6DDiB:1x79Kf:cCzZDCPl4Lt-uQ1FzHjlcDwTMABQd6W6egoMMH0_3iI",
     "expire_date": "2026-10-01T10:27:09.039Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "ino4j1g1ypfduin787hgncr664motc60",
+  "fields": {
+    "session_data": ".eJxVjEsOgjAUAO_y1qZpHxUoS_ecgbxPsahpEwor490NCQvdzkzmDRPtW5r2GtdpURjAweWXMckz5kPog_K9GCl5Wxc2R2JOW81YNL5uZ_s3SFQTDEDOdcErIzsUbjWgtRHtzMjqxQeVJmCwDWLshKVnpebaxpl67HqcHXy-52I4Gg:1xA6cs:GhyL53-24ZnqWBu4klUWyvjuJvX25OzUx5oZuzWM6cs",
+    "expire_date": "2026-10-09T14:10:10.490Z"
   }
 },
 {
@@ -590,6 +997,14 @@
   "fields": {
     "session_data": "eyJndWVzdF9jYXJ0Ijp7fX0:1x8Xld:JoyY12oObLoeR8yJzGAJ3yX-PDxLgbMkUO5SG0KpPto",
     "expire_date": "2026-10-05T06:44:45.052Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "kd5ecg2nx9wq018usbtenfij2r3x77sh",
+  "fields": {
+    "session_data": ".eJxlkMFugzAMhl9l8rlCCTBIcmt77jNExvECG02qJEibqr77RMsF9fp_n3_LvoNfOBdLmAqY--MAFpcy2iVzspMDAwp22YD0w2EF7huDjxXFUNI0VKtSbTRXl-h4Pm3urmDEPIKBvm1lQy1qKbCvB0FCt1LUSNqx6rB3TukvpVundCfYsZM0NNzrvpGy7uhzLc2c8xSD5d_blP7AiAM4vmEqVw7FIlFcQnleIXfkPQl4ZTBwfI18XDCg55XATpujn8LrLcfzWQi5x3lePBjYFmd4_AOSzHcX:1x9jGF:Zt0NXBWRubRiPhLb6bPU1__g1YOyDLcRsGW-zrLPKDA",
+    "expire_date": "2026-10-08T13:13:15.663Z"
   }
 },
 {
@@ -634,10 +1049,26 @@
 },
 {
   "model": "sessions.session",
+  "pk": "och07qk56p26qxtbakdhsaygw2rud1nt",
+  "fields": {
+    "session_data": "eyJndWVzdF9jYXJ0Ijp7fX0:1x9imF:gB0WI3zKZMLgpDrpM0kC-HJQhYRkwUcPcnfktqQYVbQ",
+    "expire_date": "2026-10-08T12:42:15.315Z"
+  }
+},
+{
+  "model": "sessions.session",
   "pk": "okaymuzxhkr87hc03ti4wkkb981vqy1z",
   "fields": {
     "session_data": ".eJxVjDEOwjAMRe-SGUUOTeOGkZ0zRK7t0gJKpKadEHdHkTrA-t97_20S7duc9qprWsRcjOvM6XcciZ-aG5EH5XuxXPK2LqNtij1otbci-roe7t_BTHVu9YQgse88gI9nEFQNHnBgiR2GwB7dJIpuROLYI0HvB1YdVAIFcmA-X_NfN-Q:1x8Xll:ftqoMcB-NXwOKiB-sHN_T7R1CGZmaJbJqnkWAkZgMjI",
     "expire_date": "2026-10-05T06:44:53.515Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "owxmerv6wpxjx0jfygcpal4ffnazhon6",
+  "fields": {
+    "session_data": ".eJxVjEsOgjAUAO_y1qZpHxUoS_ecgbxPsahpEwor490NCQvdzkzmDRPtW5r2GtdpURjAweWXMckz5kPog_K9GCl5Wxc2R2JOW81YNL5uZ_s3SFQTDEDOdcErIzsUbjWgtRHtzMjqxQeVJmCwDWLshKVnpebaxpl67HqcHXy-52I4Gg:1xA6Ni:1OHgwrUdAgfRzi8iIkYcOWRQAwcm3DkjPdDoqTVEebw",
+    "expire_date": "2026-10-09T13:54:30.242Z"
   }
 },
 {
@@ -666,6 +1097,14 @@
 },
 {
   "model": "sessions.session",
+  "pk": "q0s9hq9x17n3kjousf9lvck6v7p9qe7b",
+  "fields": {
+    "session_data": ".eJxVjEsOgjAUAO_y1qZpHxUoS_ecgbxPsahpEwor490NCQvdzkzmDRPtW5r2GtdpURjAweWXMckz5kPog_K9GCl5Wxc2R2JOW81YNL5uZ_s3SFQTDEDOdcErIzsUbjWgtRHtzMjqxQeVJmCwDWLshKVnpebaxpl67HqcHXy-52I4Gg:1xA7Sx:8h88j5Q2X_b5_LQdMhin-iLkMrKRw914dNTwloFdnAk",
+    "expire_date": "2026-10-09T15:03:59.913Z"
+  }
+},
+{
+  "model": "sessions.session",
   "pk": "q2ims00dtbl6h0aej8j7hdopi2qn0put",
   "fields": {
     "session_data": ".eJxVjEEOwiAQRe_C2hCQYei4dO8ZmoEBqZo2Ke3KeHdD0oVu_3vvv9XI-1bHveV1nERdlFWn3y1yeua5A3nwfF90WuZtnaLuij5o07dF8ut6uH8HlVvtNTEO4sBj8IXCOaQkQMmTGCELDrigt1wwJgR0SAMWBwYwYynWkPp8AdObNzw:1x64A4:jeVprPd1F3Q8DcHhFVbXPVftx9eBMMZPat4_lNnAWvU",
@@ -678,6 +1117,14 @@
   "fields": {
     "session_data": ".eJxVjMsOwiAQRf-FtSEgMO106d5vIFMeFjVgoE00xn83JF3o9p5zz5tZ2tbFbi1UmzybmGSH320mdwu5A3-lfCnclbzWNPOu8J02fi4-3E-7-xdYqC39jQSjV9rAYCIOx8E5r9EZ9MKj1EpTBCMpwuxAgwIcISotNASIUQrs0RZaSyXb8Hyk-mKT-HwBbqE-eQ:1x64vJ:jg5zQ-M-ZPXCFGWtFzfd2m2W6XO_wf9j9yx7j1peeoE",
     "expire_date": "2026-09-28T11:32:33.291Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "qc3y8dc8a8nnq2di4xoy6o62p1yxaqzs",
+  "fields": {
+    "session_data": ".eJxVjEsOgjAUAO_y1qZpHxUoS_ecgbxPsahpEwor490NCQvdzkzmDRPtW5r2GtdpURjAweWXMckz5kPog_K9GCl5Wxc2R2JOW81YNL5uZ_s3SFQTDEDOdcErIzsUbjWgtRHtzMjqxQeVJmCwDWLshKVnpebaxpl67HqcHXy-52I4Gg:1xA6l1:i4UfJeQLcyf-7at_HXwddWWFc75XmbNWYc82uoiex1w",
+    "expire_date": "2026-10-09T14:18:35.356Z"
   }
 },
 {
@@ -706,10 +1153,26 @@
 },
 {
   "model": "sessions.session",
+  "pk": "r8gxva8ta8tjobucdoqqgbaduo51ouin",
+  "fields": {
+    "session_data": ".eJxVjEsOgjAUAO_y1qZpHxUoS_ecgbxPsahpEwor490NCQvdzkzmDRPtW5r2GtdpURjAweWXMckz5kPog_K9GCl5Wxc2R2JOW81YNL5uZ_s3SFQTDEDOdcErIzsUbjWgtRHtzMjqxQeVJmCwDWLshKVnpebaxpl67HqcHXy-52I4Gg:1xA7SN:G4OkUnAacdnqhqb-FT7K8W3y__zV8ALWVUa02cEmjQk",
+    "expire_date": "2026-10-09T15:03:23.393Z"
+  }
+},
+{
+  "model": "sessions.session",
   "pk": "rckwysb8vpmayk9synvk3xyer18vpzdf",
   "fields": {
     "session_data": ".eJxlkMtuwyAQRX-lmnVkgfED2KVZ5xvQAGOb1oHIYKlR1H-v3HhRq9t7ztzRzBMMrmUya6bFBA8aJJz-ZhbdJ8UN-A-MY6pcimUJttqUaqe5uiZP8_vuHgomzBNoYLauhx6lJWaVEtx5r4RX3FuOLVnJetGJlslGDH3ftTU675QTfmgGbITsttJMOYcUDX3dw_IAzU7g6Y5LuVEsBp1Layy_V_AD-Z9EvBFoOL9G3q4YcaSNwEGb0xji6y3ny4UxfsR5XkfQsC_O8P0DPChx0Q:1x6pM2:KSmjxs3AB93CoMN1kEc-XKKWs95RtlbkBFCuETVUgKM",
     "expire_date": "2026-09-30T13:07:14.523Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "s3wn7o39kj4b8ip52eh55i55xbzicqre",
+  "fields": {
+    "session_data": ".eJxVjEsOgjAUAO_y1qZpHxUoS_ecgbxPsahpEwor490NCQvdzkzmDRPtW5r2GtdpURjAweWXMckz5kPog_K9GCl5Wxc2R2JOW81YNL5uZ_s3SFQTDEDOdcErIzsUbjWgtRHtzMjqxQeVJmCwDWLshKVnpebaxpl67HqcHXy-52I4Gg:1xA6oJ:O9d2IJOB_jaeZCasL-1COrz6BMvs0LExDRFO5Qf0oLg",
+    "expire_date": "2026-10-09T14:21:59.672Z"
   }
 },
 {
@@ -778,6 +1241,14 @@
 },
 {
   "model": "sessions.session",
+  "pk": "vb31jnwrl0rmbpigwhnd9tib6ytv663m",
+  "fields": {
+    "session_data": ".eJxVjEsOgjAUAO_y1qZpHxUoS_ecgbxPsahpEwor490NCQvdzkzmDRPtW5r2GtdpURjAweWXMckz5kPog_K9GCl5Wxc2R2JOW81YNL5uZ_s3SFQTDEDOdcErIzsUbjWgtRHtzMjqxQeVJmCwDWLshKVnpebaxpl67HqcHXy-52I4Gg:1xA6qG:58q9gQ5gC9GJoiOHF-u23pf6X8Ou36TH7BAZq37CtCg",
+    "expire_date": "2026-10-09T14:24:00.430Z"
+  }
+},
+{
+  "model": "sessions.session",
   "pk": "vf3bpud7qbhta3ucdfqo3yhlwyaq1j1c",
   "fields": {
     "session_data": "eyJndWVzdF9jYXJ0Ijp7fX0:1x8amo:t3tjNtHHna9neoAk2Sp4-GL0u6d5Vb_-NhK3fZdzkEs",
@@ -842,6 +1313,14 @@
 },
 {
   "model": "sessions.session",
+  "pk": "xv9a6at669s60rqjdq2qn9qcp6r3wa5v",
+  "fields": {
+    "session_data": "eyJndWVzdF9jYXJ0Ijp7fX0:1x9iuB:7TBeOaGy7JaTAwh_KPqYeeMO_LStp2aUrv_WeMNPH7s",
+    "expire_date": "2026-10-08T12:50:27.927Z"
+  }
+},
+{
+  "model": "sessions.session",
   "pk": "xyi5xw7o1udqfnc9nm93upnsw52k9d4n",
   "fields": {
     "session_data": "eyJndWVzdF9jYXJ0Ijp7fX0:1x7ofR:0slkLGo2azgYoa5gDrRzlpcg8d_bin3v2MFBrurkXaI",
@@ -870,6 +1349,14 @@
   "fields": {
     "session_data": ".eJxVjMsOwiAQAP-FsyE86hY8evcbyLIsUjWQlPZk_HdD0oNeZybzFgH3rYS98xqWJC5Ci9Mvi0hPrkOkB9Z7k9Tqti5RjkQetstbS_y6Hu3foGAvYwvWGkRN7LxhPTPkaSJGJoUJAJENOmvPmU12CtmS8irPJunoAdiIzxf6DDiB:1x79KN:XGsOguIJXwZLSlbm_X4DLBgAorVcjw3nfHLPlhimkSI",
     "expire_date": "2026-10-01T10:26:51.856Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "ylib1kd8tevt5ns7wk1hai3ktcr0j692",
+  "fields": {
+    "session_data": "eyJndWVzdF9jYXJ0Ijp7fX0:1xA64n:9mtEVpeg9odrZVfJU1V5GP7yAg-1l5EwrlCyGspO0oE",
+    "expire_date": "2026-10-09T13:34:57.696Z"
   }
 },
 {
@@ -910,6 +1397,22 @@
   "fields": {
     "session_data": ".eJxVjEEOwiAQRe_C2hCQYei4dO8ZmoEBqZo2Ke3KeHdD0oVu_3vvv9XI-1bHveV1nERdlFWn3y1yeua5A3nwfF90WuZtnaLuij5o07dF8ut6uH8HlVvtNTEO4sBj8IXCOaQkQMmTGCELDrigt1wwJgR0SAMWBwYwYynWkPp8AdObNzw:1x64vS:9AVrtsY9AKuEV_XAOyVfDqyh5YuPniKyeh3jvQPnqbs",
     "expire_date": "2026-09-28T11:32:42.539Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "zoj9ubvvj59fwo3q9qgpwzavkg9bd04k",
+  "fields": {
+    "session_data": ".eJxVjEsOgjAUAO_y1qZpHxUoS_ecgbxPsahpEwor490NCQvdzkzmDRPtW5r2GtdpURjAweWXMckz5kPog_K9GCl5Wxc2R2JOW81YNL5uZ_s3SFQTDEDOdcErIzsUbjWgtRHtzMjqxQeVJmCwDWLshKVnpebaxpl67HqcHXy-52I4Gg:1xA6IO:dfcPbQASZjLypScoiLGvsI8aun2NkrEK-S8-hsgSXrk",
+    "expire_date": "2026-10-09T13:49:00.846Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "zozlzcoh3ieiae20q9yn4hrlx9lnr5q0",
+  "fields": {
+    "session_data": ".eJxVjEsOgjAUAO_y1qZpHxUoS_ecgbxPsahpEwor490NCQvdzkzmDRPtW5r2GtdpURjAweWXMckz5kPog_K9GCl5Wxc2R2JOW81YNL5uZ_s3SFQTDEDOdcErIzsUbjWgtRHtzMjqxQeVJmCwDWLshKVnpebaxpl67HqcHXy-52I4Gg:1xA6rz:IGIX4Lvk01UK3rzRPWi1txyWiNkm5LLF2j90PDFn9s8",
+    "expire_date": "2026-10-09T14:25:47.962Z"
   }
 },
 {
@@ -1040,14 +1543,12 @@
   "model": "accounts.userprofile",
   "pk": 1,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "is_management_staff": true,
     "job_title": "Super Administrator",
     "phone": "",
     "created_at": "2026-09-08T13:22:07.290Z",
-    "updated_at": "2026-09-08T13:22:07.304Z",
+    "updated_at": "2026-09-25T13:18:38.690Z",
     "roles": [
       1
     ],
@@ -1058,9 +1559,7 @@
   "model": "accounts.userprofile",
   "pk": 7,
   "fields": {
-    "user": [
-      "ug1312005@gmail.com"
-    ],
+    "user": 7,
     "is_management_staff": false,
     "job_title": "",
     "phone": "6392401418",
@@ -1074,14 +1573,12 @@
   "model": "accounts.userprofile",
   "pk": 8,
   "fields": {
-    "user": [
-      "ACC001"
-    ],
+    "user": 8,
     "is_management_staff": true,
     "job_title": "Account Management Staff",
     "phone": "",
     "created_at": "2026-09-16T12:22:56.499Z",
-    "updated_at": "2026-09-21T05:52:27.137Z",
+    "updated_at": "2026-09-25T14:03:37.071Z",
     "roles": [],
     "department_access": [
       1
@@ -1092,9 +1589,7 @@
   "model": "accounts.userprofile",
   "pk": 9,
   "fields": {
-    "user": [
-      "CMS001"
-    ],
+    "user": 9,
     "is_management_staff": true,
     "job_title": "CMS Management Staff",
     "phone": "",
@@ -1110,14 +1605,12 @@
   "model": "accounts.userprofile",
   "pk": 22,
   "fields": {
-    "user": [
-      "CAT001"
-    ],
+    "user": 22,
     "is_management_staff": true,
     "job_title": "Catalog Management Staff",
     "phone": "",
     "created_at": "2026-09-17T06:23:15.646Z",
-    "updated_at": "2026-09-18T16:24:46.165Z",
+    "updated_at": "2026-09-25T14:20:07.096Z",
     "roles": [],
     "department_access": [
       2
@@ -1128,9 +1621,7 @@
   "model": "accounts.userprofile",
   "pk": 23,
   "fields": {
-    "user": [
-      "INV001"
-    ],
+    "user": 23,
     "is_management_staff": true,
     "job_title": "Inventory Management Staff",
     "phone": "",
@@ -1146,9 +1637,7 @@
   "model": "accounts.userprofile",
   "pk": 25,
   "fields": {
-    "user": [
-      "CRT001"
-    ],
+    "user": 25,
     "is_management_staff": true,
     "job_title": "Cart Management Staff",
     "phone": "",
@@ -1164,9 +1653,7 @@
   "model": "accounts.userprofile",
   "pk": 26,
   "fields": {
-    "user": [
-      "ORD001"
-    ],
+    "user": 26,
     "is_management_staff": true,
     "job_title": "Order Management Staff",
     "phone": "",
@@ -1182,9 +1669,7 @@
   "model": "accounts.userprofile",
   "pk": 27,
   "fields": {
-    "user": [
-      "CHK001"
-    ],
+    "user": 27,
     "is_management_staff": true,
     "job_title": "Checkout Management Staff",
     "phone": "",
@@ -1200,9 +1685,7 @@
   "model": "accounts.userprofile",
   "pk": 28,
   "fields": {
-    "user": [
-      "SHP001"
-    ],
+    "user": 28,
     "is_management_staff": true,
     "job_title": "Shipping Management Staff",
     "phone": "",
@@ -1218,9 +1701,7 @@
   "model": "accounts.userprofile",
   "pk": 29,
   "fields": {
-    "user": [
-      "vishal@gmail.com"
-    ],
+    "user": 29,
     "is_management_staff": false,
     "job_title": "",
     "phone": "8115684889",
@@ -1231,12 +1712,24 @@
   }
 },
 {
+  "model": "accounts.userprofile",
+  "pk": 30,
+  "fields": {
+    "user": 30,
+    "is_management_staff": true,
+    "job_title": "Super Administrator",
+    "phone": "",
+    "created_at": "2026-09-25T13:38:44.353Z",
+    "updated_at": "2026-09-25T13:38:44.357Z",
+    "roles": [],
+    "department_access": []
+  }
+},
+{
   "model": "accounts.address",
   "pk": 2,
   "fields": {
-    "user": [
-      "ug1312005@gmail.com"
-    ],
+    "user": 7,
     "full_name": "Utkarsh Gupta",
     "phone": "8115684889",
     "street_address": "Yogi Veer ahimane Sultanpur",
@@ -1255,9 +1748,7 @@
   "model": "accounts.address",
   "pk": 3,
   "fields": {
-    "user": [
-      "vishal@gmail.com"
-    ],
+    "user": 29,
     "full_name": "Vishal",
     "phone": "8115684889",
     "street_address": "Luckmonw",
@@ -1276,9 +1767,7 @@
   "model": "accounts.address",
   "pk": 4,
   "fields": {
-    "user": [
-      "vishal@gmail.com"
-    ],
+    "user": 29,
     "full_name": "Vishal Test",
     "phone": "+1 555-0199",
     "street_address": "456 Commerce Way",
@@ -1297,9 +1786,7 @@
   "model": "accounts.address",
   "pk": 5,
   "fields": {
-    "user": [
-      "vishal@gmail.com"
-    ],
+    "user": 29,
     "full_name": "Vishal Test",
     "phone": "+1 555-0199",
     "street_address": "456 Commerce Way",
@@ -1318,9 +1805,7 @@
   "model": "accounts.address",
   "pk": 6,
   "fields": {
-    "user": [
-      "vishal@gmail.com"
-    ],
+    "user": 29,
     "full_name": "Vishal Test",
     "phone": "+1 555-0199",
     "street_address": "456 Commerce Way",
@@ -1339,9 +1824,7 @@
   "model": "accounts.address",
   "pk": 7,
   "fields": {
-    "user": [
-      "vishal@gmail.com"
-    ],
+    "user": 29,
     "full_name": "Vishal Test",
     "phone": "+1 555-0199",
     "street_address": "456 Commerce Way",
@@ -1360,9 +1843,7 @@
   "model": "accounts.address",
   "pk": 8,
   "fields": {
-    "user": [
-      "vishal@gmail.com"
-    ],
+    "user": 29,
     "full_name": "Vishal Test",
     "phone": "+1 555-0199",
     "street_address": "456 Commerce Way",
@@ -7706,9 +8187,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-AURA-SM-BLK",
     "reason": "Initial seed intake: Matte Obsidian Black (25 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.819Z"
   }
 },
@@ -7729,9 +8208,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-AURA-SM-SLV",
     "reason": "Initial seed intake: Silver Frost White (22 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.822Z"
   }
 },
@@ -7752,9 +8229,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-AURA-SM-BLU",
     "reason": "Initial seed intake: Midnight Indigo Blue (20 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.825Z"
   }
 },
@@ -7775,9 +8250,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-HZ-EDGE-256-BLK",
     "reason": "Initial seed intake: Obsidian Black (256GB) (25 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.832Z"
   }
 },
@@ -7798,9 +8271,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-HZ-EDGE-256-BLU",
     "reason": "Initial seed intake: Celestial Blue (256GB) (20 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.839Z"
   }
 },
@@ -7821,9 +8292,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-HZ-EDGE-512-GRN",
     "reason": "Initial seed intake: Emerald Green (512GB) (24 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.845Z"
   }
 },
@@ -7844,9 +8313,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-LUM-AIR-WHT",
     "reason": "Initial seed intake: Glacier White (30 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.853Z"
   }
 },
@@ -7867,9 +8334,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-LUM-AIR-GRY",
     "reason": "Initial seed intake: Graphite Gray (26 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.857Z"
   }
 },
@@ -7890,9 +8355,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-SCAN-CH-GRY",
     "reason": "Initial seed intake: Charcoal Gray Weave (20 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.865Z"
   }
 },
@@ -7913,9 +8376,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-SCAN-CH-TAN",
     "reason": "Initial seed intake: Walnut Tan Leather (22 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.870Z"
   }
 },
@@ -7936,9 +8397,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-SCAN-CH-IVR",
     "reason": "Initial seed intake: Nordic Ivory White (25 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.874Z"
   }
 },
@@ -7959,9 +8418,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-ATL-COAT-CAM",
     "reason": "Initial seed intake: Camel Tan (25 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.880Z"
   }
 },
@@ -7982,9 +8439,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-ATL-COAT-NAV",
     "reason": "Initial seed intake: Midnight Navy (24 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.884Z"
   }
 },
@@ -8005,9 +8460,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-ATL-COAT-BLK",
     "reason": "Initial seed intake: Deep Charcoal (20 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.889Z"
   }
 },
@@ -8028,9 +8481,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-VELO-HLM-WHT",
     "reason": "Initial seed intake: Gloss Racing White (30 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.895Z"
   }
 },
@@ -8051,9 +8502,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-VELO-HLM-BLK",
     "reason": "Initial seed intake: Matte Stealth Black (28 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.899Z"
   }
 },
@@ -8074,9 +8523,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-VELO-HLM-RED",
     "reason": "Initial seed intake: Electric Crimson Red (25 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.903Z"
   }
 },
@@ -8097,9 +8544,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CHRONO-TI-BLK",
     "reason": "Initial seed intake: Space Black Titanium (20 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.911Z"
   }
 },
@@ -8120,9 +8565,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CHRONO-TI-SLV",
     "reason": "Initial seed intake: Silver Brushed Steel (22 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.915Z"
   }
 },
@@ -8143,9 +8586,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CHRONO-TI-GLD",
     "reason": "Initial seed intake: Rose Gold Edition (20 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.919Z"
   }
 },
@@ -8166,9 +8607,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-LUM-SRM-RSG",
     "reason": "Initial seed intake: Rose Gold Radiance (30 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.927Z"
   }
 },
@@ -8189,9 +8628,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-LUM-SRM-AMB",
     "reason": "Initial seed intake: Amber Nourish Gold (30 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.930Z"
   }
 },
@@ -8212,9 +8649,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-ATL-WKD-BRN",
     "reason": "Initial seed intake: Saddle Brown Leather (25 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.936Z"
   }
 },
@@ -8235,9 +8670,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-ATL-WKD-COG",
     "reason": "Initial seed intake: Vintage Cognac Tan (20 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.939Z"
   }
 },
@@ -8258,9 +8691,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-ATL-WKD-BLK",
     "reason": "Initial seed intake: Deep Onyx Black (24 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.942Z"
   }
 },
@@ -8281,9 +8712,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-BREW-ESP-SS",
     "reason": "Initial seed intake: Brushed Stainless Steel (20 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.947Z"
   }
 },
@@ -8304,9 +8733,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-BREW-ESP-BLK",
     "reason": "Initial seed intake: Matte Cast Black (20 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.950Z"
   }
 },
@@ -8327,9 +8754,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-SONIC-SPK-ORG",
     "reason": "Initial seed intake: Sunset Flame Orange (30 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.955Z"
   }
 },
@@ -8350,9 +8775,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-SONIC-SPK-TEL",
     "reason": "Initial seed intake: Ocean Coral Teal (30 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.958Z"
   }
 },
@@ -8373,9 +8796,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-SONIC-SPK-BLK",
     "reason": "Initial seed intake: Phantom Stealth Black (25 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.961Z"
   }
 },
@@ -8396,9 +8817,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-VELO-RUN-VOLT",
     "reason": "Initial seed intake: Neon Volt / Black (25 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.966Z"
   }
 },
@@ -8419,9 +8838,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-VELO-RUN-WHT",
     "reason": "Initial seed intake: Coral White / Silver (25 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.969Z"
   }
 },
@@ -8442,9 +8859,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-VELO-RUN-BLK",
     "reason": "Initial seed intake: Triple Stealth Black (25 units)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T10:54:16.972Z"
   }
 },
@@ -8465,9 +8880,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-TOY-MNT-NAT",
     "reason": "Initial purchase receipt stock load for Natural Beechwood / 64 Pieces",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.621Z"
   }
 },
@@ -8488,9 +8901,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-TOY-MNT-PAS",
     "reason": "Initial purchase receipt stock load for Pastel Spectrum / 64 Pieces",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.632Z"
   }
 },
@@ -8511,9 +8922,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-TOY-MNT-NOR",
     "reason": "Initial purchase receipt stock load for Nordic Earth Tone Collector Edition / 84 Pieces",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.642Z"
   }
 },
@@ -8534,9 +8943,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-TOY-ROB-WHT",
     "reason": "Initial purchase receipt stock load for Cyber Pearl White",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.653Z"
   }
 },
@@ -8557,9 +8964,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-TOY-ROB-BLU",
     "reason": "Initial purchase receipt stock load for Cosmic Metallic Cobalt",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.658Z"
   }
 },
@@ -8580,9 +8985,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-GRO-OIL-500",
     "reason": "Initial purchase receipt stock load for Classic 500ml Duo Gift Box",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.668Z"
   }
 },
@@ -8603,9 +9006,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-GRO-OIL-750",
     "reason": "Initial purchase receipt stock load for Grand Cru 750ml Hand-Harvested Reserve",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.673Z"
   }
 },
@@ -8626,9 +9027,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-GRO-COF-DRK",
     "reason": "Initial purchase receipt stock load for Dark Roast Espresso Blend (1kg)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.683Z"
   }
 },
@@ -8649,9 +9048,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-GRO-COF-MED",
     "reason": "Initial purchase receipt stock load for Medium Roast Honey Processed (1kg)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.689Z"
   }
 },
@@ -8672,9 +9069,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-GRO-COF-PBY",
     "reason": "Initial purchase receipt stock load for Micro-Lot Peaberry Reserve (1kg)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.695Z"
   }
 },
@@ -8695,9 +9090,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-AUT-CAM-64G",
     "reason": "Initial purchase receipt stock load for 64GB High-Endurance Pack",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.704Z"
   }
 },
@@ -8718,9 +9111,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-AUT-CAM-128G",
     "reason": "Initial purchase receipt stock load for 128GB High-Endurance Pack",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.709Z"
   }
 },
@@ -8741,9 +9132,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-AUT-CAM-256G",
     "reason": "Initial purchase receipt stock load for 256GB Ultra Pro 24h Hardwire Surveillance Kit",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.714Z"
   }
 },
@@ -8764,9 +9153,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-AUT-INF-BLK",
     "reason": "Initial purchase receipt stock load for Stealth Matte Black (150 PSI)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.722Z"
   }
 },
@@ -8787,9 +9174,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-AUT-INF-GRY",
     "reason": "Initial purchase receipt stock load for Anodized Slate Gray (150 PSI)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.728Z"
   }
 },
@@ -8810,9 +9195,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-BOK-ARC-HC",
     "reason": "Initial purchase receipt stock load for Clothbound Linen Hardcover",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.736Z"
   }
 },
@@ -8833,9 +9216,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-BOK-ARC-SLP",
     "reason": "Initial purchase receipt stock load for Collector's Boxed Slipcase Limited Edition",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.741Z"
   }
 },
@@ -8856,9 +9237,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-BOK-SYS-PB",
     "reason": "Initial purchase receipt stock load for Standard Paperback Edition",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.750Z"
   }
 },
@@ -8879,9 +9258,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-BOK-SYS-HC",
     "reason": "Initial purchase receipt stock load for Hardcover Deluxe Engineering Edition",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.755Z"
   }
 },
@@ -8902,9 +9279,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-VEH-EBK-OBS",
     "reason": "Initial purchase receipt stock load for Stealth Obsidian (Single-Speed Belt Drive)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.765Z"
   }
 },
@@ -8925,9 +9300,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-VEH-EBK-WHT",
     "reason": "Initial purchase receipt stock load for Glacier White (7-Speed Shimano)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.771Z"
   }
 },
@@ -8948,9 +9321,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-VEH-EBK-SGE",
     "reason": "Initial purchase receipt stock load for Forest Sage Metallic (7-Speed Shimano)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.776Z"
   }
 },
@@ -8971,9 +9342,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-VEH-SCT-GRY",
     "reason": "Initial purchase receipt stock load for Space Gray (350W / 30km Range)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.786Z"
   }
 },
@@ -8994,9 +9363,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-VEH-SCT-BLK",
     "reason": "Initial purchase receipt stock load for Matte Carbon Black (500W / 45km Long-Range)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.792Z"
   }
 },
@@ -9017,9 +9384,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-HOM-LMP-BRS",
     "reason": "Initial purchase receipt stock load for Brushed Satin Brass (Carrara Marble)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.802Z"
   }
 },
@@ -9040,9 +9405,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-HOM-LMP-BLK",
     "reason": "Initial purchase receipt stock load for Matte Anodized Black (Nero Marquina Marble)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.808Z"
   }
 },
@@ -9063,9 +9426,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-HOM-DIF-WHT",
     "reason": "Initial purchase receipt stock load for Chalk White Matte Porcelain",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.817Z"
   }
 },
@@ -9086,9 +9447,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-HOM-DIF-TER",
     "reason": "Initial purchase receipt stock load for Terracotta Warm Earth",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.822Z"
   }
 },
@@ -9109,9 +9468,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-HOM-DIF-CHR",
     "reason": "Initial purchase receipt stock load for Basalt Charcoal Matte",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.827Z"
   }
 },
@@ -9132,9 +9489,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-WAT-DIV-BLU",
     "reason": "Initial purchase receipt stock load for Sunburst Pacific Blue (Solid 316L Bracelet)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.838Z"
   }
 },
@@ -9155,9 +9510,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-WAT-DIV-BLK",
     "reason": "Initial purchase receipt stock load for Matte Stealth Black (FKM Tropical Rubber Strap)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.845Z"
   }
 },
@@ -9178,9 +9531,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-WAT-DIV-GRN",
     "reason": "Initial purchase receipt stock load for Emerald Sunray Green (Solid 316L Bracelet)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.851Z"
   }
 },
@@ -9201,9 +9552,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-AUD-SPK-WAL",
     "reason": "Initial purchase receipt stock load for Walnut Woodgrain Finish (120W Pair)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.860Z"
   }
 },
@@ -9224,9 +9573,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-AUD-SPK-ASH",
     "reason": "Initial purchase receipt stock load for Smoked Ash Black Finish (120W Pair)",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.865Z"
   }
 },
@@ -9247,9 +9594,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-ACC-WLT-TAN",
     "reason": "Initial purchase receipt stock load for Cognac Tan Full-Grain",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.874Z"
   }
 },
@@ -9270,9 +9615,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-ACC-WLT-BRN",
     "reason": "Initial purchase receipt stock load for Espresso Dark Brown",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.879Z"
   }
 },
@@ -9293,9 +9636,7 @@
     "reference_type": "INITIAL_LOAD",
     "reference_id": "INIT-STOCK-CART-ACC-WLT-BLK",
     "reason": "Initial purchase receipt stock load for Midnight Obsidian Black",
-    "performed_by": [
-      "admin"
-    ],
+    "performed_by": 1,
     "created_at": "2026-09-17T11:07:36.884Z"
   }
 },
@@ -9337,9 +9678,7 @@
     "reference_type": "ORDER",
     "reference_id": "ORD-1789752235",
     "reason": "Customer purchase of 1 unit(s)",
-    "performed_by": [
-      "ug1312005@gmail.com"
-    ],
+    "performed_by": 7,
     "created_at": "2026-09-18T17:23:55.899Z"
   }
 },
@@ -9360,9 +9699,7 @@
     "reference_type": "ORDER",
     "reference_id": "ORD-20260918-E000B",
     "reason": "Customer purchase of 1 unit(s)",
-    "performed_by": [
-      "ug1312005@gmail.com"
-    ],
+    "performed_by": 7,
     "created_at": "2026-09-18T17:24:35.942Z"
   }
 },
@@ -9383,9 +9720,7 @@
     "reference_type": "ORDER",
     "reference_id": "ORD-20260918-13AEC",
     "reason": "Customer purchase of 1 unit(s)",
-    "performed_by": [
-      "ug1312005@gmail.com"
-    ],
+    "performed_by": 7,
     "created_at": "2026-09-18T17:47:36.420Z"
   }
 },
@@ -9406,9 +9741,7 @@
     "reference_type": "ORDER",
     "reference_id": "ORD-20260918-13AEC",
     "reason": "Customer purchase of 2 unit(s)",
-    "performed_by": [
-      "ug1312005@gmail.com"
-    ],
+    "performed_by": 7,
     "created_at": "2026-09-18T17:47:36.453Z"
   }
 },
@@ -9429,9 +9762,7 @@
     "reference_type": "ORDER",
     "reference_id": "ORD-20260918-13AEC",
     "reason": "Customer purchase of 1 unit(s)",
-    "performed_by": [
-      "ug1312005@gmail.com"
-    ],
+    "performed_by": 7,
     "created_at": "2026-09-18T17:47:36.486Z"
   }
 },
@@ -9452,9 +9783,7 @@
     "reference_type": "ORDER",
     "reference_id": "ORD-20260918-3449A",
     "reason": "Customer purchase of 1 unit(s)",
-    "performed_by": [
-      "ug1312005@gmail.com"
-    ],
+    "performed_by": 7,
     "created_at": "2026-09-18T17:48:39.983Z"
   }
 },
@@ -9475,9 +9804,7 @@
     "reference_type": "ORDER",
     "reference_id": "ORD-20260921-9D329",
     "reason": "Customer purchase of 1 unit(s)",
-    "performed_by": [
-      "vishal@gmail.com"
-    ],
+    "performed_by": 29,
     "created_at": "2026-09-21T05:46:25.285Z"
   }
 },
@@ -9498,9 +9825,7 @@
     "reference_type": "ORDER",
     "reference_id": "ORD-20260921-9D329",
     "reason": "Customer purchase of 1 unit(s)",
-    "performed_by": [
-      "vishal@gmail.com"
-    ],
+    "performed_by": 29,
     "created_at": "2026-09-21T05:46:25.296Z"
   }
 },
@@ -9521,9 +9846,7 @@
     "reference_type": "ORDER",
     "reference_id": "ORD-20260921-9D329",
     "reason": "Customer purchase of 1 unit(s)",
-    "performed_by": [
-      "vishal@gmail.com"
-    ],
+    "performed_by": 29,
     "created_at": "2026-09-21T05:46:25.309Z"
   }
 },
@@ -9544,9 +9867,7 @@
     "reference_type": "ORDER",
     "reference_id": "ORD-20260921-9D329",
     "reason": "Customer purchase of 1 unit(s)",
-    "performed_by": [
-      "vishal@gmail.com"
-    ],
+    "performed_by": 29,
     "created_at": "2026-09-21T05:46:25.317Z"
   }
 },
@@ -9567,9 +9888,7 @@
     "reference_type": "ORDER",
     "reference_id": "ORD-20260921-376C3",
     "reason": "Customer purchase of 1 unit(s)",
-    "performed_by": [
-      "vishal@gmail.com"
-    ],
+    "performed_by": 29,
     "created_at": "2026-09-21T10:03:10.583Z"
   }
 },
@@ -9590,9 +9909,7 @@
     "reference_type": "ORDER",
     "reference_id": "ORD-20260921-40C93",
     "reason": "Customer purchase of 1 unit(s)",
-    "performed_by": [
-      "vishal@gmail.com"
-    ],
+    "performed_by": 29,
     "created_at": "2026-09-21T10:03:36.198Z"
   }
 },
@@ -9600,9 +9917,7 @@
   "model": "cart.cart",
   "pk": 1,
   "fields": {
-    "user": [
-      "ug1312005@gmail.com"
-    ],
+    "user": 7,
     "session_key": null,
     "status": "CONVERTED",
     "created_at": "2026-09-18T17:23:24.245Z",
@@ -9613,9 +9928,7 @@
   "model": "cart.cart",
   "pk": 2,
   "fields": {
-    "user": [
-      "ug1312005@gmail.com"
-    ],
+    "user": 7,
     "session_key": null,
     "status": "CONVERTED",
     "created_at": "2026-09-18T17:24:36.010Z",
@@ -9626,9 +9939,7 @@
   "model": "cart.cart",
   "pk": 3,
   "fields": {
-    "user": [
-      "ACC001"
-    ],
+    "user": 8,
     "session_key": null,
     "status": "ACTIVE",
     "created_at": "2026-09-18T17:27:06.168Z",
@@ -9639,9 +9950,7 @@
   "model": "cart.cart",
   "pk": 4,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "session_key": null,
     "status": "ACTIVE",
     "created_at": "2026-09-18T17:28:41.761Z",
@@ -9652,9 +9961,7 @@
   "model": "cart.cart",
   "pk": 5,
   "fields": {
-    "user": [
-      "CRT001"
-    ],
+    "user": 25,
     "session_key": null,
     "status": "ACTIVE",
     "created_at": "2026-09-18T17:32:34.821Z",
@@ -9665,9 +9972,7 @@
   "model": "cart.cart",
   "pk": 6,
   "fields": {
-    "user": [
-      "CHK001"
-    ],
+    "user": 27,
     "session_key": null,
     "status": "ACTIVE",
     "created_at": "2026-09-18T17:33:13.870Z",
@@ -9678,9 +9983,7 @@
   "model": "cart.cart",
   "pk": 7,
   "fields": {
-    "user": [
-      "ORD001"
-    ],
+    "user": 26,
     "session_key": null,
     "status": "ACTIVE",
     "created_at": "2026-09-18T17:33:54.130Z",
@@ -9691,9 +9994,7 @@
   "model": "cart.cart",
   "pk": 8,
   "fields": {
-    "user": [
-      "ug1312005@gmail.com"
-    ],
+    "user": 7,
     "session_key": null,
     "status": "CONVERTED",
     "created_at": "2026-09-18T17:47:36.609Z",
@@ -9704,9 +10005,7 @@
   "model": "cart.cart",
   "pk": 9,
   "fields": {
-    "user": [
-      "ug1312005@gmail.com"
-    ],
+    "user": 7,
     "session_key": null,
     "status": "ACTIVE",
     "created_at": "2026-09-18T17:48:40.084Z",
@@ -9717,9 +10016,7 @@
   "model": "cart.cart",
   "pk": 10,
   "fields": {
-    "user": [
-      "SHP001"
-    ],
+    "user": 28,
     "session_key": null,
     "status": "ACTIVE",
     "created_at": "2026-09-19T05:30:12.061Z",
@@ -9730,9 +10027,7 @@
   "model": "cart.cart",
   "pk": 11,
   "fields": {
-    "user": [
-      "vishal@gmail.com"
-    ],
+    "user": 29,
     "session_key": null,
     "status": "CONVERTED",
     "created_at": "2026-09-21T05:44:21.555Z",
@@ -9743,9 +10038,7 @@
   "model": "cart.cart",
   "pk": 14,
   "fields": {
-    "user": [
-      "vishal@gmail.com"
-    ],
+    "user": 29,
     "session_key": null,
     "status": "CONVERTED",
     "created_at": "2026-09-21T10:03:10.490Z",
@@ -9756,9 +10049,7 @@
   "model": "cart.cart",
   "pk": 15,
   "fields": {
-    "user": [
-      "vishal@gmail.com"
-    ],
+    "user": 29,
     "session_key": null,
     "status": "CONVERTED",
     "created_at": "2026-09-21T10:03:36.120Z",
@@ -9769,13 +10060,44 @@
   "model": "cart.cart",
   "pk": 16,
   "fields": {
-    "user": [
-      "vishal@gmail.com"
-    ],
+    "user": 29,
     "session_key": null,
     "status": "ACTIVE",
     "created_at": "2026-09-21T10:03:36.287Z",
     "updated_at": "2026-09-21T10:03:36.287Z"
+  }
+},
+{
+  "model": "cart.cart",
+  "pk": 17,
+  "fields": {
+    "user": null,
+    "session_key": null,
+    "status": "",
+    "created_at": null,
+    "updated_at": null
+  }
+},
+{
+  "model": "cart.cart",
+  "pk": 18,
+  "fields": {
+    "user": 30,
+    "session_key": null,
+    "status": "ACTIVE",
+    "created_at": "2026-09-25T13:41:12.262Z",
+    "updated_at": "2026-09-25T13:41:12.262Z"
+  }
+},
+{
+  "model": "cart.cart",
+  "pk": 19,
+  "fields": {
+    "user": 22,
+    "session_key": null,
+    "status": "ACTIVE",
+    "created_at": "2026-09-25T14:20:07.304Z",
+    "updated_at": "2026-09-25T14:20:07.304Z"
   }
 },
 {
@@ -9911,16 +10233,37 @@
   }
 },
 {
+  "model": "cart.cartitem",
+  "pk": 14,
+  "fields": {
+    "cart": 3,
+    "product": 33,
+    "variant": 31,
+    "quantity": 1,
+    "created_at": "2026-09-25T12:36:08.363Z",
+    "updated_at": "2026-09-25T12:36:08.364Z"
+  }
+},
+{
   "model": "wishlist.wishlist",
   "pk": 2,
   "fields": {
-    "user": [
-      "vishal@gmail.com"
-    ],
+    "user": 29,
     "name": "My Wishlist",
     "is_default": true,
     "created_at": "2026-09-21T07:39:49.685Z",
     "updated_at": "2026-09-21T07:47:07.464Z"
+  }
+},
+{
+  "model": "wishlist.wishlist",
+  "pk": 3,
+  "fields": {
+    "user": 8,
+    "name": "My Wishlist",
+    "is_default": true,
+    "created_at": "2026-09-24T13:13:15.430Z",
+    "updated_at": "2026-09-24T13:13:15.430Z"
   }
 },
 {
@@ -9961,9 +10304,7 @@
   "pk": 1,
   "fields": {
     "order_number": "ORD-20260918-E000B",
-    "user": [
-      "ug1312005@gmail.com"
-    ],
+    "user": 7,
     "cart": 1,
     "shipping_address": 2,
     "shipping_name": "Utkarsh Gupta",
@@ -10003,9 +10344,7 @@
   "pk": 2,
   "fields": {
     "order_number": "ORD-20260918-13AEC",
-    "user": [
-      "ug1312005@gmail.com"
-    ],
+    "user": 7,
     "cart": 2,
     "shipping_address": 2,
     "shipping_name": "Utkarsh Gupta",
@@ -10045,9 +10384,7 @@
   "pk": 3,
   "fields": {
     "order_number": "ORD-20260918-3449A",
-    "user": [
-      "ug1312005@gmail.com"
-    ],
+    "user": 7,
     "cart": 8,
     "shipping_address": 2,
     "shipping_name": "Utkarsh Gupta",
@@ -10087,9 +10424,7 @@
   "pk": 4,
   "fields": {
     "order_number": "ORD-20260921-9D329",
-    "user": [
-      "vishal@gmail.com"
-    ],
+    "user": 29,
     "cart": 11,
     "shipping_address": 3,
     "shipping_name": "Vishal",
@@ -10344,9 +10679,7 @@
   "model": "notifications.notification",
   "pk": 1,
   "fields": {
-    "user": [
-      "ug1312005@gmail.com"
-    ],
+    "user": 7,
     "order": 1,
     "event_type": "ORDER_DELIVERED",
     "title": "Order #ORD-20260918-E000B Delivered",
@@ -10360,9 +10693,7 @@
   "model": "notifications.notification",
   "pk": 2,
   "fields": {
-    "user": [
-      "ug1312005@gmail.com"
-    ],
+    "user": 7,
     "order": 1,
     "event_type": "COD_PAYMENT_RECEIVED",
     "title": "COD Payment Received - #ORD-20260918-E000B",
@@ -10376,9 +10707,7 @@
   "model": "notifications.notification",
   "pk": 3,
   "fields": {
-    "user": [
-      "ug1312005@gmail.com"
-    ],
+    "user": 7,
     "order": 3,
     "event_type": "ORDER_DELIVERED",
     "title": "Order #ORD-20260918-3449A Delivered",
@@ -10392,9 +10721,7 @@
   "model": "notifications.notification",
   "pk": 4,
   "fields": {
-    "user": [
-      "ug1312005@gmail.com"
-    ],
+    "user": 7,
     "order": 3,
     "event_type": "COD_PAYMENT_RECEIVED",
     "title": "COD Payment Received - #ORD-20260918-3449A",
@@ -10408,9 +10735,7 @@
   "model": "notifications.notification",
   "pk": 5,
   "fields": {
-    "user": [
-      "vishal@gmail.com"
-    ],
+    "user": 29,
     "order": 4,
     "event_type": "ORDER_DELIVERED",
     "title": "Order #ORD-20260921-9D329 Delivered",
@@ -10424,9 +10749,7 @@
   "model": "notifications.notification",
   "pk": 6,
   "fields": {
-    "user": [
-      "vishal@gmail.com"
-    ],
+    "user": 29,
     "order": 4,
     "event_type": "COD_PAYMENT_RECEIVED",
     "title": "COD Payment Received - #ORD-20260921-9D329",
@@ -11445,9 +11768,7 @@
   "model": "audit.auditlog",
   "pk": 1,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "username_attempt": "cartivo.admin",
     "action": "login_success",
     "department": "",
@@ -11462,9 +11783,7 @@
   "model": "audit.auditlog",
   "pk": 2,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "username_attempt": "cartivo.admin",
     "action": "dept_access",
     "department": "accounts",
@@ -11479,9 +11798,7 @@
   "model": "audit.auditlog",
   "pk": 3,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "username_attempt": "cartivo.admin",
     "action": "dept_access",
     "department": "accounts",
@@ -11496,9 +11813,7 @@
   "model": "audit.auditlog",
   "pk": 4,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "username_attempt": "cartivo.admin",
     "action": "dept_access",
     "department": "accounts",
@@ -11513,9 +11828,7 @@
   "model": "audit.auditlog",
   "pk": 5,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "username_attempt": "cartivo.admin",
     "action": "dept_access",
     "department": "accounts",
@@ -11530,9 +11843,7 @@
   "model": "audit.auditlog",
   "pk": 6,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "username_attempt": "cartivo.admin",
     "action": "dept_access",
     "department": "accounts",
@@ -11547,9 +11858,7 @@
   "model": "audit.auditlog",
   "pk": 7,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "username_attempt": "cartivo.admin",
     "action": "dept_access",
     "department": "analytics",
@@ -11564,9 +11873,7 @@
   "model": "audit.auditlog",
   "pk": 8,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "username_attempt": "cartivo.admin",
     "action": "logout",
     "department": "",
@@ -11581,9 +11888,7 @@
   "model": "audit.auditlog",
   "pk": 9,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "username_attempt": "cartivo.admin",
     "action": "login_success",
     "department": "",
@@ -11598,9 +11903,7 @@
   "model": "audit.auditlog",
   "pk": 10,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "username_attempt": "cartivo.admin",
     "action": "dept_access",
     "department": "accounts",
@@ -11615,9 +11918,7 @@
   "model": "audit.auditlog",
   "pk": 11,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "username_attempt": "cartivo.admin",
     "action": "dept_access",
     "department": "orders",
@@ -11632,9 +11933,7 @@
   "model": "audit.auditlog",
   "pk": 12,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "username_attempt": "cartivo.admin",
     "action": "logout",
     "department": "",
@@ -11679,9 +11978,7 @@
   "model": "audit.auditlog",
   "pk": 15,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "username_attempt": "cartivo.admin",
     "action": "login_success",
     "department": "",
@@ -11696,9 +11993,7 @@
   "model": "audit.auditlog",
   "pk": 16,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "username_attempt": "cartivo.admin",
     "action": "dept_access",
     "department": "accounts",
@@ -11713,9 +12008,7 @@
   "model": "audit.auditlog",
   "pk": 17,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "username_attempt": "cartivo.admin",
     "action": "dept_access",
     "department": "accounts",
@@ -11730,9 +12023,7 @@
   "model": "audit.auditlog",
   "pk": 18,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "username_attempt": "cartivo.admin",
     "action": "logout",
     "department": "",
@@ -11747,9 +12038,7 @@
   "model": "audit.auditlog",
   "pk": 19,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "username_attempt": "cartivo.admin",
     "action": "login_success",
     "department": "",
@@ -11764,9 +12053,7 @@
   "model": "audit.auditlog",
   "pk": 20,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "username_attempt": "cartivo.admin",
     "action": "dept_access",
     "department": "cms",
@@ -11781,9 +12068,7 @@
   "model": "audit.auditlog",
   "pk": 21,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "username_attempt": "cartivo.admin",
     "action": "dept_access",
     "department": "cms",
@@ -11798,9 +12083,7 @@
   "model": "audit.auditlog",
   "pk": 22,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "username_attempt": "cartivo.admin",
     "action": "dept_access",
     "department": "cms",
@@ -11815,9 +12098,7 @@
   "model": "audit.auditlog",
   "pk": 23,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "username_attempt": "cartivo.admin",
     "action": "dept_access",
     "department": "cms",
@@ -11832,9 +12113,7 @@
   "model": "audit.auditlog",
   "pk": 24,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "username_attempt": "cartivo.admin",
     "action": "dept_access",
     "department": "cms",
@@ -11849,9 +12128,7 @@
   "model": "audit.auditlog",
   "pk": 25,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "username_attempt": "cartivo.admin",
     "action": "dept_access",
     "department": "cms",
@@ -11866,9 +12143,7 @@
   "model": "audit.auditlog",
   "pk": 26,
   "fields": {
-    "user": [
-      "admin"
-    ],
+    "user": 1,
     "username_attempt": "cartivo.admin",
     "action": "logout",
     "department": "",
@@ -12328,13 +12603,11 @@
   "pk": 1,
   "fields": {
     "department": 1,
-    "user": [
-      "ACC001"
-    ],
+    "user": 8,
     "login_id": "ACC001",
     "password_hash": "pbkdf2_sha256$1000000$jqnuoqj5N6GlCO53uawQSZ$pPtpctZ8zh6A02dmg6B3pZs0PvplGYrU0VAWpzj/wTM=",
     "status": "ACTIVE",
-    "last_login": "2026-09-21T05:52:26.070Z",
+    "last_login": "2026-09-25T14:03:36.053Z",
     "created_at": "2026-09-15T09:09:51.936Z",
     "updated_at": "2026-09-16T13:19:49.567Z"
   }
@@ -12344,9 +12617,7 @@
   "pk": 2,
   "fields": {
     "department": 16,
-    "user": [
-      "CMS001"
-    ],
+    "user": 9,
     "login_id": "CMS001",
     "password_hash": "pbkdf2_sha256$1000000$miAWGRVC8ldP51KD0L1blg$gRzGi7Qz/LLSdYwiRhf/B1EncLErdK2vJDs1C13TO5Q=",
     "status": "ACTIVE",
@@ -12360,13 +12631,11 @@
   "pk": 3,
   "fields": {
     "department": 2,
-    "user": [
-      "CAT001"
-    ],
+    "user": 22,
     "login_id": "CAT001",
     "password_hash": "pbkdf2_sha256$1000000$DCjznNFgd5bOYSZ7j5QPPa$S5Syt9vn32mWLmWjng90KWzZaMyFWo/oTteOtqTaaXY=",
     "status": "ACTIVE",
-    "last_login": "2026-09-18T16:24:44.279Z",
+    "last_login": "2026-09-25T14:20:06.069Z",
     "created_at": "2026-09-17T06:23:13.915Z",
     "updated_at": "2026-09-17T06:23:15.612Z"
   }
@@ -12376,9 +12645,7 @@
   "pk": 4,
   "fields": {
     "department": 3,
-    "user": [
-      "INV001"
-    ],
+    "user": 23,
     "login_id": "INV001",
     "password_hash": "pbkdf2_sha256$1000000$xz3LqB51AbXPVTa0CCbpn3$e3QiFKXpVJEqlgfv8uazfjSappF8cQHrFK+V4PXEJTw=",
     "status": "ACTIVE",
@@ -12392,9 +12659,7 @@
   "pk": 5,
   "fields": {
     "department": 5,
-    "user": [
-      "CRT001"
-    ],
+    "user": 25,
     "login_id": "CRT001",
     "password_hash": "pbkdf2_sha256$1000000$CDX3lC3dcSxbdygf52SfRg$gZUubRQF+5FXoGxkPIe2r95CVvc+Bq/1QGgAt8BQMN4=",
     "status": "SUSPENDED",
@@ -12408,9 +12673,7 @@
   "pk": 6,
   "fields": {
     "department": 9,
-    "user": [
-      "ORD001"
-    ],
+    "user": 26,
     "login_id": "ORD001",
     "password_hash": "pbkdf2_sha256$1000000$84mxfT5hsq9szGjgdjrBQK$vv8iOA+I9YZxWtzuZiKjlzyXvtSnXXiWv6N8Xm3g5yo=",
     "status": "ACTIVE",
@@ -12424,9 +12687,7 @@
   "pk": 7,
   "fields": {
     "department": 7,
-    "user": [
-      "CHK001"
-    ],
+    "user": 27,
     "login_id": "CHK001",
     "password_hash": "pbkdf2_sha256$1000000$6aHrxZWLv95rNFBj6VDFdS$xr/hVcbzE67o/9TSZTVnlYnlmB3evxyOkLscsqL9T8M=",
     "status": "ACTIVE",
@@ -12440,9 +12701,7 @@
   "pk": 8,
   "fields": {
     "department": 10,
-    "user": [
-      "SHP001"
-    ],
+    "user": 28,
     "login_id": "SHP001",
     "password_hash": "pbkdf2_sha256$1000000$fy8nLvyxTaP6QxLNYnAISc$SBqgXlune9YAvnf7yOoiVst6QJO1KKUVhfoUflHMR5Q=",
     "status": "ACTIVE",
@@ -12467,9 +12726,7 @@
   "pk": 2,
   "fields": {
     "session_id": "88135bf7-21e9-4c5d-914e-ee9e5639f648",
-    "user": [
-      "ug1312005@gmail.com"
-    ],
+    "user": 7,
     "metadata": {
       "last_url": "/",
       "last_page_title": "Cartivo • Shop Smarter. Live Better."
@@ -14710,330 +14967,6 @@
     "raw_tool_results": [],
     "actions": [],
     "timestamp": "2026-09-18T16:39:00.126Z"
-  }
-},
-{
-  "model": "admin.logentry",
-  "pk": 1,
-  "fields": {
-    "action_time": "2026-09-08T12:44:08.125Z",
-    "user": [
-      "admin"
-    ],
-    "content_type": [
-      "cms",
-      "promobanner"
-    ],
-    "object_id": "1",
-    "object_repr": "VIRAT V1 5G",
-    "action_flag": 2,
-    "change_message": "[{\"changed\": {\"fields\": [\"Is active\"]}}]"
-  }
-},
-{
-  "model": "admin.logentry",
-  "pk": 2,
-  "fields": {
-    "action_time": "2026-09-08T12:44:08.130Z",
-    "user": [
-      "admin"
-    ],
-    "content_type": [
-      "cms",
-      "promobanner"
-    ],
-    "object_id": "2",
-    "object_repr": "Ortho Slippers",
-    "action_flag": 2,
-    "change_message": "[{\"changed\": {\"fields\": [\"Is active\"]}}]"
-  }
-},
-{
-  "model": "admin.logentry",
-  "pk": 3,
-  "fields": {
-    "action_time": "2026-09-08T13:00:32.357Z",
-    "user": [
-      "admin"
-    ],
-    "content_type": [
-      "cms",
-      "categorynavitem"
-    ],
-    "object_id": "16",
-    "object_repr": "Fashion",
-    "action_flag": 2,
-    "change_message": "[{\"changed\": {\"fields\": [\"Is highlighted\"]}}]"
-  }
-},
-{
-  "model": "admin.logentry",
-  "pk": 4,
-  "fields": {
-    "action_time": "2026-09-08T13:00:51.314Z",
-    "user": [
-      "admin"
-    ],
-    "content_type": [
-      "cms",
-      "categorynavitem"
-    ],
-    "object_id": "16",
-    "object_repr": "Fashion",
-    "action_flag": 2,
-    "change_message": "[{\"changed\": {\"fields\": [\"Is highlighted\"]}}]"
-  }
-},
-{
-  "model": "admin.logentry",
-  "pk": 5,
-  "fields": {
-    "action_time": "2026-09-15T08:06:46.688Z",
-    "user": [
-      "admin"
-    ],
-    "content_type": [
-      "catalog",
-      "product"
-    ],
-    "object_id": "8",
-    "object_repr": "Saddle Leather Daypack",
-    "action_flag": 2,
-    "change_message": "[{\"changed\": {\"fields\": [\"Is trending\"]}}]"
-  }
-},
-{
-  "model": "admin.logentry",
-  "pk": 6,
-  "fields": {
-    "action_time": "2026-09-15T08:06:46.691Z",
-    "user": [
-      "admin"
-    ],
-    "content_type": [
-      "catalog",
-      "product"
-    ],
-    "object_id": "7",
-    "object_repr": "Atelier Merino Overcoat",
-    "action_flag": 2,
-    "change_message": "[{\"changed\": {\"fields\": [\"Is trending\"]}}]"
-  }
-},
-{
-  "model": "admin.logentry",
-  "pk": 7,
-  "fields": {
-    "action_time": "2026-09-15T08:06:46.694Z",
-    "user": [
-      "admin"
-    ],
-    "content_type": [
-      "catalog",
-      "product"
-    ],
-    "object_id": "6",
-    "object_repr": "Aura ANC Pro Earbuds",
-    "action_flag": 2,
-    "change_message": "[{\"changed\": {\"fields\": [\"Is trending\"]}}]"
-  }
-},
-{
-  "model": "admin.logentry",
-  "pk": 8,
-  "fields": {
-    "action_time": "2026-09-15T08:06:46.696Z",
-    "user": [
-      "admin"
-    ],
-    "content_type": [
-      "catalog",
-      "product"
-    ],
-    "object_id": "5",
-    "object_repr": "Titanium Smart Chronograph",
-    "action_flag": 2,
-    "change_message": "[{\"changed\": {\"fields\": [\"Is trending\"]}}]"
-  }
-},
-{
-  "model": "admin.logentry",
-  "pk": 9,
-  "fields": {
-    "action_time": "2026-09-15T08:07:15.335Z",
-    "user": [
-      "admin"
-    ],
-    "content_type": [
-      "catalog",
-      "product"
-    ],
-    "object_id": "8",
-    "object_repr": "Saddle Leather Daypack",
-    "action_flag": 2,
-    "change_message": "[{\"changed\": {\"fields\": [\"Is trending\"]}}]"
-  }
-},
-{
-  "model": "admin.logentry",
-  "pk": 10,
-  "fields": {
-    "action_time": "2026-09-15T08:07:15.336Z",
-    "user": [
-      "admin"
-    ],
-    "content_type": [
-      "catalog",
-      "product"
-    ],
-    "object_id": "7",
-    "object_repr": "Atelier Merino Overcoat",
-    "action_flag": 2,
-    "change_message": "[{\"changed\": {\"fields\": [\"Is trending\"]}}]"
-  }
-},
-{
-  "model": "admin.logentry",
-  "pk": 11,
-  "fields": {
-    "action_time": "2026-09-15T08:07:15.337Z",
-    "user": [
-      "admin"
-    ],
-    "content_type": [
-      "catalog",
-      "product"
-    ],
-    "object_id": "6",
-    "object_repr": "Aura ANC Pro Earbuds",
-    "action_flag": 2,
-    "change_message": "[{\"changed\": {\"fields\": [\"Is trending\"]}}]"
-  }
-},
-{
-  "model": "admin.logentry",
-  "pk": 12,
-  "fields": {
-    "action_time": "2026-09-15T08:07:15.338Z",
-    "user": [
-      "admin"
-    ],
-    "content_type": [
-      "catalog",
-      "product"
-    ],
-    "object_id": "5",
-    "object_repr": "Titanium Smart Chronograph",
-    "action_flag": 2,
-    "change_message": "[{\"changed\": {\"fields\": [\"Is trending\"]}}]"
-  }
-},
-{
-  "model": "admin.logentry",
-  "pk": 13,
-  "fields": {
-    "action_time": "2026-09-15T08:58:39.818Z",
-    "user": [
-      "admin"
-    ],
-    "content_type": [
-      "accounts",
-      "role"
-    ],
-    "object_id": "3",
-    "object_repr": "CMS Content Manager",
-    "action_flag": 2,
-    "change_message": "[]"
-  }
-},
-{
-  "model": "admin.logentry",
-  "pk": 14,
-  "fields": {
-    "action_time": "2026-09-16T12:24:18.307Z",
-    "user": [
-      "admin"
-    ],
-    "content_type": [
-      "auth",
-      "group"
-    ],
-    "object_id": "1",
-    "object_repr": "Cartivo Department",
-    "action_flag": 2,
-    "change_message": "[]"
-  }
-},
-{
-  "model": "admin.logentry",
-  "pk": 15,
-  "fields": {
-    "action_time": "2026-09-16T12:24:32.278Z",
-    "user": [
-      "admin"
-    ],
-    "content_type": [
-      "auth",
-      "group"
-    ],
-    "object_id": "2",
-    "object_repr": "Customer",
-    "action_flag": 2,
-    "change_message": "[]"
-  }
-},
-{
-  "model": "admin.logentry",
-  "pk": 16,
-  "fields": {
-    "action_time": "2026-09-16T12:32:49.618Z",
-    "user": [
-      "admin"
-    ],
-    "content_type": [
-      "auth",
-      "group"
-    ],
-    "object_id": "1",
-    "object_repr": "Cartivo Department",
-    "action_flag": 2,
-    "change_message": "[]"
-  }
-},
-{
-  "model": "admin.logentry",
-  "pk": 17,
-  "fields": {
-    "action_time": "2026-09-16T12:32:54.897Z",
-    "user": [
-      "admin"
-    ],
-    "content_type": [
-      "auth",
-      "group"
-    ],
-    "object_id": "2",
-    "object_repr": "Customer",
-    "action_flag": 2,
-    "change_message": "[]"
-  }
-},
-{
-  "model": "admin.logentry",
-  "pk": 18,
-  "fields": {
-    "action_time": "2026-09-16T12:33:26.398Z",
-    "user": [
-      "admin"
-    ],
-    "content_type": [
-      "auth",
-      "user"
-    ],
-    "object_id": "9",
-    "object_repr": "CMS001",
-    "action_flag": 2,
-    "change_message": "[]"
   }
 }
 ]

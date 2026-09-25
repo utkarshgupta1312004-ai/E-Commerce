@@ -257,7 +257,18 @@
     - Authored [static/js/table-paginator.js](file:///d:/django_project/E-Commerce/E-Commerce/ecom/static/js/table-paginator.js): Lightweight, zero-dependency vanilla JS class supporting rows-per-page (5, 10, 20, All), sliding window navigation, dynamic info counter, and seamless live search/filter integration.
     - Applied `TablePaginator` across Domains, Sales, and Users tables.
     - Added universal `@media print` stylesheet in `superadmin_base.html`: Automatically hides UI chrome, un-paginates table during print events, renders crisp multi-page tables on clean paper with repeating `thead` and print headers.
-    - Added dedicated "Print List" / "Print Ledger" / "Print Users" buttons in all table toolbars.
+    - **2026-09-25:**
+  - **Render Deployment & Automated Database Seeding Infrastructure:**
+    - Resolved `python manage.py dumpdata` encoding crash on Windows PowerShell (`UnicodeEncodeError: 'charmap'` caused by default cp1252 encoding attempting to serialize `₹` currency symbols in notifications/titles) by dumping with explicit UTF-8 encoding.
+    - Successfully serialized all 909 active records across 42 models into [ecom/data.json](file:///d:/django_project/E-Commerce/E-Commerce/ecom/data.json) and synchronized [ecom/fixtures/seed_data.json](file:///d:/django_project/E-Commerce/E-Commerce/ecom/fixtures/seed_data.json).
+    - Authored [apps/core/management/commands/ensure_seed_data.py](file:///d:/django_project/E-Commerce/E-Commerce/ecom/apps/core/management/commands/ensure_seed_data.py):
+      - Automatically loads `fixtures/seed_data.json` if core catalog records are missing (e.g. on fresh PostgreSQL deployment on Render).
+      - Safely skips loading if the catalog is already populated, preventing primary key collisions or overwriting on subsequent deploys.
+      - Supports manual `--force` re-seeding if requested.
+    - Updated [build.sh](file:///d:/django_project/E-Commerce/E-Commerce/build.sh) to execute `python ecom/manage.py ensure_seed_data` directly after `migrate`.
+    - Set git executable permissions (`chmod +x` / mode `100755`) on [build.sh](file:///d:/django_project/E-Commerce/E-Commerce/build.sh) to prevent Linux execution permission denial.
+    - Updated [render.yaml](file:///d:/django_project/E-Commerce/E-Commerce/render.yaml) with `buildCommand: "bash ./build.sh"` for defense-in-depth script execution.
+    - Validated Django system check (0 issues identified) and passed complete automated test suite (150/150 tests passing green).
 
 
 

@@ -158,8 +158,12 @@ TEMPLATES = [
 WSGI_APPLICATION = 'ecom.wsgi.application'
 
 
-DATABASE_URL = os.environ.get('DATABASE_URL')
-if DATABASE_URL:
+# Database configuration
+# Uses the project's SQLite database (db.sqlite3) along with all existing data by default.
+USE_SQLITE = os.environ.get('USE_SQLITE', 'True').strip().lower() in ('true', '1', 'yes')
+DATABASE_URL = (os.environ.get('DATABASE_URL') or '').strip()
+
+if DATABASE_URL and not USE_SQLITE:
     try:
         import dj_database_url
         DATABASES = {
@@ -171,40 +175,39 @@ if DATABASE_URL:
             )
         }
     except Exception:
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
-            }
-        }
-else:
+        USE_SQLITE = True
+
+if USE_SQLITE or 'DATABASES' not in locals():
+    # Resolve existing populated db.sqlite3 location
+    db_candidates = [
+        BASE_DIR / 'db.sqlite3',
+        BASE_DIR.parent / 'ecom' / 'db.sqlite3',
+        BASE_DIR.parent / 'db.sqlite3',
+        Path('/var/task/ecom/db.sqlite3'),
+        Path('/var/task/db.sqlite3'),
+    ]
+    resolved_db_path = BASE_DIR / 'db.sqlite3'
+    for candidate in db_candidates:
+        if candidate.exists() and candidate.stat().st_size > 0:
+            resolved_db_path = candidate
+            break
+
     # Serverless runtime detection (Vercel has read-only filesystem except /tmp)
     is_vercel = bool(os.environ.get('VERCEL') or os.environ.get('VERCEL_ENV'))
-    db_path = BASE_DIR / 'db.sqlite3'
     if is_vercel:
         import shutil
         tmp_db = Path('/tmp/db.sqlite3')
-        if not tmp_db.exists():
-            candidates = [
-                BASE_DIR / 'db.sqlite3',
-                BASE_DIR.parent / 'ecom' / 'db.sqlite3',
-                BASE_DIR.parent / 'db.sqlite3',
-                Path('/var/task/ecom/db.sqlite3'),
-                Path('/var/task/db.sqlite3'),
-            ]
-            for src in candidates:
-                if src.exists() and src.stat().st_size > 0:
-                    try:
-                        shutil.copy2(src, tmp_db)
-                        break
-                    except Exception:
-                        pass
-        db_path = tmp_db
+        if not tmp_db.exists() and resolved_db_path.exists():
+            try:
+                shutil.copy2(resolved_db_path, tmp_db)
+            except Exception:
+                pass
+        resolved_db_path = tmp_db
 
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': db_path,
+            'NAME': resolved_db_path,
         }
     }
 

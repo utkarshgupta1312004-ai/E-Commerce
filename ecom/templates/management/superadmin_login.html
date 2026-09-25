@@ -1,4 +1,5 @@
 {% extends "management/base.html" %}
+{% load static %}
 
 {% block title %}Super Administrator Authentication | Cartivo Console{% endblock %}
 
@@ -6,34 +7,34 @@
 <div class="w-full min-h-[calc(100vh-10rem)] flex items-center justify-center px-4 py-8 sm:py-12">
     <div class="w-full max-w-md my-auto">
         
-        <!-- Brand & Shield Header -->
+        <!-- Brand & Shield Header Matching Store Aesthetics -->
         <div class="flex flex-col items-center text-center mb-6 sm:mb-8">
-            <div class="w-16 h-16 rounded-3xl bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-600 p-0.5 shadow-2xl shadow-blue-500/30 mb-4 animate-pulse shrink-0">
-                <div class="w-full h-full bg-[#0f172a] rounded-[22px] flex items-center justify-center">
-                    <i data-lucide="shield-check" class="w-8 h-8 text-cyan-400"></i>
+            <div class="w-16 h-16 rounded-3xl bg-blue-50 border border-blue-200/80 p-1 shadow-sm mb-4 shrink-0 flex items-center justify-center">
+                <div class="w-full h-full bg-white rounded-[20px] flex items-center justify-center border border-blue-100 shadow-2xs">
+                    <i data-lucide="shield-check" class="w-8 h-8 text-blue-600"></i>
                 </div>
             </div>
-            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-500/30 text-cyan-300 text-xs font-bold uppercase tracking-wider mb-2.5">
-                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 live-dot"></span>
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs font-bold uppercase tracking-wider mb-2.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-600 live-dot"></span>
                 <span>Root Governance Access</span>
             </div>
-            <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
                 Superadmin Sign In
             </h1>
-            <p class="mt-2 text-xs text-slate-400 max-w-sm mx-auto leading-relaxed">
+            <p class="mt-2 text-xs text-slate-600 max-w-sm mx-auto leading-relaxed">
                 Universal management authority. Department staff accounts and passwords are provisioned through this portal.
             </p>
         </div>
 
-        <!-- Superadmin Auth Form Card Matching Superadmin UI -->
-        <div class="relative rounded-3xl bg-[#131c2e] border border-blue-500/30 p-6 sm:p-8 shadow-2xl shadow-blue-500/10">
+        <!-- Superadmin Auth Form Card -->
+        <div class="relative rounded-3xl bg-white border border-slate-200/90 p-6 sm:p-8 shadow-xl shadow-slate-200/50">
             <form method="POST" action="{% url 'management:login' %}" class="space-y-4 sm:space-y-5">
                 {% csrf_token %}
                 <input type="hidden" name="next" value="{{ next }}">
 
                 <!-- Username Field -->
                 <div>
-                    <label for="username" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                    <label for="username" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
                         Superadmin Username / ID
                     </label>
                     <div class="relative">
@@ -46,15 +47,15 @@
                             name="username" 
                             required 
                             autocomplete="username"
-                            placeholder="e.g. cartivo.admin"
-                            class="w-full pl-10 pr-4 py-3 rounded-xl bg-[#0f172a] border border-[#1e293b] text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                            placeholder="e.g. admin"
+                            class="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 focus:bg-white border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-500/15 transition-all"
                         >
                     </div>
                 </div>
 
                 <!-- Password Field -->
                 <div>
-                    <label for="password" class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                    <label for="password" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
                         Master Password
                     </label>
                     <div class="relative">
@@ -68,12 +69,12 @@
                             required 
                             autocomplete="current-password"
                             placeholder="••••••••••••"
-                            class="w-full pl-10 pr-11 py-3 rounded-xl bg-[#0f172a] border border-[#1e293b] text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                            class="w-full pl-10 pr-11 py-3 rounded-xl bg-slate-50 focus:bg-white border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-500/15 transition-all"
                         >
                         <button 
                             type="button" 
                             id="toggle-password" 
-                            class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white transition-colors cursor-pointer"
+                            class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
                             aria-label="Toggle password visibility"
                         >
                             <i data-lucide="eye" class="w-4 h-4" id="eye-icon"></i>
@@ -83,7 +84,7 @@
 
                 <!-- Authority Tag -->
                 <div class="flex items-center justify-end text-xs pt-1">
-                    <span class="text-[10px] font-bold text-amber-400 bg-amber-400/10 border border-amber-400/20 px-2.5 py-0.5 rounded-full uppercase">
+                    <span class="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full uppercase">
                         Root Authority
                     </span>
                 </div>
@@ -91,7 +92,7 @@
                 <!-- Submit Button -->
                 <button 
                     type="submit" 
-                    class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-600/25 hover:shadow-blue-600/40 transition-all duration-200 cursor-pointer"
+                    class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
                 >
                     <i data-lucide="log-in" class="w-4 h-4"></i>
                     <span>Authenticate as Superadmin</span>
@@ -99,13 +100,13 @@
             </form>
 
             <!-- Department Info Callout -->
-            <div class="mt-6 pt-5 border-t border-[#1e293b]">
-                <div class="rounded-2xl bg-[#0f172a] border border-[#1e293b] p-3.5 sm:p-4 text-xs text-slate-400 space-y-1.5">
-                    <div class="flex items-center gap-2 font-bold text-slate-200">
-                        <i data-lucide="info" class="w-4 h-4 text-blue-400 shrink-0"></i>
+            <div class="mt-6 pt-5 border-t border-slate-100">
+                <div class="rounded-2xl bg-slate-50 border border-slate-200/80 p-3.5 sm:p-4 text-xs text-slate-600 space-y-1.5">
+                    <div class="flex items-center gap-2 font-bold text-slate-900">
+                        <i data-lucide="info" class="w-4 h-4 text-blue-600 shrink-0"></i>
                         <span>Department Staff Access</span>
                     </div>
-                    <p class="text-[11px] text-slate-400 leading-relaxed pl-6">
+                    <p class="text-[11px] text-slate-500 leading-relaxed pl-6">
                         Department-specific User IDs and Passwords are provisioned and assigned exclusively by the Super Administrator.
                     </p>
                 </div>
@@ -113,7 +114,7 @@
 
             <!-- Return Link -->
             <div class="mt-5 text-center">
-                <a href="{% url 'management:portal' %}" class="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors py-1 px-3 rounded-xl hover:bg-slate-800/60">
+                <a href="{% url 'management:portal' %}" class="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-blue-600 transition-colors py-1 px-3 rounded-xl hover:bg-slate-100">
                     <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
                     <span>Return to Management Directory</span>
                 </a>

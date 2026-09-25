@@ -9,6 +9,7 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('google/login/', views.google_login_view, name='google_login'),
     path('google/callback/', views.google_callback_view, name='google_callback'),
+    path('google/callback', views.google_callback_view),
     path('profile/', views.profile_view, name='profile'),
     path('password/change/', views.change_password_view, name='change_password'),
     path('settings/', views.account_settings_view, name='settings'),

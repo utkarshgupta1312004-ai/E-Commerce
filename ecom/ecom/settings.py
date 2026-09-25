@@ -79,6 +79,9 @@ if _render_hostname:
     if _render_origin not in CSRF_TRUSTED_ORIGINS:
         CSRF_TRUSTED_ORIGINS.append(_render_origin)
 
+# Reverse Proxy SSL Headers (Required for Render and Google OAuth HTTPS redirects)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
 
 
 # Application definition

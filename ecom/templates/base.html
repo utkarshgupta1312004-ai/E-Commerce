@@ -184,7 +184,95 @@
                 console.error('Wishlist card toggle error:', err);
             });
         };
-    </script>
+
+        // Global quick add to bag function for product card '+' buttons
+        window.quickAddToCart = function(event, productId, btn) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            if (!productId || !btn || btn.disabled) return;
+
+            btn.disabled = true;
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = '<svg class="animate-spin w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+
+            let csrfToken = '{{ csrf_token }}';
+            if (!csrfToken) {
+                const match = document.cookie.match(/csrftoken=([^;]+)/);
+                if (match) csrfToken = match[1];
+            }
+
+            fetch("{% url 'cart:add_to_cart' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    product_id: productId,
+                    quantity: 1
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                btn.disabled = false;
+                if (data.success) {
+                    // Update all cart count badges in header and mobile navigation
+                    document.querySelectorAll('#cart-badge, .cart-badge-count').forEach(badge => {
+                        badge.textContent = data.cart_item_count;
+                        badge.classList.remove('hidden');
+                        badge.classList.add('scale-125');
+                        setTimeout(() => badge.classList.remove('scale-125'), 300);
+                    });
+
+                    const headerPrice = document.getElementById('cart-header-price');
+                    if (headerPrice && data.cart_total) {
+                        headerPrice.textContent = '₹' + data.cart_total;
+                    }
+
+                    // Success animation on '+' button
+                    btn.classList.remove('bg-slate-950', 'hover:bg-blue-600');
+                    btn.classList.add('bg-emerald-600', 'text-white');
+                    btn.innerHTML = '<svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+
+                    if (window.showToast) {
+                        window.showToast(data.message || 'Added to shopping bag!', 'success');
+                    }
+
+                    setTimeout(() => {
+                        btn.classList.remove('bg-emerald-600');
+                        btn.classList.add('bg-slate-950', 'hover:bg-blue-600');
+                        btn.innerHTML = originalContent;
+                        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                            window.lucide.createIcons();
+                        }
+                    }, 1400);
+                } else {
+                    btn.innerHTML = originalContent;
+                    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                        window.lucide.createIcons();
+                    }
+                    if (window.showToast) {
+                        window.showToast(data.message || 'Could not add item to bag.', 'error');
+                    } else {
+                        alert(data.message || 'Could not add item to bag.');
+                    }
+                }
+            })
+            .catch(err => {
+                console.error('Quick add to cart error:', err);
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+                if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                    window.lucide.createIcons();
+                }
+                if (window.showToast) {
+                    window.showToast('Network error while adding to bag.', 'error');
+                }
+            });
+        };
 
     {% block extra_js %}{% endblock %}
 </body>

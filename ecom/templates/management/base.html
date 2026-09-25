@@ -93,6 +93,43 @@
         .live-dot {
             animation: subtlePulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
+
+        /* Management Button Engine */
+        button[class*="bg-slate-800"]:not(.btn-primary):not([class*="bg-emerald"]):not([class*="bg-blue"]):not([class*="bg-rose"]):not([class*="bg-amber"]),
+        a[class*="bg-slate-800"]:not(.btn-primary):not([class*="bg-emerald"]):not([class*="bg-blue"]):not([class*="bg-rose"]):not([class*="bg-amber"]),
+        button[class*="bg-[#131c2e]"], a[class*="bg-[#131c2e]"],
+        button[class*="bg-[#0f172a]"], a[class*="bg-[#0f172a]"],
+        button[class*="bg-[#0e1424]"], a[class*="bg-[#0e1424]"],
+        button.bg-slate-800, a.bg-slate-800 {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border: 1px solid #cbd5e1 !important;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+            font-weight: 600 !important;
+        }
+
+        button[class*="bg-slate-800"]:not(.btn-primary):not([class*="bg-emerald"]):not([class*="bg-blue"]):not([class*="bg-rose"]):not([class*="bg-amber"]):hover,
+        a[class*="bg-slate-800"]:not(.btn-primary):not([class*="bg-emerald"]):not([class*="bg-blue"]):not([class*="bg-rose"]):not([class*="bg-amber"]):hover,
+        button[class*="bg-[#131c2e]"]:hover, a[class*="bg-[#131c2e]"]:hover,
+        button.bg-slate-800:hover, a.bg-slate-800:hover {
+            background-color: #f1f5f9 !important;
+            border-color: #94a3b8 !important;
+            color: #0f172a !important;
+        }
+
+        button[class*="bg-slate-800"]:not(.btn-primary):not([class*="bg-emerald"]):not([class*="bg-blue"]):not([class*="bg-rose"]):not([class*="bg-amber"]) *,
+        a[class*="bg-slate-800"]:not(.btn-primary):not([class*="bg-emerald"]):not([class*="bg-blue"]):not([class*="bg-rose"]):not([class*="bg-amber"]) *,
+        button[class*="bg-[#131c2e]"] *, a[class*="bg-[#131c2e]"] *,
+        button[class*="bg-[#0f172a]"] *, a[class*="bg-[#0f172a]"] *,
+        button.bg-slate-800 *, a.bg-slate-800 * {
+            color: inherit !important;
+        }
+
+        .btn-primary, .btn-primary *,
+        .keep-white, .keep-white * {
+            color: #ffffff !important;
+            fill: #ffffff !important;
+        }
     </style>
     {% block extra_head %}{% endblock %}
 </head>

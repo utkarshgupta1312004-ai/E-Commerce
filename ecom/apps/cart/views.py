@@ -60,6 +60,15 @@ def add_to_cart_view(request):
             variant = ProductVariant.objects.filter(id=int(variant_id), product=product, is_active=True).first()
         except (ValueError, TypeError):
             variant = None
+    elif product.variants.filter(is_active=True).exists():
+        # Fallback to the first available variant with stock, or first active variant
+        active_vars = product.variants.filter(is_active=True)
+        for v in active_vars:
+            if v.is_in_stock:
+                variant = v
+                break
+        if not variant and active_vars.exists():
+            variant = active_vars.first()
 
     try:
         item = CartService.add_item(request, product=product, variant=variant, quantity=quantity)

@@ -201,6 +201,92 @@
             border: 1px solid #e2e8f0 !important;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
         }
+
+        /* ============================================================== */
+        /* COMPREHENSIVE BUTTON ENGINE FOR ALL MANAGEMENT PAGES          */
+        /* Eliminates dark/unreadable black blobs and ensures clean UI    */
+        /* ============================================================== */
+
+        /* 1. Neutral / Secondary / Action / Table / Search buttons */
+        button[class*="bg-slate-800"]:not(.btn-primary):not([class*="bg-emerald"]):not([class*="bg-blue"]):not([class*="bg-rose"]):not([class*="bg-amber"]),
+        a[class*="bg-slate-800"]:not(.btn-primary):not([class*="bg-emerald"]):not([class*="bg-blue"]):not([class*="bg-rose"]):not([class*="bg-amber"]),
+        button[class*="bg-[#131c2e]"], a[class*="bg-[#131c2e]"],
+        button[class*="bg-[#0f172a]"], a[class*="bg-[#0f172a]"],
+        button[class*="bg-[#0e1424]"], a[class*="bg-[#0e1424]"],
+        button.bg-slate-800, a.bg-slate-800 {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border: 1px solid #cbd5e1 !important;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+            font-weight: 600 !important;
+        }
+
+        button[class*="bg-slate-800"]:not(.btn-primary):not([class*="bg-emerald"]):not([class*="bg-blue"]):not([class*="bg-rose"]):not([class*="bg-amber"]):hover,
+        a[class*="bg-slate-800"]:not(.btn-primary):not([class*="bg-emerald"]):not([class*="bg-blue"]):not([class*="bg-rose"]):not([class*="bg-amber"]):hover,
+        button[class*="bg-[#131c2e]"]:hover, a[class*="bg-[#131c2e]"]:hover,
+        button.bg-slate-800:hover, a.bg-slate-800:hover {
+            background-color: #f1f5f9 !important;
+            border-color: #94a3b8 !important;
+            color: #0f172a !important;
+        }
+
+        /* Ensure child text and icons inside secondary buttons inherit readable dark color */
+        button[class*="bg-slate-800"]:not(.btn-primary):not([class*="bg-emerald"]):not([class*="bg-blue"]):not([class*="bg-rose"]):not([class*="bg-amber"]) *,
+        a[class*="bg-slate-800"]:not(.btn-primary):not([class*="bg-emerald"]):not([class*="bg-blue"]):not([class*="bg-rose"]):not([class*="bg-amber"]) *,
+        button[class*="bg-[#131c2e]"] *, a[class*="bg-[#131c2e]"] *,
+        button[class*="bg-[#0f172a]"] *, a[class*="bg-[#0f172a]"] *,
+        button.bg-slate-800 *, a.bg-slate-800 * {
+            color: inherit !important;
+        }
+
+        /* 2. Top-right Logout / Sign Out button */
+        a[title="Sign Out"], a[title="Logout"], a[href*="logout"] {
+            background-color: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            color: #334155 !important;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+        }
+        a[title="Sign Out"]:hover, a[title="Logout"]:hover, a[href*="logout"]:hover {
+            background-color: #fff1f2 !important;
+            border-color: #fecdd3 !important;
+            color: #e11d48 !important;
+        }
+        a[title="Sign Out"] *, a[title="Logout"] *, a[href*="logout"] * {
+            color: inherit !important;
+        }
+        a[title="Sign Out"] svg, a[title="Sign Out"] i, a[title="Logout"] svg, a[title="Logout"] i, a[href*="logout"] svg, a[href*="logout"] i {
+            color: #e11d48 !important;
+        }
+
+        /* 3. Primary & Brand action buttons - always keep white text & icons */
+        .btn-primary, .btn-primary *,
+        .bg-emerald-600, .bg-emerald-600 *,
+        .bg-blue-600, .bg-blue-600 *,
+        .bg-indigo-600, .bg-indigo-600 *,
+        .bg-rose-600, .bg-rose-600 *,
+        [class*="bg-emerald-600"], [class*="bg-emerald-600"] *,
+        [class*="bg-blue-600"], [class*="bg-blue-600"] *,
+        [class*="from-emerald-600"], [class*="from-emerald-600"] *,
+        .keep-white, .keep-white * {
+            color: #ffffff !important;
+            fill: #ffffff !important;
+        }
+
+        /* 4. Table action icon buttons */
+        td button, td a.p-1\.5, td a.p-2, td a.p-1 {
+            color: #475569 !important;
+            background-color: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03) !important;
+        }
+        td button:hover, td a.p-1\.5:hover, td a.p-2:hover, td a.p-1:hover {
+            background-color: #f8fafc !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+        td button *, td a.p-1\.5 *, td a.p-2 *, td a.p-1 * {
+            color: inherit !important;
+        }
         .bg-emerald-500\/10, .bg-emerald-500\/15, .bg-emerald-500\/20 {
             background-color: #ecfdf5 !important;
             color: #047857 !important;
@@ -524,13 +610,13 @@
                 </a>
                 {% endblock %}
 
-                <a href="{% url 'catalog:product_list' %}" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/80 text-xs font-semibold transition-all shadow-xs" title="Preview Storefront">
-                    <i data-lucide="external-link" class="w-3.5 h-3.5 text-blue-400"></i>
+                <a href="{% url 'catalog:product_list' %}" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-blue-600 border border-slate-200 hover:border-slate-300 text-xs font-semibold transition-all shadow-2xs" title="Preview Storefront">
+                    <i data-lucide="external-link" class="w-3.5 h-3.5 text-blue-500"></i>
                     <span>Storefront</span>
                 </a>
 
-                <a href="{% if request.user.is_superuser and not request.session.department_slug %}{% url 'management:logout' %}{% else %}{% url 'management:dept_logout' %}{% endif %}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-rose-500/15 text-slate-300 hover:text-rose-300 border border-slate-700/80 hover:border-rose-500/30 text-xs font-semibold transition-all shadow-xs" title="Sign Out">
-                    <i data-lucide="log-out" class="w-3.5 h-3.5 text-rose-400"></i>
+                <a href="{% if request.user.is_superuser and not request.session.department_slug %}{% url 'management:logout' %}{% else %}{% url 'management:dept_logout' %}{% endif %}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-rose-50 text-slate-700 hover:text-rose-600 border border-slate-200 hover:border-rose-200 text-xs font-semibold transition-all shadow-2xs" title="Sign Out">
+                    <i data-lucide="log-out" class="w-3.5 h-3.5 text-rose-500"></i>
                     <span class="hidden sm:inline">Logout</span>
                 </a>
             </div>

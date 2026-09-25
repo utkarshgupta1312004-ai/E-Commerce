@@ -106,7 +106,13 @@
                             <span class="text-[10px] sm:text-xs text-slate-400 line-through ml-1">₹{{ prod.compare_at_price }}</span>
                             {% endif %}
                         </div>
-                        <button class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-950 hover:bg-blue-600 text-white flex items-center justify-center shadow-sm transition-colors cursor-pointer shrink-0" title="Add to Cart">
+                        <button 
+                            type="button"
+                            onclick="quickAddToCart(event, '{{ prod.id }}', this)" 
+                            class="quick-add-btn w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-950 hover:bg-blue-600 text-white flex items-center justify-center shadow-sm transition-all duration-200 active:scale-90 cursor-pointer shrink-0" 
+                            title="Add to Cart"
+                            aria-label="Add {{ prod.title }} to Cart"
+                        >
                             <i data-lucide="plus" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
                         </button>
                     </div>

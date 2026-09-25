@@ -25,6 +25,9 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Role, UserProfile, Address
 from apps.core.models import ManagementDepartment
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def login_view(request):
@@ -39,6 +42,13 @@ def login_view(request):
         return redirect('/')
 
     redirect_to = request.POST.get('next') or request.GET.get('next') or '/'
+    google_client_id = _get_env_config('GOOGLE_CLIENT_ID')
+
+    def render_login(extra_ctx=None):
+        ctx = {'next': redirect_to, 'google_client_id': google_client_id}
+        if extra_ctx:
+            ctx.update(extra_ctx)
+        return render(request, 'accounts/login.html', ctx)
 
     if request.method == 'POST':
         login_id = request.POST.get('email', '').strip()
@@ -47,7 +57,7 @@ def login_view(request):
 
         if not login_id or not password:
             messages.error(request, "Please enter both email/username and password.")
-            return render(request, 'accounts/login.html', {'next': redirect_to, 'email': login_id})
+            return render_login({'email': login_id})
 
         # Try authenticating directly as username first
         user = authenticate(request, username=login_id, password=password)
@@ -70,13 +80,13 @@ def login_view(request):
                         request,
                         "Super Administrator accounts cannot sign in through the customer storefront. Please authenticate via the Management Portal (/management/login/)."
                     )
-                    return render(request, 'accounts/login.html', {'next': redirect_to, 'email': login_id})
+                    return render_login({'email': login_id})
                 if not candidate.is_active:
                     messages.error(
                         request,
                         "Your account has been deactivated or suspended. Please contact customer support."
                     )
-                    return render(request, 'accounts/login.html', {'next': redirect_to, 'email': login_id})
+                    return render_login({'email': login_id})
 
         if user is not None:
             # 1. Superadmin accounts are strictly forbidden from customer storefront login
@@ -85,7 +95,7 @@ def login_view(request):
                     request,
                     "Super Administrator accounts cannot sign in through the customer storefront. Please authenticate via the Management Portal (/management/login/)."
                 )
-                return render(request, 'accounts/login.html', {'next': redirect_to, 'email': login_id})
+                return render_login({'email': login_id})
 
             # 2. Check active status
             if not user.is_active:
@@ -93,7 +103,7 @@ def login_view(request):
                     request,
                     "Your account has been deactivated or suspended. Please contact customer support."
                 )
-                return render(request, 'accounts/login.html', {'next': redirect_to, 'email': login_id})
+                return render_login({'email': login_id})
 
             # 3. Department staff accounts cannot log in through customer storefront
             is_dept_staff = (
@@ -105,7 +115,7 @@ def login_view(request):
                     request,
                     "Department staff accounts cannot sign in through the customer storefront. Please use the Management Portal."
                 )
-                return render(request, 'accounts/login.html', {'next': redirect_to, 'email': login_id})
+                return render_login({'email': login_id})
 
             # Rotate session key to protect against session fixation
             request.session.cycle_key()
@@ -127,9 +137,9 @@ def login_view(request):
             return redirect('/')
         else:
             messages.error(request, "Invalid email/username or password. Please check your credentials.")
-            return render(request, 'accounts/login.html', {'next': redirect_to, 'email': login_id})
+            return render_login({'email': login_id})
 
-    return render(request, 'accounts/login.html', {'next': redirect_to})
+    return render_login()
 
 
 def register_view(request):
@@ -138,11 +148,18 @@ def register_view(request):
     Registers new customer using existing User model and UserProfile.
     """
     redirect_to = request.POST.get('next') or request.GET.get('next') or '/'
+    google_client_id = _get_env_config('GOOGLE_CLIENT_ID')
 
     if request.user.is_authenticated:
         if redirect_to and redirect_to.startswith('/'):
             return redirect(redirect_to)
         return redirect('/')
+
+    def render_register(extra_ctx=None):
+        ctx = {'next': redirect_to, 'google_client_id': google_client_id}
+        if extra_ctx:
+            ctx.update(extra_ctx)
+        return render(request, 'accounts/register.html', ctx)
 
     if request.method == 'POST':
         full_name = request.POST.get('full_name', '').strip()
@@ -177,7 +194,7 @@ def register_view(request):
         if errors:
             for err in errors:
                 messages.error(request, err)
-            return render(request, 'accounts/register.html', {
+            return render_register({
                 'full_name': full_name,
                 'email': email,
                 'phone': phone,
@@ -224,8 +241,7 @@ def register_view(request):
             return redirect(redirect_to)
         return redirect('/')
 
-
-    return render(request, 'accounts/register.html', {'next': redirect_to})
+    return render_register()
 
 
 def _get_env_config(key, default=''):
@@ -236,7 +252,7 @@ def _get_env_config(key, default=''):
     val = os.environ.get(key, '').strip()
     if val:
         return val
-    for env_path in [settings.BASE_DIR / '.env', settings.BASE_DIR.parent / '.env']:
+    for env_path in [settings.BASE_DIR / '.env', settings.BASE_DIR.parent / '.env', settings.BASE_DIR.parent / 'ecom' / '.env']:
         if env_path.exists():
             try:
                 with open(env_path, 'r', encoding='utf-8') as f:
@@ -254,9 +270,11 @@ def _get_env_config(key, default=''):
 def google_login_view(request):
     """
     Initiates Google OAuth2 login flow.
-    Uses GOOGLE_CLIENT_ID from environment variables or .env file.
+    Uses GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET from environment variables or .env file.
     """
     client_id = _get_env_config('GOOGLE_CLIENT_ID')
+    client_secret = _get_env_config('GOOGLE_CLIENT_SECRET')
+
     if not client_id:
         messages.warning(
             request,
@@ -264,9 +282,32 @@ def google_login_view(request):
         )
         return redirect('accounts:login')
 
-    redirect_uri = request.build_absolute_uri(reverse('accounts:google_callback'))
+    redirect_to = request.GET.get('next') or request.POST.get('next') or '/'
+    if redirect_to and redirect_to.startswith('/'):
+        request.session['google_oauth_next'] = redirect_to
+
+    # Determine redirect URI (handling reverse proxies, custom override, and dev vs prod)
+    custom_redirect = _get_env_config('GOOGLE_REDIRECT_URI') or _get_env_config('GOOGLE_OAUTH_REDIRECT_URI')
+    if custom_redirect:
+        redirect_uri = custom_redirect
+    else:
+        redirect_uri = request.build_absolute_uri(reverse('accounts:google_callback'))
+        # If running behind an HTTPS reverse proxy (e.g. Render), ensure https scheme
+        if request.headers.get('x-forwarded-proto') == 'https' or not settings.DEBUG:
+            if redirect_uri.startswith('http://'):
+                redirect_uri = 'https://' + redirect_uri[7:]
+
     state = get_random_string(32)
     request.session['google_oauth_state'] = state
+
+    # If client_secret is missing, provide a clear, helpful warning
+    if not client_secret:
+        messages.warning(
+            request,
+            "Google Sign-In redirect flow requires GOOGLE_CLIENT_SECRET in your .env file. "
+            "Please add your Client Secret in .env, or use the 1-Click Google Sign-In button on the login page."
+        )
+        return redirect('accounts:login')
 
     params = {
         'client_id': client_id,
@@ -281,119 +322,207 @@ def google_login_view(request):
     return redirect(auth_url)
 
 
+@csrf_exempt
 def google_callback_view(request):
     """
-    Handles Google OAuth2 callback.
-    Exchanges code for access token and authenticates or registers customer.
+    Handles Google OAuth2 and Google Identity Services (GSI) callback.
+    Supports:
+    1. Google Identity Services (GSI) credential (ID Token) via POST/GET - requires ONLY GOOGLE_CLIENT_ID!
+    2. Server-side OAuth2 code exchange via GET/POST - uses GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET.
+    Authenticates existing customer or registers a new customer account.
     """
-    code = request.GET.get('code')
-    state = request.GET.get('state')
-    saved_state = request.session.pop('google_oauth_state', None)
-
-    if not code or (saved_state and state != saved_state):
-        messages.error(request, "Google authentication could not be verified. Please try again.")
-        return redirect('accounts:login')
-
     client_id = _get_env_config('GOOGLE_CLIENT_ID')
     client_secret = _get_env_config('GOOGLE_CLIENT_SECRET')
-    redirect_uri = request.build_absolute_uri(reverse('accounts:google_callback'))
 
-    if not client_id or not client_secret:
-        messages.error(request, "Google OAuth configuration is incomplete.")
+    if not client_id:
+        messages.error(request, "Google OAuth is not configured on this server.")
         return redirect('accounts:login')
+
+    user_info = None
+
+    # -------------------------------------------------------------------------
+    # Flow 1: Google Identity Services (GSI) Credential / ID Token
+    # -------------------------------------------------------------------------
+    credential = request.POST.get('credential') or request.GET.get('credential')
+    if credential:
+        try:
+            token_url = f"https://oauth2.googleapis.com/tokeninfo?id_token={urllib.parse.quote(credential)}"
+            req = urllib.request.Request(token_url)
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                token_data = json.loads(resp.read().decode('utf-8'))
+
+            # Verify audience matches client ID
+            token_aud = token_data.get('aud')
+            if token_aud != client_id:
+                messages.error(request, "Google authentication token audience mismatch.")
+                return redirect('accounts:login')
+
+            email = (token_data.get('email') or '').strip().lower()
+            if not email:
+                messages.error(request, "Google did not provide an email address.")
+                return redirect('accounts:login')
+
+            user_info = {
+                'email': email,
+                'given_name': token_data.get('given_name') or token_data.get('name') or '',
+                'family_name': token_data.get('family_name') or '',
+                'sub': token_data.get('sub'),
+            }
+        except Exception as e:
+            logger.error(f"Google ID token verification failed: {e}")
+            messages.error(request, f"Google token verification failed: {str(e)}")
+            return redirect('accounts:login')
+
+    # -------------------------------------------------------------------------
+    # Flow 2: Traditional OAuth2 Authorization Code Exchange
+    # -------------------------------------------------------------------------
+    code = request.GET.get('code') or request.POST.get('code')
+    if not user_info and code:
+        state = request.GET.get('state') or request.POST.get('state')
+        saved_state = request.session.pop('google_oauth_state', None)
+
+        if saved_state and state and state != saved_state:
+            messages.error(request, "Google authentication state could not be verified. Please try again.")
+            return redirect('accounts:login')
+
+        if not client_secret:
+            messages.error(
+                request,
+                "Google Sign-In is missing GOOGLE_CLIENT_SECRET. Please add your Client Secret in your .env file."
+            )
+            return redirect('accounts:login')
+
+        custom_redirect = _get_env_config('GOOGLE_REDIRECT_URI') or _get_env_config('GOOGLE_OAUTH_REDIRECT_URI')
+        if custom_redirect:
+            redirect_uri = custom_redirect
+        else:
+            redirect_uri = request.build_absolute_uri(reverse('accounts:google_callback'))
+            if request.headers.get('x-forwarded-proto') == 'https' or not settings.DEBUG:
+                if redirect_uri.startswith('http://'):
+                    redirect_uri = 'https://' + redirect_uri[7:]
+
+        try:
+            token_url = "https://oauth2.googleapis.com/token"
+            token_data = urllib.parse.urlencode({
+                'code': code,
+                'client_id': client_id,
+                'client_secret': client_secret,
+                'redirect_uri': redirect_uri,
+                'grant_type': 'authorization_code'
+            }).encode('utf-8')
+
+            token_req = urllib.request.Request(token_url, data=token_data, method='POST')
+            token_req.add_header('Content-Type', 'application/x-www-form-urlencoded')
+
+            with urllib.request.urlopen(token_req, timeout=10) as resp:
+                token_json = json.loads(resp.read().decode('utf-8'))
+                access_token = token_json.get('access_token')
+
+            if not access_token:
+                messages.error(request, "Unable to obtain Google access token.")
+                return redirect('accounts:login')
+
+            # Fetch Google user info using access token
+            userinfo_url = "https://www.googleapis.com/oauth2/v2/userinfo"
+            userinfo_req = urllib.request.Request(userinfo_url)
+            userinfo_req.add_header('Authorization', f"Bearer {access_token}")
+
+            with urllib.request.urlopen(userinfo_req, timeout=10) as resp:
+                raw_info = json.loads(resp.read().decode('utf-8'))
+
+            email = (raw_info.get('email') or '').strip().lower()
+            if not email:
+                messages.error(request, "Google did not provide an email address.")
+                return redirect('accounts:login')
+
+            user_info = {
+                'email': email,
+                'given_name': raw_info.get('given_name') or raw_info.get('name') or '',
+                'family_name': raw_info.get('family_name') or '',
+                'sub': raw_info.get('id'),
+            }
+        except urllib.error.HTTPError as he:
+            err_body = he.read().decode('utf-8', errors='ignore')
+            logger.error(f"Google token exchange HTTPError: {he.code} - {err_body}")
+            messages.error(request, f"Google OAuth failed ({he.code}): {err_body}")
+            return redirect('accounts:login')
+        except Exception as e:
+            logger.error(f"Google OAuth exchange error: {e}")
+            messages.error(request, f"Google authentication failed: {str(e)}")
+            return redirect('accounts:login')
+
+    if not user_info:
+        # Check if Google returned an error query param (e.g. user cancelled)
+        error_desc = request.GET.get('error_description') or request.GET.get('error')
+        if error_desc:
+            messages.warning(request, f"Google authentication cancelled: {error_desc}")
+        else:
+            messages.error(request, "Google authentication could not be completed. Please try again.")
+        return redirect('accounts:login')
+
+    # -------------------------------------------------------------------------
+    # User Lookup or Customer Registration
+    # -------------------------------------------------------------------------
+    email = user_info['email']
+    user = User.objects.filter(email__iexact=email).first()
+
+    if user:
+        if not user.is_active:
+            messages.error(request, "Your account has been deactivated. Please contact support.")
+            return redirect('accounts:login')
+        if user.is_superuser:
+            messages.error(
+                request,
+                "Super Administrator accounts cannot sign in through the customer storefront. Please use the Management Portal (/management/login/)."
+            )
+            return redirect('accounts:login')
+        is_dept_staff = (
+            user.groups.filter(name__in=['Cartivo Department', 'Cartive Department']).exists() or
+            hasattr(user, 'department_account')
+        )
+        if is_dept_staff:
+            messages.error(
+                request,
+                "Department staff accounts cannot sign in through the customer storefront. Please use the Management Portal (/management/login/)."
+            )
+            return redirect('accounts:login')
+    else:
+        # Register new customer
+        first_name = user_info.get('given_name', '')
+        last_name = user_info.get('family_name', '')
+        username = email
+        if User.objects.filter(username=username).exists():
+            username = f"{email.split('@')[0]}_{get_random_string(5)}"
+
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+        )
+        user.set_unusable_password()
+        user.save()
+
+        # Assign to Customer group
+        customer_group, _ = Group.objects.get_or_create(name='Customer')
+        user.groups.add(customer_group)
+
+    # Clean session rotation and login
+    request.session.cycle_key()
+    request.session.set_expiry(0)
+    auth_login(request, user)
 
     try:
-        token_url = "https://oauth2.googleapis.com/token"
-        token_data = urllib.parse.urlencode({
-            'code': code,
-            'client_id': client_id,
-            'client_secret': client_secret,
-            'redirect_uri': redirect_uri,
-            'grant_type': 'authorization_code'
-        }).encode('utf-8')
+        from apps.cart.services import CartService
+        CartService.merge_guest_cart(request, user)
+    except Exception:
+        pass
 
-        token_req = urllib.request.Request(token_url, data=token_data, method='POST')
-        token_req.add_header('Content-Type', 'application/x-www-form-urlencoded')
-
-        with urllib.request.urlopen(token_req, timeout=10) as resp:
-            token_json = json.loads(resp.read().decode('utf-8'))
-            access_token = token_json.get('access_token')
-
-        if not access_token:
-            messages.error(request, "Unable to obtain Google access token.")
-            return redirect('accounts:login')
-
-        # Fetch Google user info
-        userinfo_url = "https://www.googleapis.com/oauth2/v2/userinfo"
-        userinfo_req = urllib.request.Request(userinfo_url)
-        userinfo_req.add_header('Authorization', f"Bearer {access_token}")
-
-        with urllib.request.urlopen(userinfo_req, timeout=10) as resp:
-            user_info = json.loads(resp.read().decode('utf-8'))
-
-        email = user_info.get('email', '').lower()
-        if not email:
-            messages.error(request, "Google did not provide an email address.")
-            return redirect('accounts:login')
-
-        # Existing account?
-        user = User.objects.filter(email__iexact=email).first()
-
-        if user:
-            if not user.is_active:
-                messages.error(request, "Your account has been deactivated. Please contact support.")
-                return redirect('accounts:login')
-            if user.is_superuser:
-                messages.error(
-                    request,
-                    "Super Administrator accounts cannot sign in through the customer storefront. Please use the Management Portal."
-                )
-                return redirect('accounts:login')
-            is_dept_staff = (
-                user.groups.filter(name__in=['Cartivo Department', 'Cartive Department']).exists() or
-                hasattr(user, 'department_account')
-            )
-            if is_dept_staff:
-                messages.error(
-                    request,
-                    "Department staff accounts cannot sign in through the customer storefront. Please use the Management Portal."
-                )
-                return redirect('accounts:login')
-        else:
-            # Register new customer
-            first_name = user_info.get('given_name', '')
-            last_name = user_info.get('family_name', '')
-            username = email
-            if User.objects.filter(username=username).exists():
-                username = f"{email.split('@')[0]}_{get_random_string(5)}"
-
-            user = User.objects.create_user(
-                username=username,
-                email=email,
-                first_name=first_name,
-                last_name=last_name,
-            )
-            # Make sure unusable password
-            user.set_unusable_password()
-            user.save()
-
-            # Assign to Customer group
-            customer_group, _ = Group.objects.get_or_create(name='Customer')
-            user.groups.add(customer_group)
-
-        request.session.cycle_key()
-        auth_login(request, user)
-        try:
-            from apps.cart.services import CartService
-            CartService.merge_guest_cart(request, user)
-        except Exception:
-            pass
-        messages.success(request, f"Signed in with Google as {user.first_name or user.email}.")
-        return redirect('/')
-
-    except Exception as e:
-        messages.error(request, f"Google authentication failed: {str(e)}")
-        return redirect('accounts:login')
+    messages.success(request, f"Signed in with Google as {user.first_name or user.email}.")
+    next_url = request.session.pop('google_oauth_next', None) or request.GET.get('next') or '/'
+    if not next_url.startswith('/'):
+        next_url = '/'
+    return redirect(next_url)
 
 
 @login_required(login_url='/accounts/login/')

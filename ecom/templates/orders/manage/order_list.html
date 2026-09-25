@@ -51,7 +51,7 @@
                     <option value="PAID" {% if selected_payment_status == 'PAID' %}selected{% endif %}>Paid</option>
                     <option value="FAILED" {% if selected_payment_status == 'FAILED' %}selected{% endif %}>Failed</option>
                 </select>
-                <button type="submit" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 shrink-0">
+                <button type="submit" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-white keep-white shrink-0 shadow-2xs">
                     Filter
                 </button>
             </div>
@@ -107,10 +107,10 @@
                         </td>
                         <td class="py-3.5 px-4 text-right">
                             <div class="inline-flex items-center gap-2">
-                                <a href="{% url 'orders:manage_detail' order.order_number %}" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white transition-colors text-[11px] font-bold">
+                                <a href="{% url 'orders:manage_detail' order.order_number %}" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-50 text-slate-700 hover:text-blue-600 border border-slate-300 hover:border-slate-400 transition-colors text-[11px] font-semibold shadow-2xs">
                                     Details
                                 </a>
-                                <a href="{% url 'orders:order_receipt' order.order_number %}" target="_blank" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors" title="Print Receipt">
+                                <a href="{% url 'orders:order_receipt' order.order_number %}" target="_blank" class="p-1.5 rounded-lg bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-800 border border-slate-200 hover:border-slate-300 transition-colors shadow-2xs" title="Print Receipt">
                                     <i data-lucide="printer" class="w-3.5 h-3.5"></i>
                                 </a>
                             </div>

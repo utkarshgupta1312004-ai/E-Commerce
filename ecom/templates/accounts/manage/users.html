@@ -148,11 +148,11 @@
                     class="w-full pl-9 pr-3 py-1.5 bg-[#131c2e] border border-[#1e293b] rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-all"
                 >
             </div>
-            <button type="submit" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700 transition-colors">
+            <button type="submit" class="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white keep-white text-xs font-semibold rounded-xl border border-slate-900 transition-colors shadow-2xs">
                 Search
             </button>
             {% if search_query %}
-            <a href="{% url 'accounts:dashboard' %}{% if selected_role %}?role={{ selected_role }}{% endif %}" class="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800">
+            <a href="{% url 'accounts:dashboard' %}{% if selected_role %}?role={{ selected_role }}{% endif %}" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 border border-slate-200" title="Clear search">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </a>
             {% endif %}
@@ -292,10 +292,10 @@
                             <div class="flex items-center justify-end gap-2">
                                 <a 
                                     href="{% url 'accounts:user_detail' user_id=u.id %}" 
-                                    class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-emerald-600 text-slate-200 hover:text-white border border-slate-700 transition-all shadow-sm"
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 border border-slate-300 hover:border-emerald-300 transition-all shadow-2xs group"
                                     title="Edit Profile, Roles &amp; Addresses"
                                 >
-                                    <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
+                                    <i data-lucide="sliders" class="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-600 transition-colors"></i>
                                     <span>Manage</span>
                                 </a>
 
@@ -305,19 +305,19 @@
                                     <button 
                                         type="submit" 
                                         onclick="return confirm('Restrict / Block account {{ u.username }}?')"
-                                        class="p-1.5 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all" 
+                                        class="p-1.5 rounded-xl bg-white hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-slate-200 hover:border-rose-200 transition-all shadow-2xs" 
                                         title="Suspend / Block User"
                                     >
-                                        <i data-lucide="user-x" class="w-4 h-4"></i>
+                                        <i data-lucide="user-x" class="w-3.5 h-3.5"></i>
                                     </button>
                                     {% else %}
                                     <button 
                                         type="submit" 
                                         onclick="return confirm('Activate / Unblock account {{ u.username }}?')"
-                                        class="p-1.5 rounded-xl text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 border border-transparent hover:border-emerald-500/20 transition-all" 
+                                        class="p-1.5 rounded-xl bg-white hover:bg-emerald-50 text-slate-500 hover:text-emerald-600 border border-slate-200 hover:border-emerald-200 transition-all shadow-2xs" 
                                         title="Re-activate User"
                                     >
-                                        <i data-lucide="user-check" class="w-4 h-4"></i>
+                                        <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
                                     </button>
                                     {% endif %}
                                 </form>

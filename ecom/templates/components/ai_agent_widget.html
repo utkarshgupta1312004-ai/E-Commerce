@@ -523,5 +523,10 @@
                 handleSend(prompt);
             });
         });
+
+        // Initialize icons within the widget
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+            window.lucide.createIcons();
+        }
     })();
 </script>

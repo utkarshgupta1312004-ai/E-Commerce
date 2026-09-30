@@ -21,7 +21,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
     
     <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="{% static 'js/lucide.min.js' %}"></script>
+    <script>
+        if (typeof lucide === 'undefined') {
+            document.write('<script src="https://unpkg.com/lucide@latest"><\/script>');
+        }
+    </script>
 
     <!-- Tailwind CSS Compiled Output -->
     <link rel="stylesheet" href="{% static 'src/output.css' %}?v=2">
@@ -82,8 +87,18 @@
 
     <!-- Global JavaScript Interactions -->
     <script>
-        // Initialize Lucide Icons
-        lucide.createIcons();
+        // Safe Lucide Icons Initialization
+        function initLucideIcons() {
+            if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                window.lucide.createIcons();
+            }
+        }
+        window.initLucideIcons = initLucideIcons;
+        initLucideIcons();
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initLucideIcons);
+        }
+        window.addEventListener('load', initLucideIcons);
 
         // Mobile Drawer Controller
         const menuToggle = document.getElementById('mobile-menu-toggle');
@@ -273,6 +288,7 @@
                 }
             });
         };
+    </script>
 
     {% block extra_js %}{% endblock %}
 </body>

@@ -1,5 +1,6 @@
 /**
  * Cartivo AI Shopping Assistant - Client-Side Controller & Action Dispatcher
+ * Production-grade, context-aware, human-like shopping concierge.
  */
 (function () {
     'use strict';
@@ -16,6 +17,12 @@
             this.sendBtn = document.getElementById('assistant-send-btn');
             this.typingIndicator = document.getElementById('assistant-typing');
             this.chipsContainer = document.getElementById('assistant-chips');
+
+            this.csrfToken = this.drawer ? this.drawer.getAttribute('data-csrf-token') || '' : '';
+            if (!this.csrfToken && this.chatForm) {
+                const csrfInput = this.chatForm.querySelector('input[name="csrfmiddlewaretoken"]');
+                if (csrfInput) this.csrfToken = csrfInput.value;
+            }
 
             this.storageKey = 'cartivo_assistant_session_id';
             this.sessionId = localStorage.getItem(this.storageKey) || null;
@@ -90,14 +97,14 @@
             if (!confirm('Are you sure you want to clear your conversation history?')) return;
             localStorage.removeItem(this.storageKey);
             this.sessionId = null;
-            
+
             // Keep initial greeting only
             const initialGreetings = this.messagesContainer.querySelectorAll('.assistant-msg-initial');
             this.messagesContainer.innerHTML = '';
             if (initialGreetings.length > 0) {
                 initialGreetings.forEach(node => this.messagesContainer.appendChild(node));
             } else {
-                this.appendMessage('assistant', "Hello! I am your Cartivo AI Assistant. How can I assist with your shopping today?");
+                this.appendMessage('assistant', "Hey! 👋 I am your Cartivo AI Assistant. How can I help you today?");
             }
         }
 
@@ -113,9 +120,52 @@
 
             const bubbleEl = document.createElement('div');
             bubbleEl.className = 'assistant-bubble';
-            
-            // Render basic markdown formatting (bold, newlines)
-            bubbleEl.innerHTML = this.formatMessageText(text);
+
+            // Check for interactive confirmation tags (e.g. [CONFIRM_ADD_TO_CART:id:title:price])
+            const confirmMatch = text.match(/\[CONFIRM_ADD_TO_CART:(\d+):([^:]+):([^\]]+)\]/);
+            let cleanText = text;
+            let confirmData = null;
+
+            if (confirmMatch) {
+                cleanText = text.replace(confirmMatch[0], '').trim();
+                confirmData = {
+                    productId: confirmMatch[1],
+                    productTitle: confirmMatch[2],
+                    productPrice: confirmMatch[3]
+                };
+            }
+
+            // Render markdown text
+            bubbleEl.innerHTML = this.formatMessageText(cleanText);
+
+            // Render explicit confirmation UI if present
+            if (confirmData) {
+                const cardEl = document.createElement('div');
+                cardEl.className = 'assistant-confirm-card';
+                cardEl.innerHTML = `
+                    <div class="confirm-card-info">
+                        <span class="confirm-card-title">${confirmData.productTitle}</span>
+                        <span class="confirm-card-price">₹${confirmData.productPrice}</span>
+                    </div>
+                    <div class="confirm-card-actions">
+                        <button type="button" class="confirm-btn add-btn" data-prod-id="${confirmData.productId}">Add to Bag</button>
+                        <button type="button" class="confirm-btn cancel-btn">Cancel</button>
+                    </div>
+                `;
+
+                const addBtn = cardEl.querySelector('.add-btn');
+                const cancelBtn = cardEl.querySelector('.cancel-btn');
+
+                addBtn.addEventListener('click', () => {
+                    this.executeAddToCart(confirmData.productId, confirmData.productTitle, cardEl);
+                });
+
+                cancelBtn.addEventListener('click', () => {
+                    cardEl.innerHTML = '<span class="text-xs text-slate-500 italic">Action cancelled. Let me know if you would like to explore other options.</span>';
+                });
+
+                bubbleEl.appendChild(cardEl);
+            }
 
             const timeEl = document.createElement('div');
             timeEl.className = 'assistant-msg-time';
@@ -129,6 +179,43 @@
             this.scrollToBottom();
         }
 
+        async executeAddToCart(productId, productTitle, cardEl) {
+            if (!cardEl) return;
+            const buttons = cardEl.querySelectorAll('button');
+            buttons.forEach(b => b.disabled = true);
+
+            try {
+                const formData = new FormData();
+                formData.append('product_id', productId);
+                formData.append('quantity', '1');
+                if (this.csrfToken) {
+                    formData.append('csrfmiddlewaretoken', this.csrfToken);
+                }
+
+                const response = await fetch('/cart/add/', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                const data = await response.json();
+                if (data.status === 'success') {
+                    cardEl.innerHTML = `<span class="text-xs font-semibold text-emerald-600">✅ Added to your shopping bag!</span>`;
+                    this.actionUpdateCartBadge({ count: data.cart_count || 1 });
+                    if (window.showToast) {
+                        window.showToast(data.message || `Added ${productTitle} to shopping bag!`, 'success');
+                    }
+                } else {
+                    cardEl.innerHTML = `<span class="text-xs text-rose-500">${data.message || 'Could not add to bag.'}</span>`;
+                }
+            } catch (err) {
+                console.error('Cart addition error:', err);
+                cardEl.innerHTML = `<span class="text-xs text-rose-500">Connection error. Please try again.</span>`;
+            }
+        }
+
         formatMessageText(text) {
             if (!text) return '';
             const escaped = text
@@ -136,12 +223,17 @@
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;');
 
+            // Headers
+            let formatted = escaped.replace(/^### (.*$)/gim, '<strong class="block text-sm font-bold text-slate-900 mt-1 mb-0.5">$1</strong>');
+            formatted = formatted.replace(/^## (.*$)/gim, '<strong class="block text-base font-bold text-slate-900 mt-1 mb-0.5">$1</strong>');
+
             // Bold **text**
-            const formatted = escaped
+            formatted = formatted
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\*(.*?)\*/g, '<em>$1</em>')
                 .replace(/`([^`]+)`/g, '<code class="bg-slate-200 px-1 py-0.5 rounded text-xs">$1</code>')
                 .replace(/\n/g, '<br>');
+
             return formatted;
         }
 
@@ -230,14 +322,14 @@
                     this.appendMessage('assistant', data.reply);
                 }
 
-                // Dispatch UI actions
+                // Dispatch validated UI actions
                 if (Array.isArray(data.actions) && data.actions.length > 0) {
                     this.dispatchActions(data.actions);
                 }
 
             } catch (err) {
                 console.error('[Cartivo Assistant Error]:', err);
-                this.appendMessage('assistant', 'Sorry, I ran into a connection error while processing your request. Please try again.');
+                this.appendMessage('assistant', "Sorry, I'm having trouble connecting right now. Please check your connection and try again.");
             } finally {
                 this.hideTyping();
                 this.isWaiting = false;
@@ -246,13 +338,11 @@
         }
 
         /**
-         * Dispatches deterministic UI actions returned from tool execution
+         * Dispatches validated UI actions returned from backend
          */
         dispatchActions(actions) {
             actions.forEach(action => {
                 if (!action || !action.type) return;
-
-                console.log(`[Assistant Action] Dispatching: ${action.type}`, action.payload);
 
                 switch (action.type) {
                     case 'compare_products':
@@ -308,7 +398,6 @@
             const cards = document.querySelectorAll('.product-card');
 
             if (cards.length > 0) {
-                let matchedCount = 0;
                 cards.forEach(card => {
                     const cardId = parseInt(card.getAttribute('data-product-id'), 10);
                     const cardTitle = (card.getAttribute('data-product-title') || '').toLowerCase();
@@ -320,16 +409,13 @@
                     if (isMatch) {
                         card.style.opacity = '1';
                         card.classList.add('assistant-highlight-glow');
-                        matchedCount++;
                         setTimeout(() => card.classList.remove('assistant-highlight-glow'), 4000);
                     } else if (productIds.length > 0) {
-                        // Dim non-matching items slightly to focus attention
                         card.style.opacity = '0.4';
                         setTimeout(() => card.style.opacity = '1', 6000);
                     }
                 });
 
-                // Smooth scroll to product grid section
                 const gridSection = document.querySelector('.product-card')?.closest('section') ||
                                     document.querySelector('.grid.grid-cols-2');
                 if (gridSection) {
@@ -346,8 +432,7 @@
             badgeElements.forEach(badge => {
                 badge.textContent = String(count);
                 badge.classList.remove('cart-badge-bounce');
-                // Force reflow
-                void badge.offsetWidth;
+                void badge.offsetWidth; // Force reflow
                 badge.classList.add('cart-badge-bounce');
                 setTimeout(() => badge.classList.remove('cart-badge-bounce'), 800);
             });
@@ -357,7 +442,6 @@
             const modalId = payload.modal_id;
             if (!modalId) return;
 
-            // Try existing global openModal helper if available
             if (typeof window.openModal === 'function') {
                 window.openModal(modalId);
                 return;
@@ -374,6 +458,12 @@
             const url = payload.url;
             if (!url) return;
 
+            // Security guard: Only navigate to relative internal routes
+            if (!url.startsWith('/') || url.startsWith('//') || url.includes(':')) {
+                console.warn('[Assistant Security] Blocked invalid navigation attempt to:', url);
+                return;
+            }
+
             if (payload.new_tab) {
                 window.open(url, '_blank');
             } else {
@@ -384,6 +474,12 @@
         actionHighlightElement(payload) {
             const selector = payload.selector;
             if (!selector) return;
+
+            // Security check: validate selector pattern
+            if (!/^[#\.\w\-\s,>+~:\[\]="\'*]+$/.test(selector)) {
+                console.warn('[Assistant Security] Blocked unsafe selector:', selector);
+                return;
+            }
 
             try {
                 const element = document.querySelector(selector);

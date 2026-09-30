@@ -87,23 +87,30 @@ def order_receipt_view(request, order_number):
     """
     Clean, printable HTML receipt generated permanently from Order and OrderItem records.
     Contains print CSS rules (@media print) and window.print() trigger.
-    Supports official Payment Receipt format (Requirement 60) via ?type=payment or when order is delivered & paid.
+    Strictly verifies payment status from backend records (Requirement 18).
     Enforces strict ownership access control (Requirement 62).
     """
-    order = Order.objects.filter(order_number__iexact=order_number).prefetch_related('items', 'checkpoints').first()
+    order = Order.objects.filter(order_number__iexact=order_number).prefetch_related('items', 'checkpoints', 'payment_transactions').first()
     if not order or not _can_access_order(request, order, allow_session=False):
         raise Http404(f"Order #{order_number} not found.")
 
     req_type = request.GET.get('type', '').strip().lower()
-    is_payment_receipt = (req_type == 'payment') or (
-        order.status == 'DELIVERED' and order.payment_status == 'PAID' and req_type != 'standard'
+    # A Payment Confirmation Receipt is ONLY generated if the backend confirms the order is PAID
+    is_payment_receipt = (order.payment_status == 'PAID') and (
+        req_type == 'payment' or order.payment_method == 'RAZORPAY' or order.status == 'DELIVERED' or req_type != 'standard'
     )
+
+    # Fetch associated verified payment transaction if available
+    payment_txn = order.payment_transactions.filter(status='SUCCESS').order_by('-created_at').first()
+    if not payment_txn:
+        payment_txn = order.payment_transactions.order_by('-created_at').first()
 
     context = {
         'order': order,
         'items': order.items.all(),
         'checkpoints': order.checkpoints.filter(is_customer_visible=True),
         'is_payment_receipt': is_payment_receipt,
+        'payment_txn': payment_txn,
     }
     return render(request, 'orders/receipt.html', context)
 

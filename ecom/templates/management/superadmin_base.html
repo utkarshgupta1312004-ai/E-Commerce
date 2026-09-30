@@ -248,18 +248,26 @@
         }
 
         /* Typography Mapping */
-        .text-white:not(.keep-white) {
+        .text-white:not(.keep-white):not(.btn-primary) {
             color: #0f172a !important;
         }
-        /* Elements on solid/gradient backgrounds retain crisp white text */
-        .bg-blue-600, .bg-blue-700, .bg-indigo-600, .bg-emerald-600,
-        .bg-gradient-to-r, .btn-primary, [class*="bg-blue-600"],
-        [class*="from-indigo-600"], [class*="from-emerald-600"], [class*="from-cyan-600"], [class*="from-rose-600"] {
+        /* Elements on solid primary/accent buttons retain crisp white text */
+        button.bg-blue-600, a.bg-blue-600,
+        button.bg-blue-700, a.bg-blue-700,
+        button.bg-indigo-600, a.bg-indigo-600,
+        button.bg-emerald-600, a.bg-emerald-600,
+        button.bg-rose-600, a.bg-rose-600,
+        .btn-primary, .keep-white {
             color: #ffffff !important;
         }
-        .bg-blue-600 *, .bg-blue-700 *, .bg-indigo-600 *, .bg-emerald-600 *,
-        [class*="from-indigo-600"] *, [class*="from-emerald-600"] *, [class*="from-cyan-600"] *, [class*="from-rose-600"] * {
+        button.bg-blue-600 *, a.bg-blue-600 *,
+        button.bg-blue-700 *, a.bg-blue-700 *,
+        button.bg-indigo-600 *, a.bg-indigo-600 *,
+        button.bg-emerald-600 *, a.bg-emerald-600 *,
+        button.bg-rose-600 *, a.bg-rose-600 *,
+        .btn-primary *, .keep-white * {
             color: #ffffff !important;
+            fill: #ffffff !important;
         }
 
         /* Readable Accents on Light Background */
@@ -339,13 +347,14 @@
 
         /* 3. Primary & Brand action buttons - always keep white text & icons */
         .btn-primary, .btn-primary *,
-        .bg-emerald-600, .bg-emerald-600 *,
-        .bg-blue-600, .bg-blue-600 *,
-        .bg-indigo-600, .bg-indigo-600 *,
-        .bg-rose-600, .bg-rose-600 *,
-        [class*="bg-emerald-600"], [class*="bg-emerald-600"] *,
-        [class*="bg-blue-600"], [class*="bg-blue-600"] *,
-        [class*="from-emerald-600"], [class*="from-emerald-600"] *,
+        button.bg-emerald-600, button.bg-emerald-600 *,
+        a.bg-emerald-600, a.bg-emerald-600 *,
+        button.bg-blue-600, button.bg-blue-600 *,
+        a.bg-blue-600, a.bg-blue-600 *,
+        button.bg-indigo-600, button.bg-indigo-600 *,
+        a.bg-indigo-600, a.bg-indigo-600 *,
+        button.bg-rose-600, button.bg-rose-600 *,
+        a.bg-rose-600, a.bg-rose-600 *,
         .keep-white, .keep-white * {
             color: #ffffff !important;
             fill: #ffffff !important;
@@ -367,20 +376,56 @@
             color: inherit !important;
         }
 
-        .text-slate-100 {
-            color: #0f172a !important;
-        }
-        .text-slate-200 {
-            color: #1e293b !important;
-        }
-        .text-slate-300 {
+        /* Strict Light-Theme Slate Text Hierarchy */
+        .text-slate-950 { color: #020617 !important; }
+        .text-slate-900 { color: #0f172a !important; }
+        .text-slate-800 { color: #1e293b !important; }
+        .text-slate-700 { color: #334155 !important; }
+        .text-slate-600 { color: #475569 !important; }
+        .text-slate-500 { color: #64748b !important; }
+        .text-slate-400 { color: #64748b !important; }
+        .text-slate-300 { color: #94a3b8 !important; }
+        .text-slate-200 { color: #cbd5e1 !important; }
+        .text-slate-100 { color: #0f172a !important; }
+
+        /* Accent & Brand Text Colors */
+        .text-blue-700 { color: #1d4ed8 !important; }
+        .text-blue-600 { color: #2563eb !important; }
+        .text-blue-500 { color: #3b82f6 !important; }
+        .text-emerald-700 { color: #047857 !important; }
+        .text-emerald-600 { color: #059669 !important; }
+        .text-amber-700 { color: #b45309 !important; }
+        .text-amber-600 { color: #d97706 !important; }
+        .text-rose-700 { color: #be123c !important; }
+        .text-rose-600 { color: #e11d48 !important; }
+        .text-purple-700 { color: #7e22ce !important; }
+        .text-purple-600 { color: #9333ea !important; }
+
+        /* Sidebar items & text */
+        .sidebar-item {
             color: #475569 !important;
         }
-        .text-slate-400 {
-            color: #64748b !important;
+        .sidebar-item:hover {
+            color: #0f172a !important;
+            background-color: #f8fafc !important;
         }
-        .text-slate-500 {
-            color: #64748b !important;
+        .sidebar-item.bg-blue-50 {
+            background-color: #eff6ff !important;
+            color: #1d4ed8 !important;
+            border-color: #bfdbfe !important;
+        }
+        .sidebar-item.bg-blue-50 .sidebar-text {
+            color: #1d4ed8 !important;
+            font-weight: 700 !important;
+        }
+        .sidebar-item.bg-blue-50 i, .sidebar-item.bg-blue-50 svg {
+            color: #2563eb !important;
+        }
+        .sidebar-text {
+            color: inherit !important;
+        }
+        .sidebar-badge {
+            color: inherit !important;
         }
 
         /* Table Styling */
@@ -490,35 +535,53 @@
             color: #334155 !important;
             border-color: #e2e8f0 !important;
         }
-        .bg-emerald-500\/10, .bg-emerald-500\/15 {
+        .bg-emerald-500\/10, .bg-emerald-500\/15, .bg-emerald-500\/20 {
             background-color: #ecfdf5 !important;
             color: #047857 !important;
             border-color: #a7f3d0 !important;
         }
-        .bg-blue-500\/10, .bg-blue-500\/15, .bg-indigo-500\/10, .bg-indigo-500\/15 {
+        .bg-emerald-500\/10 *, .bg-emerald-500\/15 *, .bg-emerald-500\/20 * {
+            color: #047857 !important;
+        }
+        .bg-blue-500\/10, .bg-blue-500\/15, .bg-blue-500\/20, .bg-indigo-500\/10, .bg-indigo-500\/15, .bg-indigo-500\/20 {
             background-color: #eff6ff !important;
             color: #1d4ed8 !important;
             border-color: #bfdbfe !important;
+        }
+        .bg-blue-500\/10 *, .bg-blue-500\/15 *, .bg-blue-500\/20 *, .bg-indigo-500\/10 *, .bg-indigo-500\/15 *, .bg-indigo-500\/20 * {
+            color: #1d4ed8 !important;
         }
         .bg-purple-500\/10, .bg-purple-500\/15 {
             background-color: #faf5ff !important;
             color: #7e22ce !important;
             border-color: #e9d5ff !important;
         }
+        .bg-purple-500\/10 *, .bg-purple-500\/15 * {
+            color: #7e22ce !important;
+        }
         .bg-amber-500\/10, .bg-amber-500\/15 {
             background-color: #fffbeb !important;
             color: #b45309 !important;
             border-color: #fde68a !important;
+        }
+        .bg-amber-500\/10 *, .bg-amber-500\/15 * {
+            color: #b45309 !important;
         }
         .bg-rose-500\/10, .bg-rose-500\/15 {
             background-color: #fff1f2 !important;
             color: #be123c !important;
             border-color: #fecdd3 !important;
         }
+        .bg-rose-500\/10 *, .bg-rose-500\/15 * {
+            color: #be123c !important;
+        }
         .bg-cyan-500\/10, .bg-cyan-500\/15 {
             background-color: #ecfeff !important;
             color: #0e7490 !important;
             border-color: #a5f3fc !important;
+        }
+        .bg-cyan-500\/10 *, .bg-cyan-500\/15 * {
+            color: #0e7490 !important;
         }
 
         /* Mobile Drawer Transitions */
@@ -653,10 +716,15 @@
         .print-title, .print-subtitle {
             display: none;
         }
+
+        ::selection {
+            background-color: #2563eb !important;
+            color: #ffffff !important;
+        }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
-<body class="h-full bg-slate-50 text-slate-900 flex overflow-hidden selection:bg-blue-600 selection:text-white">
+<body class="h-full bg-slate-50 text-slate-900 flex overflow-hidden">
 
     <!-- Mobile Sidebar Backdrop Overlay -->
     <div 

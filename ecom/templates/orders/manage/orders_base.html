@@ -103,19 +103,33 @@
         .text-white:not(.keep-white) {
             color: #0f172a !important;
         }
-        .bg-blue-600, .bg-blue-700, .bg-indigo-600, .bg-emerald-600, .btn-primary,
-        [class*="bg-blue-600"], [class*="bg-emerald-600"], [class*="from-emerald-600"], [class*="from-blue-600"] {
+        button.bg-blue-600, a.bg-blue-600,
+        button.bg-blue-700, a.bg-blue-700,
+        button.bg-indigo-600, a.bg-indigo-600,
+        button.bg-emerald-600, a.bg-emerald-600,
+        button.bg-rose-600, a.bg-rose-600,
+        .btn-primary, .keep-white {
             color: #ffffff !important;
         }
-        .bg-blue-600 *, .bg-blue-700 *, .bg-indigo-600 *, .bg-emerald-600 *, .btn-primary *,
-        [class*="from-emerald-600"] *, [class*="from-blue-600"] * {
+        button.bg-blue-600 *, a.bg-blue-600 *,
+        button.bg-blue-700 *, a.bg-blue-700 *,
+        button.bg-indigo-600 *, a.bg-indigo-600 *,
+        button.bg-emerald-600 *, a.bg-emerald-600 *,
+        button.bg-rose-600 *, a.bg-rose-600 *,
+        .btn-primary *, .keep-white * {
             color: #ffffff !important;
+            fill: #ffffff !important;
         }
-        .text-slate-100 { color: #0f172a !important; }
-        .text-slate-200 { color: #1e293b !important; }
-        .text-slate-300 { color: #475569 !important; }
-        .text-slate-400 { color: #64748b !important; }
+        .text-slate-950 { color: #020617 !important; }
+        .text-slate-900 { color: #0f172a !important; }
+        .text-slate-800 { color: #1e293b !important; }
+        .text-slate-700 { color: #334155 !important; }
+        .text-slate-600 { color: #475569 !important; }
         .text-slate-500 { color: #64748b !important; }
+        .text-slate-400 { color: #64748b !important; }
+        .text-slate-300 { color: #94a3b8 !important; }
+        .text-slate-200 { color: #cbd5e1 !important; }
+        .text-slate-100 { color: #0f172a !important; }
 
         /* Readable Accents on Light Background */
         .text-emerald-400 { color: #059669 !important; }
@@ -236,13 +250,14 @@
 
         /* 3. Primary & Brand action buttons - always keep white text & icons */
         .btn-primary, .btn-primary *,
-        .bg-emerald-600, .bg-emerald-600 *,
-        .bg-blue-600, .bg-blue-600 *,
-        .bg-indigo-600, .bg-indigo-600 *,
-        .bg-rose-600, .bg-rose-600 *,
-        [class*="bg-emerald-600"], [class*="bg-emerald-600"] *,
-        [class*="bg-blue-600"], [class*="bg-blue-600"] *,
-        [class*="from-emerald-600"], [class*="from-emerald-600"] *,
+        button.bg-emerald-600, button.bg-emerald-600 *,
+        a.bg-emerald-600, a.bg-emerald-600 *,
+        button.bg-blue-600, button.bg-blue-600 *,
+        a.bg-blue-600, a.bg-blue-600 *,
+        button.bg-indigo-600, button.bg-indigo-600 *,
+        a.bg-indigo-600, a.bg-indigo-600 *,
+        button.bg-rose-600, button.bg-rose-600 *,
+        a.bg-rose-600, a.bg-rose-600 *,
         .keep-white, .keep-white * {
             color: #ffffff !important;
             fill: #ffffff !important;

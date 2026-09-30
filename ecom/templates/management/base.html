@@ -45,6 +45,11 @@
             font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
+        ::selection {
+            background-color: #2563eb !important;
+            color: #ffffff !important;
+        }
+
         header {
             background-color: rgba(255, 255, 255, 0.95) !important;
             border-bottom: 1px solid #e2e8f0 !important;
@@ -133,7 +138,7 @@
     </style>
     {% block extra_head %}{% endblock %}
 </head>
-<body class="min-h-full flex flex-col bg-slate-50 text-slate-900 selection:bg-blue-600 selection:text-white antialiased">
+<body class="min-h-full flex flex-col bg-slate-50 text-slate-900 antialiased">
 
     <!-- Top Management Navigation Bar Matching Official Header Aesthetic -->
     <header class="sticky top-0 z-40 w-full border-b border-slate-200/90 bg-white/95 backdrop-blur-md transition-all shadow-xs">

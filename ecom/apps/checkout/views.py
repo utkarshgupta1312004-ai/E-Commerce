@@ -10,6 +10,7 @@ from apps.cart.services import CartService
 from apps.orders.services import OrderService
 from apps.inventory.services import InsufficientStockError
 from apps.notifications.services import notify_order_event
+from apps.payments.services import RazorpayService
 
 
 @login_required(login_url='accounts:login')
@@ -67,6 +68,9 @@ def checkout_view(request):
         'tax': tax,
         'total': total,
         'total_items': cart.total_items,
+        'razorpay_key_id': RazorpayService.get_key_id(),
+        'razorpay_configured': RazorpayService.is_configured(),
+        'is_test_mode': RazorpayService.is_test_mode(),
     }
     return render(request, 'checkout/checkout.html', context)
 
@@ -127,7 +131,7 @@ def place_order_view(request):
 
     payment_method = request.POST.get('payment_method', 'COD').upper()
     if payment_method != 'COD':
-        messages.error(request, "Only Cash on Delivery (COD) is supported for this checkout.")
+        messages.error(request, "Online payments are processed securely via the Razorpay checkout modal. Please select Cash on Delivery or ensure JavaScript is enabled.")
         return redirect('checkout:checkout')
 
     customer_notes = request.POST.get('customer_notes', '')

@@ -26,11 +26,11 @@ class Order(models.Model):
 
     PAYMENT_METHOD_CHOICES = [
         ('COD', 'Cash on Delivery'),
-        # Future placeholders:
-        # ('UPI', 'Unified Payments Interface (UPI)'),
-        # ('CARD', 'Credit / Debit Card'),
-        # ('NET_BANKING', 'Net Banking'),
-        # ('WALLET', 'Digital Wallet'),
+        ('RAZORPAY', 'Razorpay (Online Payment)'),
+        ('UPI', 'Unified Payments Interface (UPI)'),
+        ('CARD', 'Credit / Debit Card'),
+        ('NET_BANKING', 'Net Banking'),
+        ('WALLET', 'Digital Wallet'),
     ]
 
     PAYMENT_STATUS_CHOICES = [

@@ -164,20 +164,22 @@
                         </div>
 
                         <!-- Active COD Option -->
-                        <div class="p-5 rounded-2xl border-2 border-emerald-500 bg-emerald-50/20 shadow-xs mb-4">
+                        <div id="payment-box-cod" class="p-5 rounded-2xl border-2 border-emerald-500 bg-emerald-50/20 shadow-xs mb-3 transition-all cursor-pointer hover:border-emerald-400" onclick="selectPaymentMethod('COD')">
                             <div class="flex items-start justify-between gap-4">
                                 <div class="flex items-start gap-3">
                                     <input 
                                         type="radio" 
                                         name="payment_method" 
+                                        id="pay-method-cod"
                                         value="COD" 
                                         checked 
-                                        class="mt-1 text-emerald-600 focus:ring-emerald-500"
+                                        class="mt-1 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                                        onchange="selectPaymentMethod('COD')"
                                     >
                                     <div>
                                         <div class="flex items-center gap-2 mb-1">
                                             <span class="text-sm sm:text-base font-extrabold text-slate-950">Cash on Delivery (COD)</span>
-                                            <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">Active</span>
+                                            <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">Available</span>
                                         </div>
                                         <p class="text-xs text-slate-600 leading-relaxed">
                                             Pay in cash directly to our delivery courier when your order is delivered to your doorstep.
@@ -191,13 +193,48 @@
                             </div>
                         </div>
 
-                        <!-- Disabled Online Payments Notice -->
-                        <div class="p-4 rounded-2xl border border-slate-200/80 bg-slate-50 text-xs text-slate-500 flex items-center justify-between gap-3">
-                            <div class="flex items-center gap-2">
-                                <i data-lucide="credit-card" class="w-4 h-4 text-slate-400"></i>
-                                <span>Online Payments (UPI, Cards, Net Banking)</span>
+                        <!-- Razorpay Online Payments Option -->
+                        <div id="payment-box-razorpay" class="p-5 rounded-2xl border-2 border-slate-200 bg-white shadow-xs mb-4 transition-all cursor-pointer hover:border-blue-400" onclick="selectPaymentMethod('RAZORPAY')">
+                            <div class="flex items-start justify-between gap-4">
+                                <div class="flex items-start gap-3">
+                                    <input 
+                                        type="radio" 
+                                        name="payment_method" 
+                                        id="pay-method-razorpay"
+                                        value="RAZORPAY" 
+                                        class="mt-1 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                        onchange="selectPaymentMethod('RAZORPAY')"
+                                    >
+                                    <div>
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="text-sm sm:text-base font-extrabold text-slate-950">Razorpay Secure Online Checkout</span>
+                                            {% if is_test_mode %}
+                                            <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 border border-amber-200">
+                                                <i data-lucide="flask-conical" class="w-3 h-3"></i>
+                                                Test Mode
+                                            </span>
+                                            {% else %}
+                                            <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                                                <i data-lucide="shield-check" class="w-3 h-3"></i>
+                                                Instant
+                                            </span>
+                                            {% endif %}
+                                        </div>
+                                        <p class="text-xs text-slate-600 leading-relaxed mb-2.5">
+                                            Pay instantly via UPI (Google Pay, PhonePe, Paytm), Credit & Debit Cards, Net Banking, or Digital Wallets.
+                                        </p>
+                                        <div class="flex flex-wrap items-center gap-1.5 pt-1 text-[11px] font-semibold text-slate-600">
+                                            <span class="px-2 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-700">UPI / QR</span>
+                                            <span class="px-2 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-700">Credit / Debit Card</span>
+                                            <span class="px-2 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-700">Net Banking</span>
+                                            <span class="px-2 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-700">Wallets</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                                    <i data-lucide="credit-card" class="w-5 h-5"></i>
+                                </div>
                             </div>
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-slate-200/60 px-2 py-0.5 rounded-full">Coming Soon</span>
                         </div>
 
                         <!-- Special Instructions -->
@@ -263,7 +300,7 @@
                                 <span class="font-bold text-slate-900">₹0.00</span>
                             </div>
                             <div class="pt-3 border-t border-slate-100 flex items-baseline justify-between">
-                                <span class="text-base font-extrabold text-slate-950">Payable on Delivery</span>
+                                <span id="payable-label" class="text-base font-extrabold text-slate-950">Payable on Delivery</span>
                                 <span class="text-2xl font-black text-slate-950">₹{{ total }}</span>
                             </div>
                         </div>
@@ -274,13 +311,18 @@
                             id="btn-confirm-order"
                             class="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-slate-950 hover:bg-emerald-600 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all active:scale-[0.99] cursor-pointer"
                         >
-                            <i data-lucide="check-circle" class="w-4 h-4"></i>
+                            <i data-lucide="check-circle" id="btn-icon" class="w-4 h-4"></i>
                             <span id="btn-text">Confirm & Place COD Order</span>
                         </button>
 
-                        <p class="text-[11px] text-center text-slate-400 leading-relaxed">
+                        <p id="payment-notice-text" class="text-[11px] text-center text-slate-400 leading-relaxed">
                             By placing this order, you agree to pay in cash upon physical delivery.
                         </p>
+
+                        <div class="flex items-center justify-center gap-2 pt-1 text-[11px] text-slate-400">
+                            <i data-lucide="lock" class="w-3 h-3 text-slate-400"></i>
+                            <span>256-bit SSL encrypted • Razorpay verified checkout</span>
+                        </div>
 
                     </div>
                 </div>
@@ -291,7 +333,59 @@
     </div>
 </div>
 
+<!-- Razorpay Checkout SDK -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 <script>
+function selectPaymentMethod(method) {
+    const codRadio = document.getElementById('pay-method-cod');
+    const rzpRadio = document.getElementById('pay-method-razorpay');
+    const codBox = document.getElementById('payment-box-cod');
+    const rzpBox = document.getElementById('payment-box-razorpay');
+    const btnText = document.getElementById('btn-text');
+    const btnIcon = document.getElementById('btn-icon');
+    const btn = document.getElementById('btn-confirm-order');
+    const payNotice = document.getElementById('payment-notice-text');
+    const payableLabel = document.getElementById('payable-label');
+
+    if (method === 'RAZORPAY') {
+        if (rzpRadio) rzpRadio.checked = true;
+        if (codBox) {
+            codBox.classList.remove('border-emerald-500', 'bg-emerald-50/20');
+            codBox.classList.add('border-slate-200', 'bg-white');
+        }
+        if (rzpBox) {
+            rzpBox.classList.remove('border-slate-200', 'bg-white');
+            rzpBox.classList.add('border-blue-600', 'bg-blue-50/20');
+        }
+        if (btn) {
+            btn.className = "w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-500/20 hover:shadow-lg transition-all active:scale-[0.99] cursor-pointer";
+        }
+        if (btnText) btnText.textContent = "Pay with Razorpay • ₹{{ total }}";
+        if (btnIcon) btnIcon.setAttribute('data-lucide', 'lock');
+        if (payNotice) payNotice.textContent = "Instant order confirmation with 100% secure Razorpay online checkout.";
+        if (payableLabel) payableLabel.textContent = "Total Payable Online";
+    } else {
+        if (codRadio) codRadio.checked = true;
+        if (rzpBox) {
+            rzpBox.classList.remove('border-blue-600', 'bg-blue-50/20');
+            rzpBox.classList.add('border-slate-200', 'bg-white');
+        }
+        if (codBox) {
+            codBox.classList.remove('border-slate-200', 'bg-white');
+            codBox.classList.add('border-emerald-500', 'bg-emerald-50/20');
+        }
+        if (btn) {
+            btn.className = "w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-slate-950 hover:bg-emerald-600 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all active:scale-[0.99] cursor-pointer";
+        }
+        if (btnText) btnText.textContent = "Confirm & Place COD Order";
+        if (btnIcon) btnIcon.setAttribute('data-lucide', 'check-circle');
+        if (payNotice) payNotice.textContent = "By placing this order, you agree to pay in cash upon physical delivery.";
+        if (payableLabel) payableLabel.textContent = "Payable on Delivery";
+    }
+    if (window.lucide) lucide.createIcons();
+}
+
 function toggleAddressSelection(addressId) {
     const newAddressFields = document.getElementById('new-address-fields');
     if (addressId === 'new') {
@@ -313,15 +407,159 @@ function toggleAddressSelection(addressId) {
     }
 }
 
-// Double submit prevention
-document.getElementById('checkout-order-form').addEventListener('submit', function(e) {
-    const btn = document.getElementById('btn-confirm-order');
-    const text = document.getElementById('btn-text');
-    if (btn) {
-        btn.disabled = true;
-        btn.classList.add('opacity-75', 'cursor-not-allowed');
-        if (text) text.textContent = 'Processing Order...';
-    }
-});
+// Integrated Form Submission & Razorpay Modal Orchestration
+const checkoutForm = document.getElementById('checkout-order-form');
+if (checkoutForm) {
+    checkoutForm.addEventListener('submit', function(e) {
+        const selectedMethod = document.querySelector('input[name="payment_method"]:checked')?.value || 'COD';
+        const btn = document.getElementById('btn-confirm-order');
+        const btnText = document.getElementById('btn-text');
+
+        if (selectedMethod === 'RAZORPAY') {
+            e.preventDefault();
+
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+            if (btnText) btnText.textContent = "Connecting to Razorpay...";
+
+            const formData = new FormData(checkoutForm);
+
+            fetch("{% url 'payments:razorpay_create_order' %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.success) {
+                    alert(data.error || "Unable to initialize payment gateway. Please choose Cash on Delivery (COD) or try again.");
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-75', 'cursor-not-allowed');
+                    if (btnText) btnText.textContent = "Pay with Razorpay • ₹{{ total }}";
+                    return;
+                }
+
+                if (typeof Razorpay === 'undefined') {
+                    alert("Payment gateway component could not be loaded. Please disable any script blockers or select Cash on Delivery (COD).");
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-75', 'cursor-not-allowed');
+                    if (btnText) btnText.textContent = "Pay with Razorpay • ₹{{ total }}";
+                    return;
+                }
+
+                const options = {
+                    key: data.razorpay_key_id,
+                    amount: data.amount,
+                    currency: data.currency,
+                    name: data.name || "Cartivo",
+                    description: data.description || "Luxury & Essentials",
+                    order_id: data.razorpay_order_id,
+                    prefill: data.prefill || {},
+                    theme: data.theme || { color: "#2563eb" },
+                    handler: function(response) {
+                        btn.disabled = true;
+                        btn.classList.add('opacity-75', 'cursor-not-allowed');
+                        if (btnText) btnText.textContent = "Verifying Payment Signature...";
+
+                        fetch("{% url 'payments:razorpay_verify' %}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRFToken": formData.get("csrfmiddlewaretoken"),
+                                "X-Requested-With": "XMLHttpRequest",
+                            },
+                            body: JSON.stringify({
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature: response.razorpay_signature,
+                                customer_notes: formData.get("customer_notes") || ""
+                            })
+                        })
+                        .then(r => r.json())
+                        .then(verifyData => {
+                            if (verifyData.success) {
+                                window.location.href = verifyData.redirect_url;
+                            } else {
+                                alert(verifyData.error || "Payment verification failed. Please contact customer support.");
+                                btn.disabled = false;
+                                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+                                if (btnText) btnText.textContent = "Pay with Razorpay • ₹{{ total }}";
+                            }
+                        })
+                        .catch(err => {
+                            console.error("Verification exception:", err);
+                            alert("Payment verification error. If your card was charged, contact support with your payment ID.");
+                            btn.disabled = false;
+                            btn.classList.remove('opacity-75', 'cursor-not-allowed');
+                            if (btnText) btnText.textContent = "Pay with Razorpay • ₹{{ total }}";
+                        });
+                    },
+                    modal: {
+                        ondismiss: function() {
+                            // Record cancellation on backend
+                            fetch("{% url 'payments:razorpay_payment_failed' %}", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "X-CSRFToken": formData.get("csrfmiddlewaretoken"),
+                                    "X-Requested-With": "XMLHttpRequest",
+                                },
+                                body: JSON.stringify({
+                                    razorpay_order_id: data.razorpay_order_id,
+                                    reason: 'CANCELLED'
+                                })
+                            }).catch(() => {});
+
+                            btn.disabled = false;
+                            btn.classList.remove('opacity-75', 'cursor-not-allowed');
+                            if (btnText) btnText.textContent = "Pay with Razorpay • ₹{{ total }}";
+                        }
+                    }
+                };
+
+                const rzp = new Razorpay(options);
+                rzp.on('payment.failed', function(resp) {
+                    console.error("Razorpay Payment Failed:", resp.error);
+                    // Record failure details on backend
+                    fetch("{% url 'payments:razorpay_payment_failed' %}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRFToken": formData.get("csrfmiddlewaretoken"),
+                            "X-Requested-With": "XMLHttpRequest",
+                        },
+                        body: JSON.stringify({
+                            razorpay_order_id: data.razorpay_order_id,
+                            reason: 'FAILED',
+                            error_code: resp.error.code || 'GATEWAY_ERROR',
+                            error_description: resp.error.description || 'Payment rejected by gateway'
+                        })
+                    }).catch(() => {});
+
+                    alert("Payment could not be completed: " + (resp.error.description || "The transaction was declined by bank or gateway."));
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-75', 'cursor-not-allowed');
+                    if (btnText) btnText.textContent = "Pay with Razorpay • ₹{{ total }}";
+                });
+                rzp.open();
+            })
+            .catch(err => {
+                console.error("Gateway initialization error:", err);
+                alert("Network error connecting to payment gateway. Please check your connection and try again.");
+                btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+                if (btnText) btnText.textContent = "Pay with Razorpay • ₹{{ total }}";
+            });
+
+        } else {
+            // Standard COD submission
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+            if (btnText) btnText.textContent = 'Processing Order...';
+        }
+    });
+}
 </script>
 {% endblock %}

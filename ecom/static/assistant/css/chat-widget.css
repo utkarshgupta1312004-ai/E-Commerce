@@ -400,3 +400,68 @@
         max-height: 520px;
     }
 }
+
+/* Interactive Action & Confirmation Cards */
+.assistant-confirm-card {
+    background: #ffffff;
+    border: 1px solid var(--assistant-border);
+    border-radius: 12px;
+    padding: 12px;
+    margin-top: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.confirm-card-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.confirm-card-title {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--assistant-text);
+}
+
+.confirm-card-price {
+    font-weight: 700;
+    font-size: 14px;
+    color: #2563eb;
+}
+
+.confirm-card-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.confirm-btn {
+    flex: 1;
+    padding: 7px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.confirm-btn.add-btn {
+    background: #2563eb;
+    color: #ffffff;
+}
+
+.confirm-btn.add-btn:hover {
+    background: #1d4ed8;
+}
+
+.confirm-btn.cancel-btn {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.confirm-btn.cancel-btn:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}

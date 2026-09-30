@@ -17,15 +17,17 @@ class OrderService:
 
     @classmethod
     @transaction.atomic
-    def create_cod_order(
+    def create_order(
         cls,
         user: User,
         address: Address,
+        payment_method: str = 'COD',
+        payment_status: str = 'PENDING',
         customer_notes: str = '',
         idempotency_key: Optional[str] = None
     ) -> Order:
         """
-        Creates a permanent Cash on Delivery (COD) Order from the customer's active cart.
+        Creates a permanent Order from the customer's active cart.
         
         Guarantees:
         1. All stock records are locked via select_for_update() to prevent race conditions.
@@ -110,8 +112,8 @@ class OrderService:
             shipping_postal_code=address.postal_code,
             shipping_country=address.country,
             status='CONFIRMED',
-            payment_method='COD',
-            payment_status='PENDING',
+            payment_method=payment_method,
+            payment_status=payment_status,
             subtotal=subtotal,
             shipping_amount=shipping_amount,
             discount_amount=discount_amount,
@@ -149,3 +151,40 @@ class OrderService:
         cart.save(update_fields=['status', 'updated_at'])
 
         return order
+
+    @classmethod
+    def create_cod_order(
+        cls,
+        user: User,
+        address: Address,
+        customer_notes: str = '',
+        idempotency_key: Optional[str] = None
+    ) -> Order:
+        """Helper to create a Cash on Delivery (COD) order."""
+        return cls.create_order(
+            user=user,
+            address=address,
+            payment_method='COD',
+            payment_status='PENDING',
+            customer_notes=customer_notes,
+            idempotency_key=idempotency_key
+        )
+
+    @classmethod
+    def create_razorpay_order(
+        cls,
+        user: User,
+        address: Address,
+        customer_notes: str = '',
+        idempotency_key: Optional[str] = None
+    ) -> Order:
+        """Helper to create an online paid Razorpay order."""
+        return cls.create_order(
+            user=user,
+            address=address,
+            payment_method='RAZORPAY',
+            payment_status='PAID',
+            customer_notes=customer_notes,
+            idempotency_key=idempotency_key
+        )
+

@@ -52,6 +52,7 @@ urlpatterns = [
     path('cart/', include('apps.cart.urls', namespace='cart')),
     path('wishlist/', include('apps.wishlist.urls', namespace='wishlist')),
     path('checkout/', include('apps.checkout.urls', namespace='checkout')),
+    path('payments/', include('apps.payments.urls', namespace='payments')),
     path('orders/', include('apps.orders.urls', namespace='orders')),
     path('notifications/', include('apps.notifications.urls', namespace='notifications')),
     path('reviews/', include('apps.reviews.urls', namespace='reviews')),

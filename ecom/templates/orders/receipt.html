@@ -47,10 +47,18 @@
     <!-- Printable Receipt Container -->
     <div class="receipt-container max-w-3xl mx-auto bg-white rounded-2xl border border-slate-200/80 shadow-md p-8 sm:p-12 relative overflow-hidden">
         
-        {% if is_payment_receipt or order.payment_status == 'PAID' %}
-        <!-- Paid Watermark Stamp -->
+        {% if order.payment_status == 'PAID' %}
+        <!-- Paid Watermark Stamp (Strictly Backend Confirmed) -->
         <div class="absolute right-8 top-28 border-4 border-emerald-600/30 text-emerald-700/40 font-black text-2xl tracking-widest uppercase px-6 py-2 rounded-xl transform rotate-[-12deg] pointer-events-none select-none">
             PAID &bull; RECEIVED
+        </div>
+        {% elif order.payment_status == 'FAILED' %}
+        <div class="absolute right-8 top-28 border-4 border-rose-600/30 text-rose-700/40 font-black text-2xl tracking-widest uppercase px-6 py-2 rounded-xl transform rotate-[-12deg] pointer-events-none select-none">
+            PAYMENT FAILED
+        </div>
+        {% else %}
+        <div class="absolute right-8 top-28 border-4 border-amber-600/30 text-amber-700/40 font-black text-2xl tracking-widest uppercase px-6 py-2 rounded-xl transform rotate-[-12deg] pointer-events-none select-none">
+            PAYMENT PENDING
         </div>
         {% endif %}
 
@@ -61,22 +69,35 @@
                 <p class="text-xs text-slate-500 font-medium">Shop Smarter. Live Better. • Official Customer Invoice</p>
             </div>
             <div class="sm:text-right">
-                <span class="inline-block uppercase tracking-widest text-[11px] font-extrabold {% if is_payment_receipt or order.payment_status == 'PAID' %}text-emerald-700 bg-emerald-50 border-emerald-200{% else %}text-blue-600 bg-blue-50 border-blue-100{% endif %} px-3 py-1 rounded-full border mb-1">
-                    {% if is_payment_receipt %}Payment Confirmation Receipt{% else %}Official Order Receipt{% endif %}
+                <span class="inline-block uppercase tracking-widest text-[11px] font-extrabold {% if order.payment_status == 'PAID' %}text-emerald-700 bg-emerald-50 border-emerald-200{% else %}text-blue-600 bg-blue-50 border-blue-100{% endif %} px-3 py-1 rounded-full border mb-1">
+                    {% if order.payment_status == 'PAID' %}Official Payment Receipt{% else %}Official Order Receipt{% endif %}
                 </span>
                 <p class="text-xs text-slate-400">Date: {{ order.created_at|date:"d-m-Y" }}</p>
             </div>
         </div>
 
-        <!-- Receipt Metadata (Requirements 50 & 53) -->
+        <!-- Receipt Metadata (Requirements 18 & 50 & 53) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 py-6 border-b border-slate-100 text-xs sm:text-sm">
             <div>
-                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Order Information</h3>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Order & Payment Information</h3>
                 <div class="space-y-1 text-slate-700">
-                    <p><span class="text-slate-400 font-medium">Order Number:</span> <span class="font-mono font-bold text-slate-900">{{ order.order_number }}</span></p>
+                    <p><span class="text-slate-400 font-medium">Order ID:</span> <span class="font-mono font-bold text-slate-900">{{ order.order_number }}</span></p>
+                    <p><span class="text-slate-400 font-medium">Payment ID:</span> 
+                        <span class="font-mono font-bold text-slate-900">
+                            {% if payment_txn.razorpay_payment_id %}
+                                {{ payment_txn.razorpay_payment_id }}
+                            {% elif payment_txn.transaction_id %}
+                                {{ payment_txn.transaction_id }}
+                            {% elif order.payment_method == 'COD' %}
+                                COD-{{ order.order_number }}
+                            {% else %}
+                                Pending Confirmation
+                            {% endif %}
+                        </span>
+                    </p>
                     <p><span class="text-slate-400 font-medium">Order Date:</span> <span class="font-semibold text-slate-900">{{ order.created_at|date:"d-m-Y H:i" }}</span></p>
                     <p><span class="text-slate-400 font-medium">Order Status:</span> <span class="font-bold text-slate-900">{{ order.customer_status_label }}</span></p>
-                    <p><span class="text-slate-400 font-medium">Payment Method:</span> <span class="font-bold text-slate-900">{{ order.get_payment_method_display }}</span></p>
+                    <p><span class="text-slate-400 font-medium">Payment Method:</span> <span class="font-bold text-slate-900">{{ order.get_payment_method_display }}{% if payment_txn.method %} ({{ payment_txn.method|upper }}){% endif %}</span></p>
                     <p><span class="text-slate-400 font-medium">Payment Status:</span> <span class="font-bold {% if order.payment_status == 'PAID' %}text-emerald-700{% else %}text-amber-700{% endif %}">{{ order.customer_payment_display }}</span></p>
                     <p><span class="text-slate-400 font-medium">Carrier Partner:</span> <span class="font-bold text-slate-900">{{ order.delivery_partner|default:"Cartivo Express Delivery" }}</span></p>
                     <p><span class="text-slate-400 font-medium">Tracking ID:</span> <span class="font-mono font-bold text-slate-900">{{ order.tracking_code }}</span></p>

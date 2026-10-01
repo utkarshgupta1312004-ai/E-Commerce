@@ -25,6 +25,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Role, UserProfile, Address
 from apps.core.models import ManagementDepartment
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
 import logging
 
 logger = logging.getLogger(__name__)
@@ -246,9 +248,12 @@ def register_view(request):
 
 def _get_env_config(key, default=''):
     """
-    Retrieves configuration value from os.environ, falling back to parsing .env file
-    from project directory or workspace root if not already in system environment.
+    Retrieves configuration value from settings or os.environ,
+    falling back to parsing .env files directly if not yet loaded.
     """
+    val = getattr(settings, key, None)
+    if val:
+        return str(val).strip()
     val = os.environ.get(key, '').strip()
     if val:
         return val
@@ -269,227 +274,128 @@ def _get_env_config(key, default=''):
 
 def google_login_view(request):
     """
-    Initiates Google OAuth2 login flow.
-    Uses GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET from environment variables or .env file.
+    Redirects customer to the login page where Google Identity Services is initialized.
+    Cartivo uses Google Identity Services (GSI) 1-click credential authentication.
     """
-    client_id = _get_env_config('GOOGLE_CLIENT_ID')
-    client_secret = _get_env_config('GOOGLE_CLIENT_SECRET')
-
-    if not client_id:
-        messages.warning(
-            request,
-            "Google Sign-In is not currently configured. Please sign in using your email and password."
-        )
-        return redirect('accounts:login')
-
     redirect_to = request.GET.get('next') or request.POST.get('next') or '/'
-    if redirect_to and redirect_to.startswith('/'):
-        request.session['google_oauth_next'] = redirect_to
-
-    # Determine redirect URI (handling reverse proxies, custom override, and dev vs prod)
-    custom_redirect = _get_env_config('GOOGLE_REDIRECT_URI') or _get_env_config('GOOGLE_OAUTH_REDIRECT_URI')
-    if custom_redirect:
-        redirect_uri = custom_redirect
-    else:
-        redirect_uri = request.build_absolute_uri(reverse('accounts:google_callback'))
-        # If running behind an HTTPS reverse proxy (e.g. Render), ensure https scheme
-        if request.headers.get('x-forwarded-proto') == 'https' or not settings.DEBUG:
-            if redirect_uri.startswith('http://'):
-                redirect_uri = 'https://' + redirect_uri[7:]
-
-    state = get_random_string(32)
-    request.session['google_oauth_state'] = state
-
-    # If client_secret is missing, provide a clear, helpful warning
-    if not client_secret:
-        messages.warning(
-            request,
-            "Google Sign-In redirect flow requires GOOGLE_CLIENT_SECRET in your .env file. "
-            "Please add your Client Secret in .env, or use the 1-Click Google Sign-In button on the login page."
-        )
-        return redirect('accounts:login')
-
-    params = {
-        'client_id': client_id,
-        'redirect_uri': redirect_uri,
-        'response_type': 'code',
-        'scope': 'openid email profile',
-        'state': state,
-        'access_type': 'online',
-        'prompt': 'select_account',
-    }
-    auth_url = f"https://accounts.google.com/o/oauth2/v2/auth?{urllib.parse.urlencode(params)}"
-    return redirect(auth_url)
+    login_url = reverse('accounts:login')
+    if redirect_to and redirect_to != '/':
+        login_url = f"{login_url}?next={urllib.parse.quote(redirect_to)}"
+    return redirect(login_url)
 
 
-@csrf_exempt
 def google_callback_view(request):
     """
-    Handles Google OAuth2 and Google Identity Services (GSI) callback.
-    Supports:
-    1. Google Identity Services (GSI) credential (ID Token) via POST/GET - requires ONLY GOOGLE_CLIENT_ID!
-    2. Server-side OAuth2 code exchange via GET/POST - uses GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET.
-    Authenticates existing customer or registers a new customer account.
+    Handles Google Identity Services (GSI) credential POST callback.
+    Verifies Google ID token server-side using Google's official verify_oauth2_token.
+    Finds or creates customer account, rotates session, and signs in user via Django auth.
+    Protected against CSRF using standard Django CSRF token submitted from the frontend form.
     """
+    if request.method != 'POST':
+        logger.warning("Google callback received non-POST request (%s). Redirecting to login.", request.method)
+        return redirect('accounts:login')
+
+    logger.info("Google callback received via POST")
+
     client_id = _get_env_config('GOOGLE_CLIENT_ID')
-    client_secret = _get_env_config('GOOGLE_CLIENT_SECRET')
-
     if not client_id:
-        messages.error(request, "Google OAuth is not configured on this server.")
+        logger.error("Google authentication failed: GOOGLE_CLIENT_ID is not configured.")
+        messages.error(request, "Google Sign-In is not currently configured on this server.")
         return redirect('accounts:login')
 
-    user_info = None
-
-    # -------------------------------------------------------------------------
-    # Flow 1: Google Identity Services (GSI) Credential / ID Token
-    # -------------------------------------------------------------------------
-    credential = request.POST.get('credential') or request.GET.get('credential')
-    if credential:
-        try:
-            token_url = f"https://oauth2.googleapis.com/tokeninfo?id_token={urllib.parse.quote(credential)}"
-            req = urllib.request.Request(token_url)
-            with urllib.request.urlopen(req, timeout=10) as resp:
-                token_data = json.loads(resp.read().decode('utf-8'))
-
-            # Verify audience matches client ID
-            token_aud = token_data.get('aud')
-            if token_aud != client_id:
-                messages.error(request, "Google authentication token audience mismatch.")
-                return redirect('accounts:login')
-
-            email = (token_data.get('email') or '').strip().lower()
-            if not email:
-                messages.error(request, "Google did not provide an email address.")
-                return redirect('accounts:login')
-
-            user_info = {
-                'email': email,
-                'given_name': token_data.get('given_name') or token_data.get('name') or '',
-                'family_name': token_data.get('family_name') or '',
-                'sub': token_data.get('sub'),
-            }
-        except Exception as e:
-            logger.error(f"Google ID token verification failed: {e}")
-            messages.error(request, f"Google token verification failed: {str(e)}")
-            return redirect('accounts:login')
-
-    # -------------------------------------------------------------------------
-    # Flow 2: Traditional OAuth2 Authorization Code Exchange
-    # -------------------------------------------------------------------------
-    code = request.GET.get('code') or request.POST.get('code')
-    if not user_info and code:
-        state = request.GET.get('state') or request.POST.get('state')
-        saved_state = request.session.pop('google_oauth_state', None)
-
-        if saved_state and state and state != saved_state:
-            messages.error(request, "Google authentication state could not be verified. Please try again.")
-            return redirect('accounts:login')
-
-        if not client_secret:
-            messages.error(
-                request,
-                "Google Sign-In is missing GOOGLE_CLIENT_SECRET. Please add your Client Secret in your .env file."
-            )
-            return redirect('accounts:login')
-
-        custom_redirect = _get_env_config('GOOGLE_REDIRECT_URI') or _get_env_config('GOOGLE_OAUTH_REDIRECT_URI')
-        if custom_redirect:
-            redirect_uri = custom_redirect
-        else:
-            redirect_uri = request.build_absolute_uri(reverse('accounts:google_callback'))
-            if request.headers.get('x-forwarded-proto') == 'https' or not settings.DEBUG:
-                if redirect_uri.startswith('http://'):
-                    redirect_uri = 'https://' + redirect_uri[7:]
-
-        try:
-            token_url = "https://oauth2.googleapis.com/token"
-            token_data = urllib.parse.urlencode({
-                'code': code,
-                'client_id': client_id,
-                'client_secret': client_secret,
-                'redirect_uri': redirect_uri,
-                'grant_type': 'authorization_code'
-            }).encode('utf-8')
-
-            token_req = urllib.request.Request(token_url, data=token_data, method='POST')
-            token_req.add_header('Content-Type', 'application/x-www-form-urlencoded')
-
-            with urllib.request.urlopen(token_req, timeout=10) as resp:
-                token_json = json.loads(resp.read().decode('utf-8'))
-                access_token = token_json.get('access_token')
-
-            if not access_token:
-                messages.error(request, "Unable to obtain Google access token.")
-                return redirect('accounts:login')
-
-            # Fetch Google user info using access token
-            userinfo_url = "https://www.googleapis.com/oauth2/v2/userinfo"
-            userinfo_req = urllib.request.Request(userinfo_url)
-            userinfo_req.add_header('Authorization', f"Bearer {access_token}")
-
-            with urllib.request.urlopen(userinfo_req, timeout=10) as resp:
-                raw_info = json.loads(resp.read().decode('utf-8'))
-
-            email = (raw_info.get('email') or '').strip().lower()
-            if not email:
-                messages.error(request, "Google did not provide an email address.")
-                return redirect('accounts:login')
-
-            user_info = {
-                'email': email,
-                'given_name': raw_info.get('given_name') or raw_info.get('name') or '',
-                'family_name': raw_info.get('family_name') or '',
-                'sub': raw_info.get('id'),
-            }
-        except urllib.error.HTTPError as he:
-            err_body = he.read().decode('utf-8', errors='ignore')
-            logger.error(f"Google token exchange HTTPError: {he.code} - {err_body}")
-            messages.error(request, f"Google OAuth failed ({he.code}): {err_body}")
-            return redirect('accounts:login')
-        except Exception as e:
-            logger.error(f"Google OAuth exchange error: {e}")
-            messages.error(request, f"Google authentication failed: {str(e)}")
-            return redirect('accounts:login')
-
-    if not user_info:
-        # Check if Google returned an error query param (e.g. user cancelled)
-        error_desc = request.GET.get('error_description') or request.GET.get('error')
-        if error_desc:
-            messages.warning(request, f"Google authentication cancelled: {error_desc}")
-        else:
-            messages.error(request, "Google authentication could not be completed. Please try again.")
+    credential = request.POST.get('credential')
+    logger.info("Google credential present in request: %s", bool(credential))
+    if not credential:
+        logger.warning("Google callback received empty or missing credential.")
+        messages.error(request, "Google authentication could not be completed. Missing credential token.")
         return redirect('accounts:login')
+
+    # Server-side token verification using Google's official library
+    try:
+        idinfo = id_token.verify_oauth2_token(
+            credential,
+            google_requests.Request(),
+            client_id,
+            clock_skew_in_seconds=10
+        )
+    except ValueError as ve:
+        logger.warning("Google ID token verification failed (ValueError): %s", ve)
+        messages.error(request, "Google sign-in token could not be verified. Please try again.")
+        return redirect('accounts:login')
+    except Exception as e:
+        logger.error("Unexpected error during Google token verification: %s", e)
+        messages.error(request, "An unexpected error occurred during Google sign-in. Please try again.")
+        return redirect('accounts:login')
+
+    # Verify token issuer
+    issuer = idinfo.get('iss')
+    if issuer not in ['accounts.google.com', 'https://accounts.google.com']:
+        logger.warning("Google token rejected: invalid issuer %s", issuer)
+        messages.error(request, "Google authentication token issuer is invalid.")
+        return redirect('accounts:login')
+
+    # Extract user information securely
+    email = (idinfo.get('email') or '').strip().lower()
+    if not email:
+        logger.warning("Google token verified but no email address was included.")
+        messages.error(request, "Google did not provide a verified email address for your account.")
+        return redirect('accounts:login')
+
+    if not idinfo.get('email_verified', True):
+        logger.warning("Google token rejected: email %s is not verified by Google.", email)
+        messages.error(request, "Your Google email address has not been verified.")
+        return redirect('accounts:login')
+
+    google_sub = idinfo.get('sub')
+    given_name = (idinfo.get('given_name') or idinfo.get('name') or '').strip()
+    family_name = (idinfo.get('family_name') or '').strip()
+
+    logger.info("Google token verification success: email=%s, sub=%s", email, google_sub)
 
     # -------------------------------------------------------------------------
     # User Lookup or Customer Registration
     # -------------------------------------------------------------------------
-    email = user_info['email']
     user = User.objects.filter(email__iexact=email).first()
 
     if user:
+        logger.info("User lookup found existing user: username=%s (id=%s)", user.username, user.id)
         if not user.is_active:
-            messages.error(request, "Your account has been deactivated. Please contact support.")
+            logger.warning("Deactivated user attempted Google login: %s", email)
+            messages.error(request, "Your account has been deactivated or suspended. Please contact customer support.")
             return redirect('accounts:login')
+
         if user.is_superuser:
+            logger.warning("Super Administrator attempted customer Google storefront login: %s", email)
             messages.error(
                 request,
-                "Super Administrator accounts cannot sign in through the customer storefront. Please use the Management Portal (/management/login/)."
+                "Super Administrator accounts cannot sign in through the customer storefront. Please authenticate via the Management Portal (/management/login/)."
             )
             return redirect('accounts:login')
+
         is_dept_staff = (
             user.groups.filter(name__in=['Cartivo Department', 'Cartive Department']).exists() or
             hasattr(user, 'department_account')
         )
         if is_dept_staff:
+            logger.warning("Department staff attempted customer Google storefront login: %s", email)
             messages.error(
                 request,
-                "Department staff accounts cannot sign in through the customer storefront. Please use the Management Portal (/management/login/)."
+                "Department staff accounts cannot sign in through the customer storefront. Please use the Management Portal."
             )
             return redirect('accounts:login')
+
+        # Update first/last names if currently blank
+        updated_fields = []
+        if not user.first_name and given_name:
+            user.first_name = given_name
+            updated_fields.append('first_name')
+        if not user.last_name and family_name:
+            user.last_name = family_name
+            updated_fields.append('last_name')
+        if updated_fields:
+            user.save(update_fields=updated_fields)
     else:
-        # Register new customer
-        first_name = user_info.get('given_name', '')
-        last_name = user_info.get('family_name', '')
+        logger.info("User lookup: creating new customer user for email=%s", email)
         username = email
         if User.objects.filter(username=username).exists():
             username = f"{email.split('@')[0]}_{get_random_string(5)}"
@@ -497,8 +403,8 @@ def google_callback_view(request):
         user = User.objects.create_user(
             username=username,
             email=email,
-            first_name=first_name,
-            last_name=last_name,
+            first_name=given_name,
+            last_name=family_name,
         )
         user.set_unusable_password()
         user.save()
@@ -506,21 +412,24 @@ def google_callback_view(request):
         # Assign to Customer group
         customer_group, _ = Group.objects.get_or_create(name='Customer')
         user.groups.add(customer_group)
+        logger.info("Created customer account for user %s (id=%s)", user.username, user.id)
 
     # Clean session rotation and login
     request.session.cycle_key()
     request.session.set_expiry(0)
     auth_login(request, user)
+    logger.info("Django auth_login successful for user: %s (id=%s)", user.username, user.id)
 
     try:
         from apps.cart.services import CartService
         CartService.merge_guest_cart(request, user)
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("Could not merge guest cart for user %s: %s", user.username, e)
 
-    messages.success(request, f"Signed in with Google as {user.first_name or user.email}.")
-    next_url = request.session.pop('google_oauth_next', None) or request.GET.get('next') or '/'
-    if not next_url.startswith('/'):
+    messages.success(request, f"Welcome to Cartivo, {user.first_name or user.username}!")
+
+    next_url = request.POST.get('next') or request.GET.get('next') or request.session.pop('google_oauth_next', None) or '/'
+    if not next_url.startswith('/') or next_url.startswith('//'):
         next_url = '/'
     return redirect(next_url)
 

@@ -23,7 +23,6 @@ try:
     for _env_candidate in [BASE_DIR.parent / '.env', BASE_DIR / '.env']:
         if _env_candidate.exists():
             load_dotenv(dotenv_path=_env_candidate)
-            break
 except ImportError:
     pass
 
@@ -287,6 +286,17 @@ SESSION_SAVE_EVERY_REQUEST = True
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_SAMESITE = 'Lax'
+# Cross-Origin Opener Policy (COOP)
+# 'same-origin-allow-popups' is required so that external OAuth popups (such as
+# Google Identity Services / GSI) can maintain window.opener communication with
+# the parent window and avoid hanging at accounts.google.com/gsi/transform.
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
+
+# ==============================================================================
+# Google Identity Services (GSI) Authentication Configuration
+# ==============================================================================
+GOOGLE_CLIENT_ID = (os.environ.get('GOOGLE_CLIENT_ID') or '').strip()
+GOOGLE_CLIENT_SECRET = (os.environ.get('GOOGLE_CLIENT_SECRET') or '').strip()
 
 # ==============================================================================
 # Production Security Hardening (Render / Cloud Deployment)

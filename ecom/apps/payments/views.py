@@ -100,9 +100,9 @@ def create_razorpay_order_view(request):
         except (ValueError, TypeError):
             address = None
 
-    # Fallback to existing default address if no explicit id was provided
+    # Fallback to existing address if no explicit id was provided
     if not address and not address_id:
-        address = Address.objects.filter(user=request.user, address_type='shipping').order_by('-is_default', '-created_at').first()
+        address = Address.objects.filter(user=request.user).order_by('-is_default', '-created_at').first()
 
     if not address or address_id == 'new':
         full_name = data.get('full_name', '').strip()
@@ -164,6 +164,8 @@ def create_razorpay_order_view(request):
         razorpay_order_id__isnull=False
     ).exclude(razorpay_order_id='').order_by('-created_at').first()
 
+    key_id = RazorpayService.get_key_id()
+
     if existing_txn:
         # Update address and notes in case the customer edited them
         existing_txn.shipping_address = address
@@ -173,8 +175,10 @@ def create_razorpay_order_view(request):
         logger.info("Reusing recent uncompleted Razorpay order %s for user %s", existing_txn.razorpay_order_id, request.user.username)
         return JsonResponse({
             'success': True,
+            'key': key_id,
+            'order_id': existing_txn.razorpay_order_id,
             'razorpay_order_id': existing_txn.razorpay_order_id,
-            'razorpay_key_id': RazorpayService.get_key_id(),
+            'razorpay_key_id': key_id,
             'amount': int(round(total * 100)),
             'currency': existing_txn.currency,
             'name': 'Cartivo Luxury & Essentials',
@@ -225,8 +229,10 @@ def create_razorpay_order_view(request):
 
         return JsonResponse({
             'success': True,
+            'key': key_id,
+            'order_id': razorpay_order['id'],
             'razorpay_order_id': razorpay_order['id'],
-            'razorpay_key_id': RazorpayService.get_key_id(),
+            'razorpay_key_id': key_id,
             'amount': razorpay_order['amount'],
             'currency': razorpay_order['currency'],
             'name': 'Cartivo Luxury & Essentials',
@@ -246,18 +252,24 @@ def create_razorpay_order_view(request):
     except RazorpayServiceException as exc:
         logger.error("Razorpay order creation failed: [%s] %s", exc.code, str(exc))
         if exc.code == 'AUTH_FAILED':
-            user_msg = "Online payment gateway is temporarily unavailable. Please verify API keys in dashboard or choose Cash on Delivery (COD)."
+            user_msg = "Razorpay authentication failed. Please verify RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in server .env configuration."
+        elif exc.code == 'CONFIG_MISSING':
+            user_msg = "Razorpay API credentials (RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET) are missing from server configuration."
+        elif exc.code == 'INVALID_AMOUNT':
+            user_msg = "Order amount must be greater than zero."
         else:
-            user_msg = "Payment gateway could not be initialized. Please try again or choose Cash on Delivery (COD)."
+            user_msg = str(exc) if getattr(settings, 'DEBUG', False) else "Payment gateway could not be initialized. Please try again or choose Cash on Delivery (COD)."
         return JsonResponse({
             'success': False,
-            'error': user_msg
+            'error': user_msg,
+            'code': exc.code or 'GATEWAY_ERROR'
         }, status=400)
     except Exception as exc:
         logger.exception("Unexpected error in create_razorpay_order_view: %s", exc)
         return JsonResponse({
             'success': False,
-            'error': "An unexpected error occurred while connecting to payment gateway. Please try again."
+            'error': f"Internal error connecting to payment gateway: {str(exc)}" if getattr(settings, 'DEBUG', False) else "An unexpected error occurred while connecting to payment gateway. Please try again.",
+            'code': 'INTERNAL_ERROR'
         }, status=500)
 
 

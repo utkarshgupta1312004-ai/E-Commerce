@@ -593,3 +593,68 @@ class RazorpayPaymentViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'TXN-HIST-01')
         self.assertContains(response, 'Payment Ledger')
+
+    def test_already_paid_order_verification_is_idempotent(self):
+        """Verifying an order that is already SUCCESS must return 200 without creating duplicate order."""
+        order = Order.objects.create(
+            order_number='ORD-ALREADY-PAID-01',
+            user=self.user,
+            cart=self.cart,
+            shipping_name='Rajesh Kumar',
+            shipping_street_address='123 Brigade Road',
+            shipping_city='Bengaluru',
+            shipping_state='Karnataka',
+            shipping_postal_code='560001',
+            shipping_country='India',
+            status='CONFIRMED',
+            payment_method='RAZORPAY',
+            payment_status='PAID',
+            total_amount=Decimal('1200.00')
+        )
+        txn = PaymentTransaction.objects.create(
+            transaction_id='TXN-ALREADY-PAID',
+            user=self.user,
+            cart=self.cart,
+            order=order,
+            amount=Decimal('1200.00'),
+            currency='INR',
+            gateway='RAZORPAY',
+            status='SUCCESS',
+            razorpay_order_id='order_already_paid_001',
+            razorpay_payment_id='pay_already_paid_001'
+        )
+
+        initial_order_count = Order.objects.count()
+        initial_stock = self.stock.on_hand_quantity
+
+        url = reverse('payments:razorpay_verify')
+        response = self.client.post(url, {
+            'razorpay_order_id': 'order_already_paid_001',
+            'razorpay_payment_id': 'pay_already_paid_001',
+            'razorpay_signature': 'any_sig'
+        })
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data['success'])
+        self.assertEqual(data['order_number'], 'ORD-ALREADY-PAID-01')
+        # Ensure no duplicate order was created and stock was not deducted again
+        self.assertEqual(Order.objects.count(), initial_order_count)
+        self.stock.refresh_from_db()
+        self.assertEqual(self.stock.on_hand_quantity, initial_stock)
+
+    def test_cod_flow_remains_functional(self):
+        """Verifies Cash on Delivery (COD) order placement works without interference from Razorpay."""
+        url = reverse('checkout:place_order')
+        response = self.client.post(url, {
+            'address_id': str(self.address.id),
+            'payment_method': 'COD',
+            'customer_notes': 'Leave at door'
+        })
+        self.assertEqual(response.status_code, 302)
+        order = Order.objects.filter(user=self.user, payment_method='COD').first()
+        self.assertIsNotNone(order)
+        self.assertEqual(order.payment_status, 'PENDING')
+        self.assertEqual(order.status, 'CONFIRMED')
+        self.assertEqual(order.customer_notes, 'Leave at door')
+        self.assertRedirects(response, reverse('orders:order_success', kwargs={'order_number': order.order_number}))

@@ -140,28 +140,105 @@ Cartivo is configured for automated, serverless deployment on **Vercel** with `@
 3. **Framework Preset**: Select **Other**.
 4. **Root Directory**: Leave as `./` (the root directory contains `vercel.json` and `api/index.py`).
 
-### 2. Configure Environment Variables in Vercel
-In your Vercel Project Settings under **Environment Variables**, add:
+### 2. Configure Environment Variables in Vercel / Production
+In your production environment or Vercel Project Settings under **Environment Variables**, add:
 
 | Variable Name | Recommended Value / Description | Required |
 | :--- | :--- | :--- |
 | `SECRET_KEY` | Generate a strong random key (e.g. 50+ characters) | **Yes** |
-| `DEBUG` | `False` | **Yes** |
-| `ALLOWED_HOSTS` | `*` or `.vercel.app,yourcustomdomain.com` | **Yes** |
-| `DATABASE_URL` | PostgreSQL connection URL (e.g. from [Neon.tech](https://neon.tech), [Supabase](https://supabase.com), or Vercel Postgres) | Recommended for Production |
-| `GEMINI_API_KEY` | Your Google Gemini API Key for the AI shopping concierge widget | Optional |
-
-> **Note on Database Storage**:
-> - **Instant Preview Mode**: If `DATABASE_URL` is omitted, Cartivo runs using SQLite in `/tmp/db.sqlite3` with fallback seeding.
-> - **Production Persistence**: For persistent customer accounts, carts, orders, and reviews, create a free database at [Neon.tech](https://neon.tech) and paste the connection string into `DATABASE_URL`. The automated build script (`build_files.sh`) will automatically run all migrations and populate the store catalog with all products (`fixtures/seed_data.json`) on deploy!
-
-### 3. Deploy
-Click **"Deploy"**. Vercel will:
-1. Run `build_files.sh` to install requirements, collect and compress static files (`staticfiles/`), and migrate/seed database tables.
-2. Spin up the serverless Python WSGI handler via `api/index.py`.
-3. Provide an instant live SSL domain: `https://<your-project>.vercel.app`.
+| `DEBUG` | `False` in production (`True` for local development in `.env`) | **Yes** |
+| `ALLOWED_HOSTS` | `*` or `.vercel.app,.onrender.com,localhost,127.0.0.1` | **Yes** |
+| `DATABASE_URL` | PostgreSQL connection URL (e.g. from Neon.tech, Supabase, or Render) | Recommended |
+| `GOOGLE_CLIENT_ID` | Google OAuth2 Web Client ID for 1-click Google Sign-In | Optional |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth2 Web Client Secret | Optional |
+| `GEMINI_API_KEY` | Google Gemini API Key for the AI concierge widget | Optional |
+| `RAZORPAY_KEY_ID` | Razorpay Key ID (`rzp_test_...` for test mode, `rzp_live_...` for live) | **Yes** |
+| `RAZORPAY_KEY_SECRET` | Razorpay Secret Key (never exposed to frontend/git) | **Yes** |
+| `RAZORPAY_CURRENCY` | Base transaction currency (default: `INR`) | Optional |
+| `RAZORPAY_WEBHOOK_SECRET` | Secret key configured on Razorpay Dashboard for webhook signatures | **Yes** |
 
 ---
+
+## Razorpay Payment Module Integration
+
+Cartivo features a production-grade, secure Razorpay checkout integration with server-side HMAC-SHA256 signature verification, atomic inventory reservation, cart conversion, and idempotent webhook synchronization.
+
+### 1. Payment Architecture & Flow
+```
+CUSTOMER
+   ↓
+Shopping Bag (Cart)
+   ↓
+Checkout Page (/checkout/)
+   ↓
+Select Payment Method:
+   ├── Cash on Delivery (COD) ──→ Order Created (Payment: PENDING, Stock Deducted) ──→ Fulfillment
+   └── Razorpay (Online)
+           ↓
+       1. Frontend posts checkout data to /payments/razorpay/create-order/
+       2. Backend strictly recalculates financials & validates stock server-side
+       3. Backend creates Razorpay order (amount in paise, currency: INR) via official SDK
+       4. Backend returns public razorpay_key_id, razorpay_order_id, and amount
+       5. Frontend opens official Razorpay Checkout.js modal (rzp.open())
+       6. Customer enters test payment (UPI / Card / NetBanking / Wallet)
+       7. Razorpay returns { razorpay_payment_id, razorpay_order_id, razorpay_signature }
+       8. Frontend securely POSTs signature payload to /payments/razorpay/verify/
+       9. Backend cryptographically verifies HMAC-SHA256 signature
+      10. Backend atomically locks row, deducts inventory, creates permanent Order (PAID),
+          marks Cart as CONVERTED, and redirects to Order Success & Receipt
+```
+
+### 2. Razorpay Dashboard & Test Mode Setup
+1. Log in to your [Razorpay Dashboard](https://dashboard.razorpay.com/).
+2. Toggle the dashboard to **Test Mode** (top-right badge).
+3. Navigate to **Account & Settings > API Keys > Generate Key**.
+4. Copy the **Key ID** and **Key Secret**.
+5. Add them to your local `.env`:
+   ```bash
+   RAZORPAY_KEY_ID=rzp_test_xxxxxxxxxxxx
+   RAZORPAY_KEY_SECRET=xxxxxxxxxxxxxxxxxxxxxxxx
+   RAZORPAY_CURRENCY=INR
+   RAZORPAY_WEBHOOK_SECRET=your_custom_webhook_secret
+   ```
+6. **Webhook Setup (Optional for local, Required for Production)**:
+   - Go to **Account & Settings > Webhooks > Add New Webhook**.
+   - **Webhook URL**: `https://your-domain.com/payments/razorpay/webhook/`
+   - **Secret**: Enter the exact secret string you set in `RAZORPAY_WEBHOOK_SECRET`.
+   - **Active Events**: Check `payment.captured`, `order.paid`, and `payment.failed`.
+   - Webhook processing is idempotent: duplicate deliveries acknowledge HTTP 200 without creating duplicate orders.
+
+### 3. Test Payment Process (Razorpay Test Mode)
+When testing in browser on `http://localhost:8000/checkout/`:
+- **Cards**: Use test card number `4111 1111 1111 1111`, any future expiry (e.g. `12/28`), any CVV (`123`), and any OTP (`123456` or click "Success").
+- **UPI**: Enter `success@razorpay` to simulate a successful UPI approval.
+- **Net Banking**: Choose any bank (e.g. HDFC, ICICI, SBI) and click "Success" on the mock bank authorization screen.
+
+### 4. Switching to Production (Test Mode to Live Mode)
+To transition to real-money processing:
+1. Complete Razorpay KYC activation on the Razorpay Dashboard.
+2. Switch dashboard toggle to **Live Mode**.
+3. Generate **Live API Keys** (`rzp_live_...`).
+4. Update environment variables in production host (e.g. Render / Vercel):
+   - Replace `RAZORPAY_KEY_ID` with `rzp_live_...`
+   - Replace `RAZORPAY_KEY_SECRET` with the live secret
+   - Configure live Webhook endpoint and set `RAZORPAY_WEBHOOK_SECRET`
+   - Ensure `DEBUG=False` and `SECURE_SSL_REDIRECT=True`
+5. **NEVER** commit live keys to Git or document them in source files.
+
+### 5. Troubleshooting: "Razorpay Checkout Not Opening"
+If clicking "Pay with Razorpay" does not launch the Razorpay Checkout popup, check the following checklist in order:
+
+| Step | Verification Point | Diagnostic Action & Resolution |
+| :--- | :--- | :--- |
+| **1** | **API Credentials** | Ensure `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET` in `.env` are valid for your active mode (Test Mode keys start with `rzp_test_`). If credentials are invalid, Razorpay returns `BadRequestError: Authentication failed` and the backend returns HTTP 400. |
+| **2** | **DEBUG & SSL on Localhost** | In `.env`, ensure `DEBUG=True` is set for local development. If `DEBUG=False`, Django's `SecurityMiddleware` automatically redirects `http://localhost:8000` to `https://localhost:8000`, causing browser fetch errors. |
+| **3** | **Checkout.js Loaded** | Ensure `<script src="https://checkout.razorpay.com/v1/checkout.js"></script>` is loaded and not blocked by browser adblockers (Brave Shields, uBlock Origin, Privacy Badger). |
+| **4** | **Browser Console Logs** | Open Developer Tools (`F12` > Console) and Network tab. Look at the POST request to `/payments/razorpay/create-order/`. Verify it returns `HTTP 200` with JSON `{ success: true, razorpay_order_id: "order_..." }`. |
+| **5** | **Address Validation** | If choosing "Ship to a New Delivery Address", all required fields (Name, Phone, Street, City, State, Postal Code) must be filled. The form validates client-side and backend will reject missing address data with a clear toast. |
+| **6** | **Active Cart Items** | Order total must be $> 0$ and active stock must be available in the warehouse. Server recalculates prices and prevents checkout on out-of-stock items. |
+
+---
+
 
 ## Project Structure
 

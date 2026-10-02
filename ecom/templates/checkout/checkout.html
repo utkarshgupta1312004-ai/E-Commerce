@@ -415,6 +415,30 @@ if (checkoutForm) {
         const btn = document.getElementById('btn-confirm-order');
         const btnText = document.getElementById('btn-text');
 
+        // Validate address selection before proceeding
+        const addressRadio = document.querySelector('input[name="address_id"]:checked');
+        const isNewAddress = !addressRadio || addressRadio.value === 'new';
+        if (isNewAddress) {
+            const fullName = document.querySelector('input[name="full_name"]')?.value.trim();
+            const phone = document.querySelector('input[name="phone"]')?.value.trim();
+            const street = document.querySelector('input[name="street_address"]')?.value.trim();
+            const city = document.querySelector('input[name="city"]')?.value.trim();
+            const state = document.querySelector('input[name="state"]')?.value.trim();
+            const postalCode = document.querySelector('input[name="postal_code"]')?.value.trim();
+
+            if (!fullName || !phone || !street || !city || !state || !postalCode) {
+                e.preventDefault();
+                if (typeof window.showToast === 'function') {
+                    window.showToast("Please fill in all required shipping address fields.", "error");
+                } else {
+                    alert("Please fill in all required shipping address fields.");
+                }
+                const newFields = document.getElementById('new-address-fields');
+                if (newFields) newFields.classList.remove('hidden');
+                return;
+            }
+        }
+
         if (selectedMethod === 'RAZORPAY') {
             e.preventDefault();
 
@@ -434,7 +458,12 @@ if (checkoutForm) {
             .then(res => res.json())
             .then(data => {
                 if (!data.success) {
-                    alert(data.error || "Unable to initialize payment gateway. Please choose Cash on Delivery (COD) or try again.");
+                    const errorMsg = data.error || "Unable to initialize payment gateway. Please choose Cash on Delivery (COD) or try again.";
+                    if (typeof window.showToast === 'function') {
+                        window.showToast(errorMsg, "error", 6000);
+                    } else {
+                        alert(errorMsg);
+                    }
                     btn.disabled = false;
                     btn.classList.remove('opacity-75', 'cursor-not-allowed');
                     if (btnText) btnText.textContent = "Pay with Razorpay • ₹{{ total }}";
@@ -442,20 +471,28 @@ if (checkoutForm) {
                 }
 
                 if (typeof Razorpay === 'undefined') {
-                    alert("Payment gateway component could not be loaded. Please disable any script blockers or select Cash on Delivery (COD).");
+                    const blockMsg = "Payment gateway component could not be loaded. Please disable any script blockers or select Cash on Delivery (COD).";
+                    if (typeof window.showToast === 'function') {
+                        window.showToast(blockMsg, "error", 6000);
+                    } else {
+                        alert(blockMsg);
+                    }
                     btn.disabled = false;
                     btn.classList.remove('opacity-75', 'cursor-not-allowed');
                     if (btnText) btnText.textContent = "Pay with Razorpay • ₹{{ total }}";
                     return;
                 }
 
+                const razorpayKey = data.key || data.razorpay_key_id;
+                const razorpayOrderId = data.order_id || data.razorpay_order_id;
+
                 const options = {
-                    key: data.razorpay_key_id,
+                    key: razorpayKey,
                     amount: data.amount,
                     currency: data.currency,
                     name: data.name || "Cartivo",
                     description: data.description || "Luxury & Essentials",
-                    order_id: data.razorpay_order_id,
+                    order_id: razorpayOrderId,
                     prefill: data.prefill || {},
                     theme: data.theme || { color: "#2563eb" },
                     handler: function(response) {
@@ -471,7 +508,7 @@ if (checkoutForm) {
                                 "X-Requested-With": "XMLHttpRequest",
                             },
                             body: JSON.stringify({
-                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_order_id: response.razorpay_order_id || razorpayOrderId,
                                 razorpay_payment_id: response.razorpay_payment_id,
                                 razorpay_signature: response.razorpay_signature,
                                 customer_notes: formData.get("customer_notes") || ""
@@ -482,7 +519,12 @@ if (checkoutForm) {
                             if (verifyData.success) {
                                 window.location.href = verifyData.redirect_url;
                             } else {
-                                alert(verifyData.error || "Payment verification failed. Please contact customer support.");
+                                const vError = verifyData.error || "Payment verification failed. Please contact customer support.";
+                                if (typeof window.showToast === 'function') {
+                                    window.showToast(vError, "error", 6000);
+                                } else {
+                                    alert(vError);
+                                }
                                 btn.disabled = false;
                                 btn.classList.remove('opacity-75', 'cursor-not-allowed');
                                 if (btnText) btnText.textContent = "Pay with Razorpay • ₹{{ total }}";
@@ -490,7 +532,12 @@ if (checkoutForm) {
                         })
                         .catch(err => {
                             console.error("Verification exception:", err);
-                            alert("Payment verification error. If your card was charged, contact support with your payment ID.");
+                            const netErr = "Payment verification network error. If your account was debited, contact support with your payment ID.";
+                            if (typeof window.showToast === 'function') {
+                                window.showToast(netErr, "error", 6000);
+                            } else {
+                                alert(netErr);
+                            }
                             btn.disabled = false;
                             btn.classList.remove('opacity-75', 'cursor-not-allowed');
                             if (btnText) btnText.textContent = "Pay with Razorpay • ₹{{ total }}";
@@ -507,7 +554,7 @@ if (checkoutForm) {
                                     "X-Requested-With": "XMLHttpRequest",
                                 },
                                 body: JSON.stringify({
-                                    razorpay_order_id: data.razorpay_order_id,
+                                    razorpay_order_id: razorpayOrderId,
                                     reason: 'CANCELLED'
                                 })
                             }).catch(() => {});
@@ -515,6 +562,10 @@ if (checkoutForm) {
                             btn.disabled = false;
                             btn.classList.remove('opacity-75', 'cursor-not-allowed');
                             if (btnText) btnText.textContent = "Pay with Razorpay • ₹{{ total }}";
+
+                            if (typeof window.showToast === 'function') {
+                                window.showToast("Payment was cancelled or checkout was closed. You can retry anytime.", "info", 5000);
+                            }
                         }
                     }
                 };
@@ -531,14 +582,19 @@ if (checkoutForm) {
                             "X-Requested-With": "XMLHttpRequest",
                         },
                         body: JSON.stringify({
-                            razorpay_order_id: data.razorpay_order_id,
+                            razorpay_order_id: razorpayOrderId,
                             reason: 'FAILED',
                             error_code: resp.error.code || 'GATEWAY_ERROR',
                             error_description: resp.error.description || 'Payment rejected by gateway'
                         })
                     }).catch(() => {});
 
-                    alert("Payment could not be completed: " + (resp.error.description || "The transaction was declined by bank or gateway."));
+                    const failMsg = "Payment could not be completed: " + (resp.error.description || "The transaction was declined by bank or gateway. You can retry safely.");
+                    if (typeof window.showToast === 'function') {
+                        window.showToast(failMsg, "error", 6000);
+                    } else {
+                        alert(failMsg);
+                    }
                     btn.disabled = false;
                     btn.classList.remove('opacity-75', 'cursor-not-allowed');
                     if (btnText) btnText.textContent = "Pay with Razorpay • ₹{{ total }}";
@@ -547,7 +603,12 @@ if (checkoutForm) {
             })
             .catch(err => {
                 console.error("Gateway initialization error:", err);
-                alert("Network error connecting to payment gateway. Please check your connection and try again.");
+                const connErr = "Network error connecting to payment gateway. Please check your connection and try again.";
+                if (typeof window.showToast === 'function') {
+                    window.showToast(connErr, "error", 6000);
+                } else {
+                    alert(connErr);
+                }
                 btn.disabled = false;
                 btn.classList.remove('opacity-75', 'cursor-not-allowed');
                 if (btnText) btnText.textContent = "Pay with Razorpay • ₹{{ total }}";
@@ -561,5 +622,6 @@ if (checkoutForm) {
         }
     });
 }
+
 </script>
 {% endblock %}

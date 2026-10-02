@@ -22,7 +22,7 @@ try:
     from dotenv import load_dotenv
     for _env_candidate in [BASE_DIR.parent / '.env', BASE_DIR / '.env']:
         if _env_candidate.exists():
-            load_dotenv(dotenv_path=_env_candidate)
+            load_dotenv(dotenv_path=_env_candidate, override=True)
 except ImportError:
     pass
 
@@ -301,7 +301,7 @@ GOOGLE_CLIENT_SECRET = (os.environ.get('GOOGLE_CLIENT_SECRET') or '').strip()
 # ==============================================================================
 # Production Security Hardening (Render / Cloud Deployment)
 # ==============================================================================
-if not DEBUG:
+if not DEBUG and 'test' not in sys.argv:
     # Reverse proxy SSL header (Essential for Render load balancer HTTPS detection)
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 

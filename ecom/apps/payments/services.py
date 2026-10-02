@@ -1,3 +1,4 @@
+import os
 import hmac
 import hashlib
 import logging
@@ -34,20 +35,46 @@ class RazorpayService:
     """
 
     @classmethod
+    def _ensure_env_loaded(cls):
+        """Dynamically ensures latest .env variables are loaded with override=True."""
+        try:
+            from dotenv import load_dotenv
+            base_dir = getattr(settings, 'BASE_DIR', None)
+            if base_dir:
+                for candidate in [base_dir / '.env', base_dir.parent / '.env']:
+                    if candidate.exists():
+                        load_dotenv(dotenv_path=candidate, override=True)
+                        break
+        except Exception:
+            pass
+
+    @classmethod
     def get_key_id(cls) -> str:
-        return getattr(settings, 'RAZORPAY_KEY_ID', '').strip()
+        cls._ensure_env_loaded()
+        key = (os.environ.get('RAZORPAY_KEY_ID') or getattr(settings, 'RAZORPAY_KEY_ID', '')).strip()
+        if hasattr(settings, 'RAZORPAY_KEY_ID') and key:
+            settings.RAZORPAY_KEY_ID = key
+        return key
 
     @classmethod
     def get_key_secret(cls) -> str:
-        return getattr(settings, 'RAZORPAY_KEY_SECRET', '').strip()
+        cls._ensure_env_loaded()
+        secret = (os.environ.get('RAZORPAY_KEY_SECRET') or getattr(settings, 'RAZORPAY_KEY_SECRET', '')).strip()
+        if hasattr(settings, 'RAZORPAY_KEY_SECRET') and secret:
+            settings.RAZORPAY_KEY_SECRET = secret
+        return secret
 
     @classmethod
     def get_currency(cls) -> str:
-        return getattr(settings, 'RAZORPAY_CURRENCY', 'INR').strip()
+        return (os.environ.get('RAZORPAY_CURRENCY') or getattr(settings, 'RAZORPAY_CURRENCY', 'INR')).strip()
 
     @classmethod
     def get_webhook_secret(cls) -> str:
-        return getattr(settings, 'RAZORPAY_WEBHOOK_SECRET', '').strip()
+        cls._ensure_env_loaded()
+        secret = (os.environ.get('RAZORPAY_WEBHOOK_SECRET') or getattr(settings, 'RAZORPAY_WEBHOOK_SECRET', '')).strip()
+        if hasattr(settings, 'RAZORPAY_WEBHOOK_SECRET') and secret:
+            settings.RAZORPAY_WEBHOOK_SECRET = secret
+        return secret
 
     @classmethod
     def is_configured(cls) -> bool:
